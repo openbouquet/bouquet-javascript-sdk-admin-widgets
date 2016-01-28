@@ -28,23 +28,28 @@
             },
             "dbDriverName" : {
                 "title" : "Database Driver",
-                "type" : "Text",
-                "editorClass" : "form-control"
+                "type" : "Select",
+                "options" : [],
+                "editorClass" : "form-control",
+                "fieldClass" : "database-details-1"
             },
             "dbHost" : {
                 "title" : "Database Host",
                 "type" : "Text",
-                "editorClass" : "form-control"
+                "editorClass" : "form-control",
+                "fieldClass" : "database-details-2"
             },
             "dbPort" : {
                 "title" : "Database Port",
                 "type" : "Text",
-                "editorClass" : "form-control"
+                "editorClass" : "form-control",
+                "fieldClass" : "database-details-3"
             },
             "dbDatabase" : {
                 "title" : "Database Name",
                 "type" : "Text",
-                "editorClass" : "form-control"
+                "editorClass" : "form-control",
+                "fieldClass" : "database-details-4"
             },
             "dbOptions" : {
                 "title": "Database Options",

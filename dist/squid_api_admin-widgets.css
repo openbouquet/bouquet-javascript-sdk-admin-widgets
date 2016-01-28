@@ -683,6 +683,15 @@ div.object-id input[disabled] {
 	display: none;
 }
 
+.squid-api-project-model-management .database-details-1, .squid-api-project-model-management .database-details-3 {
+    float: left;
+    width: 45%;
+    padding-top: 3px;
+}
+.squid-api-project-model-management .database-details-2, .squid-api-project-model-management .database-details-4 {
+    float: right;
+    width: 45%;
+}
 .squid-api-Relation-collection-management tr td {
 	width: 25%;
 	padding-left: 10px;

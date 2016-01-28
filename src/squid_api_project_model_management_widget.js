@@ -15,6 +15,15 @@
             this.formContent.on('dbUser:change', function(form) {
                 me.resetSchemas(form);
             });
+
+            // populate database driver names
+            $.getJSON(squid_api.apiURL + "/status" + "?access_token=" + squid_api.model.login.get("accessToken"), function( data ) {
+                var drivers = [];
+                for (var driver in data) {
+                    drivers.push(driver.toLowerCase());
+                }
+                me.formContent.fields.dbDriverName.editor.setOptions(drivers);
+            });
         },
 
         resetSchemas: function(form) {
