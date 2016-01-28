@@ -3421,8 +3421,17 @@ function program1(depth0,data) {
     var View = squid_api.view.BaseModelManagementWidget.extend({
         formEvents: function() {
             var me = this;
-            this.formContent.on('dbUrl:change', function(form) {
+            this.formContent.on('dbDriverName:change', function(form) {
                 me.resetSchemas(form);
+                if (form.fields.dbDriverName.getValue() == "postgresql" || form.fields.dbDriverName.getValue() == "greenplum") {
+                    form.fields.dbPort.setValue("5432");
+                }
+                if (form.fields.dbDriverName.getValue() == "redshift") {
+                    form.fields.dbPort.setValue("5439");
+                }
+                if (form.fields.dbDriverName.getValue() == "redshift") {
+                    form.fields.dbPort.setValue("5439");
+                }
             });
             this.formContent.on('dbPassword:change', function(form) {
                 me.resetSchemas(form);
