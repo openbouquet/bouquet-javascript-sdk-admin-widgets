@@ -2041,13 +2041,30 @@ function program1(depth0,data) {
                 "editorClass" : "form-control",
                 "fieldClass" : "name"
             },
-            "dbUrl" : {
-                "title" : "Database URL",
+            "dbDriverName" : {
+                "title" : "Database Driver",
                 "type" : "Text",
-                "editorClass" : "form-control",
-                "position" : 1,
-                "help" : "jdbc:[driver_name]://[host]:[port]/{[database]}{options}",
-                "fieldClass" : "dbUrl"
+                "editorClass" : "form-control"
+            },
+            "dbHost" : {
+                "title" : "Database Host",
+                "type" : "Text",
+                "editorClass" : "form-control"
+            },
+            "dbPort" : {
+                "title" : "Database Port",
+                "type" : "Text",
+                "editorClass" : "form-control"
+            },
+            "dbDatabase" : {
+                "title" : "Database Name",
+                "type" : "Text",
+                "editorClass" : "form-control"
+            },
+            "dbOptions" : {
+                "title": "Database Options",
+                "type": "Text",
+                "editorClass": "form-control"
             },
             "dbUser" : {
                 "title" : "Database User",
@@ -2382,7 +2399,8 @@ function program1(depth0,data) {
             // add class for spinning wheel
             this.$el.addClass("in-progress");
             // collect prerequisites
-            var dburl = this.form.fields.dbUrl.getValue();
+
+            var dburl = "jdbc:" + this.form.fields.dbDriverName.getValue() + "://" + this.form.fields.dbHost.getValue() + ":" + this.form.fields.dbPort.getValue() + "/" + this.form.fields.dbDatabase.getValue() + this.form.fields.dbOptions.getValue();
             var dbPassword =  this.form.fields.dbPassword.getValue();
             var dbUser = this.form.fields.dbUser.getValue();
             var projectId = this.form.fields.id.getValue().projectId;
@@ -3420,6 +3438,13 @@ function program1(depth0,data) {
             if (data.dbCheckConnection) {
                 delete data.dbCheckConnection;
             }
+            // construct jdbc url jdbc:[driver_name]://[host]:[port]/{[database]}{options}
+            data.dbUrl = "jdbc:" + data.dbDriverName + "://" + data.dbHost + ":" + data.dbPort + "/" + data.dbDatabase + data.dbOptions;
+            delete data.dbDriverName;
+            delete data.dbHost;
+            delete data.dbPort;
+            delete data.dbDatabase;
+            delete data.dbOptions;
             return data;
         },
         

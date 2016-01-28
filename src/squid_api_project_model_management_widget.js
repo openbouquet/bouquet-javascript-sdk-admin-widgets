@@ -28,6 +28,13 @@
             if (data.dbCheckConnection) {
                 delete data.dbCheckConnection;
             }
+            // construct jdbc url jdbc:[driver_name]://[host]:[port]/{[database]}{options}
+            data.dbUrl = "jdbc:" + data.dbDriverName + "://" + data.dbHost + ":" + data.dbPort + "/" + data.dbDatabase + data.dbOptions;
+            delete data.dbDriverName;
+            delete data.dbHost;
+            delete data.dbPort;
+            delete data.dbDatabase;
+            delete data.dbOptions;
             return data;
         },
         
