@@ -10,7 +10,7 @@
             return data;
         },
 
-        onSave: function(model) {
+        onSave: function(previousAttributes, model) {
             // to be overridden from other model management widgets
         },
 

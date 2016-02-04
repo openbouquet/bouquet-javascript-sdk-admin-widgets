@@ -84,7 +84,7 @@
                             }
                             // call once saved
                             if (me.onSave) {
-                                me.onSave(model);
+                                me.onSave(me.model._previousAttributes, model);
                             }
                             me.status.set("message", "Sucessfully saved");
                         },

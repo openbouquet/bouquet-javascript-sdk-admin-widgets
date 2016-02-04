@@ -18,7 +18,7 @@
             return data;
         },
 
-        onSave: function(model) {
+        onSave: function(previousAttributes, model) {
             this.config.trigger("change:selection");
         },
 

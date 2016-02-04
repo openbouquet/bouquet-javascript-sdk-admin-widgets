@@ -1228,7 +1228,7 @@ function program1(depth0,data) {
                             }
                             // call once saved
                             if (me.onSave) {
-                                me.onSave(model);
+                                me.onSave(me.model._previousAttributes, model);
                             }
                             me.status.set("message", "Sucessfully saved");
                         },
@@ -1596,7 +1596,7 @@ function program1(depth0,data) {
         customDataManipulation: function(data) {
             return data;
         },
-        onSave: function(model) {
+        onSave: function(previousAttributes, model) {
             // set bookmark as current
             this.config.set("bookmark", model.get("id").bookmarkId);
         },
@@ -2000,7 +2000,7 @@ function program1(depth0,data) {
             return data;
         },
 
-        onSave: function(model) {
+        onSave: function(previousAttributes, model) {
             // to be overridden from other model management widgets
         },
 
@@ -2710,7 +2710,7 @@ function program1(depth0,data) {
             return data;
         },
 
-        onSave: function(model) {
+        onSave: function(previousAttributes, model) {
             this.config.trigger("change:selection");
         },
 
@@ -3424,11 +3424,16 @@ function program1(depth0,data) {
             return data;
         },
         
-        onSave : function(model) {
+        onSave : function(previousAttributes, model) {
             // TODO: when saving a new project kraken should return the project role (T713)
             model.set({"_role" : "OWNER"}, {silent : true});
-            // set new project as current
-            this.config.set("project", model.get("id").projectId);
+            if (this.config.get("domain") && (previousAttributes.dbSchemas != model.get("dbSchemas"))) {
+                this.config.clear({silent: true});
+            }
+            // set new project as current if one isn't already set
+            if (! this.config.get("project")) {
+                this.config.set("project", model.get("id").projectId);
+            }
         }
     });
 
@@ -3682,7 +3687,7 @@ function program1(depth0,data) {
             }
         },
 
-        onSave: function(model) {
+        onSave: function(previousAttributes, model) {
             // reload filters
             this.config.trigger("change:selection");
         },

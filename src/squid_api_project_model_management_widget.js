@@ -31,11 +31,16 @@
             return data;
         },
         
-        onSave : function(model) {
+        onSave : function(previousAttributes, model) {
             // TODO: when saving a new project kraken should return the project role (T713)
             model.set({"_role" : "OWNER"}, {silent : true});
-            // set new project as current
-            this.config.set("project", model.get("id").projectId);
+            if (this.config.get("domain") && (previousAttributes.dbSchemas != model.get("dbSchemas"))) {
+                this.config.clear({silent: true});
+            }
+            // set new project as current if one isn't already set
+            if (! this.config.get("project")) {
+                this.config.set("project", model.get("id").projectId);
+            }
         }
     });
 

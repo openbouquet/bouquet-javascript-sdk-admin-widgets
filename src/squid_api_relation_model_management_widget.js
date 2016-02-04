@@ -69,7 +69,7 @@
             }
         },
 
-        onSave: function(model) {
+        onSave: function(previousAttributes, model) {
             // reload filters
             this.config.trigger("change:selection");
         },

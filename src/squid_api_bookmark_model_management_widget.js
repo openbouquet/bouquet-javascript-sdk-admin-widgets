@@ -156,7 +156,7 @@
         customDataManipulation: function(data) {
             return data;
         },
-        onSave: function(model) {
+        onSave: function(previousAttributes, model) {
             // set bookmark as current
             this.config.set("bookmark", model.get("id").bookmarkId);
         },
