@@ -32,10 +32,30 @@
         },
         
         onSave : function(previousAttributes, model) {
+            var me = this;
             // TODO: when saving a new project kraken should return the project role (T713)
             model.set({"_role" : "OWNER"}, {silent : true});
-            if (this.config.get("domain") && (previousAttributes.dbSchemas != model.get("dbSchemas"))) {
-                this.config.clear({silent: true});
+            if (this.config.get("domain") && (previousAttributes.dbSchemas && model.get("dbSchemas"))) {
+                if (previousAttributes.dbSchemas[0] !== model.get("dbSchemas")[0]) {
+                    squid_api.getCustomer().then(function(customer) {
+                        customer.get("projects").load(me.config.get("project"), true).then(function(project) {
+                            me.config.set({
+                                "bookmark" : null,
+                                "domain" : null,
+                                "period" : null,
+                                "chosenDimensions" : [],
+                                "chosenMetrics" : [],
+                                "orderBy" : null,
+                                "selection" : {
+                                    "domain" : null,
+                                    "facets": []
+                                }
+                            });
+                            me.config.trigger("change:project", me.config);
+                            //project.get("domains").load(null, true);
+                        });
+                    });
+                }
             }
             // set new project as current if one isn't already set
             if (! this.config.get("project")) {
