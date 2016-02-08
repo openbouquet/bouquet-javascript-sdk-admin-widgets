@@ -314,7 +314,11 @@ function program19(depth0,data) {
     + "</h4>\n</div>\n<div class=\"modal-body\">\n    <div class=\"squid-api-collection-management-widget\">\n            ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.createRole), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n            <div class=\"squid-api-";
+  buffer += "\n            <div class=\"input-group search-wrapper\">\n                <input type=\"text\" class=\"form-control search\" placeholder=\"Search for...\" value=\"";
+  if (helper = helpers.searchText) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.searchText); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\">\n                    <span class=\"input-group-btn\">\n                        <button class=\"btn btn-default\" type=\"button\"><i class=\"fa fa-search\"></i></button>\n                    </span>\n            </div>\n            <div class=\"squid-api-";
   if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -1498,6 +1502,11 @@ function program1(depth0,data) {
             }
         },
 
+        eventSearch: function(event) {
+            var text = $(event.currentTarget).val();
+            this.render(text);
+        },
+
         eventCreate : function() {
             var me = this;
             // create a new model
@@ -1528,6 +1537,9 @@ function program1(depth0,data) {
             },
             "click .create" : function(event) {
                 this.eventCreate(event);
+            },
+            "input .search" : function(event) {
+                this.eventSearch(event);
             },
             'mouseenter tr': function(event) {
                 this.eventMouseEnter(event);
@@ -1610,7 +1622,7 @@ function program1(depth0,data) {
             }
             this.config.set("bookmarkFolderState", bookmarkFolderState);
         },
-        render: function() {
+        render: function(searchText) {
             console.log("render CollectionManagementWidget "+this.type);
             var bookmarkFolderState = this.config.get("bookmarkFolderState");
             var project = this.config.get("project");
@@ -1623,7 +1635,8 @@ function program1(depth0,data) {
                 typeLabel : this.typeLabel,
                 typeLabelPlural : this.typeLabelPlural,
                 modalHtml : true,
-                type : this.type
+                type : this.type,
+                searchText: searchText
             };
             if (this.collection) {
                 var collection = [];
@@ -1727,6 +1740,14 @@ function program1(depth0,data) {
                 console.log(paths);
             }
 
+            if (searchText) {
+                this.jsonData.collection.filter(function(obj) {
+                    return obj.path.value.indexOf(searchText) >= 0;
+                });
+            }
+            this.$el.html(html);
+
+            this.jsonData = jsonData;
             // render template
             var html = this.template(jsonData);
             this.$el.html(html);

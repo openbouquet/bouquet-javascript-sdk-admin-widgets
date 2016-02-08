@@ -44,6 +44,11 @@
             }
         },
 
+        eventSearch: function(event) {
+            var text = $(event.currentTarget).val();
+            this.render(text);
+        },
+
         eventCreate : function() {
             var me = this;
             // create a new model
@@ -74,6 +79,9 @@
             },
             "click .create" : function(event) {
                 this.eventCreate(event);
+            },
+            "input .search" : function(event) {
+                this.eventSearch(event);
             },
             'mouseenter tr': function(event) {
                 this.eventMouseEnter(event);
@@ -156,7 +164,7 @@
             }
             this.config.set("bookmarkFolderState", bookmarkFolderState);
         },
-        render: function() {
+        render: function(searchText) {
             console.log("render CollectionManagementWidget "+this.type);
             var bookmarkFolderState = this.config.get("bookmarkFolderState");
             var project = this.config.get("project");
@@ -169,7 +177,8 @@
                 typeLabel : this.typeLabel,
                 typeLabelPlural : this.typeLabelPlural,
                 modalHtml : true,
-                type : this.type
+                type : this.type,
+                searchText: searchText
             };
             if (this.collection) {
                 var collection = [];
@@ -273,6 +282,14 @@
                 console.log(paths);
             }
 
+            if (searchText) {
+                this.jsonData.collection.filter(function(obj) {
+                    return obj.path.value.indexOf(searchText) >= 0;
+                });
+            }
+            this.$el.html(html);
+
+            this.jsonData = jsonData;
             // render template
             var html = this.template(jsonData);
             this.$el.html(html);

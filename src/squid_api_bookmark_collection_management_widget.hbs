@@ -9,6 +9,12 @@
                     <i class="fa fa-plus"></i> New {{type}}
                 </button>
             {{/if}}
+            <div class="input-group search-wrapper">
+                <input type="text" class="form-control search" placeholder="Search for..." value="{{searchText}}">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button>
+                    </span>
+            </div>
             <div class="squid-api-{{type}}-collection-management list">
                     <table style="width:100%">
                         <tbody {{#if valueSelected}} {{else}} class="no-values" {{/if}}>

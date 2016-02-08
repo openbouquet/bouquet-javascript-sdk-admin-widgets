@@ -244,3 +244,7 @@
 	overflow-y: scroll;
 	width: 100%;
 }
+
+.squid-api-collection-management-widget .search-wrapper {
+	width: 80%;
+}
