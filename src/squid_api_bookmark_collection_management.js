@@ -45,9 +45,18 @@
         },
 
         filterCollection: function(text) {
-            this.jsonData.collection = _.filter(this.jsonData.collection, function(model) {
-                    return _.contains(model.path.value, text);
-                });
+            var collection = this.jsonData.collection;
+            for (i=0; i<collection.length; i++) {
+                var item = this.jsonData.collection[i];
+                for (ix=0; ix<item.bookmarks.length; ix++) {
+                    if (item.bookmarks[ix].label.toLowerCase().indexOf(text.toLowerCase()) >= 0) {
+                        item.bookmarks[ix].visible = true;
+                    } else {
+                        item.bookmarks[ix].visible = false;
+                    }
+                }
+                this.jsonData.collection[i] = item;
+            }
             return this.jsonData;
         },
 
@@ -57,8 +66,11 @@
             // filter collection
             var filteredCollection = this.filterCollection(text);
             // update list
-            var listHtml = $(this.template(filteredCollection)).find(".list");
+            var listHtml = $(this.template(filteredCollection)).find(".list").html();
             this.$el.find(".list").html(listHtml);
+
+            this.bookmarkFolderStateCheck();
+            this.templateWidgets();
         },
 
         eventCreate : function() {
@@ -158,7 +170,7 @@
             }
             return name;
         },
-        bookmarkFolderState: function(item, action) {
+        bookmarkFolderStateSet: function(item, action) {
             var project = this.config.get("project");
             var bookmarkFolderState = this.config.get("bookmarkFolderState");
             if (action == "show") {
@@ -176,10 +188,20 @@
             }
             this.config.set("bookmarkFolderState", bookmarkFolderState);
         },
-        render: function() {
-            console.log("render CollectionManagementWidget "+this.type);
+        bookmarkFolderStateCheck: function() {
             var bookmarkFolderState = this.config.get("bookmarkFolderState");
             var project = this.config.get("project");
+            // open folder if stored in config
+            if (bookmarkFolderState) {
+                if (bookmarkFolderState[project]) {
+                    this.$el.find("#" + bookmarkFolderState[project]).addClass('in');
+                }
+            }
+        },
+        render: function() {
+            console.log("render CollectionManagementWidget "+this.type);
+            var project = this.config.get("project");
+            var bookmarkFolderState = this.config.get("bookmarkFolderState");
 
             this.jsonData = {
                 collectionLoaded : !this.collectionLoading,
@@ -263,6 +285,7 @@
                                 }
                                 bookmark.roles = this.getModelRoles(item);
                                 bookmark.selected = (bookmark.oid === selectedId);
+                                bookmark.visible = true;
                             }
                             if (bookmark.selected) {
                                 collection[x].bookmarks.unshift(bookmark);
@@ -297,14 +320,8 @@
             var html = this.template(this.jsonData);
             this.$el.html(html);
 
+            this.bookmarkFolderStateCheck();
             this.templateWidgets();
-
-            // open folder if stored in config
-            if (bookmarkFolderState) {
-                if (bookmarkFolderState[project]) {
-                    this.$el.find("#" + bookmarkFolderState[project]).collapse('toggle');
-                }
-            }
 
             return this;
         },
@@ -314,16 +331,14 @@
                 placement: "top",
                 trigger: "hover"
             });
-
             // accordion & events
-            this.$el.find(".collapse").collapse('hide');
             this.$el.find(".collapse").on('hidden.bs.collapse', { context: this }, function (event) {
                 var item = $(this).attr("id");
-                event.data.context.bookmarkFolderState(item, "hidden");
+                event.data.context.bookmarkFolderStateSet(item, "hidden");
             });
             this.$el.find(".collapse").on('show.bs.collapse', { context: this }, function (event) {
                 var item = $(this).attr("id");
-                event.data.context.bookmarkFolderState(item, "show");
+                event.data.context.bookmarkFolderStateSet(item, "show");
             });
         }
     });
