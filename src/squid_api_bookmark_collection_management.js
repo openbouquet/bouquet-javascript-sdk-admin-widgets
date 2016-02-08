@@ -44,9 +44,21 @@
             }
         },
 
+        filterCollection: function(text) {
+            this.jsonData.collection = _.filter(this.jsonData.collection, function(model) {
+                    return _.contains(model.path.value, text);
+                });
+            return this.jsonData;
+        },
+
         eventSearch: function(event) {
+            // obtain search box text
             var text = $(event.currentTarget).val();
-            this.render(text);
+            // filter collection
+            var filteredCollection = this.filterCollection(text);
+            // update list
+            var listHtml = $(this.template(filteredCollection)).find(".list");
+            this.$el.find(".list").html(listHtml);
         },
 
         eventCreate : function() {
@@ -164,12 +176,12 @@
             }
             this.config.set("bookmarkFolderState", bookmarkFolderState);
         },
-        render: function(searchText) {
+        render: function() {
             console.log("render CollectionManagementWidget "+this.type);
             var bookmarkFolderState = this.config.get("bookmarkFolderState");
             var project = this.config.get("project");
 
-            var jsonData = {
+            this.jsonData = {
                 collectionLoaded : !this.collectionLoading,
                 collection : this.collection,
                 roles : null,
@@ -177,15 +189,14 @@
                 typeLabel : this.typeLabel,
                 typeLabelPlural : this.typeLabelPlural,
                 modalHtml : true,
-                type : this.type,
-                searchText: searchText
+                type : this.type
             };
             if (this.collection) {
                 var collection = [];
                 var models = [];
                 var paths = [];
-                jsonData.collection = {};
-                jsonData.createRole = this.getCreateRole();
+                this.jsonData.collection = {};
+                this.jsonData.createRole = this.getCreateRole();
 
                 var selectedId = this.config.get(this.configSelectedId);
 
@@ -278,20 +289,12 @@
                     var textB = b.path.value.replace(/\//g, '').replace(/ /g, '').toUpperCase();
                     return (textA > textB) ? 1 : (textA < textB) ? -1 : 0;
                 });
-                jsonData.collection = collection;
+                this.jsonData.collection = collection;
                 console.log(paths);
             }
 
-            if (searchText) {
-                this.jsonData.collection.filter(function(obj) {
-                    return obj.path.value.indexOf(searchText) >= 0;
-                });
-            }
-            this.$el.html(html);
-
-            this.jsonData = jsonData;
             // render template
-            var html = this.template(jsonData);
+            var html = this.template(this.jsonData);
             this.$el.html(html);
 
             this.templateWidgets();
