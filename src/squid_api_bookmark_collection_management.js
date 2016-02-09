@@ -320,6 +320,8 @@
             var html = this.template(this.jsonData);
             this.$el.html(html);
 
+            this.$el.find("input.search").focus();
+
             this.bookmarkFolderStateCheck();
             this.templateWidgets();
 
