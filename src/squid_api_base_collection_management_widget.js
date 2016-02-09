@@ -120,7 +120,7 @@
             if (this.selectedModel) {
                 this.stopListening(me.selectedModel);
             }
-            if (modelId) {
+            if (me.collection && modelId) {
                 me.collection.load(modelId).done(function(model) {
                     me.selectedModel = model;
                     me.render();
