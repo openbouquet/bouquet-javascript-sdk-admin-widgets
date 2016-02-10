@@ -44,31 +44,27 @@
         },
 
         renderBase: function() {
-            var viewData = {
+            var containerData = {
                 modalCount : $(".squid-api-modal-view").length,
                 fadeAnimation : this.fadeAnimation,
                 header: this.header,
                 footer: this.footer,
                 headerTitle: this.headerTitle
             };
-            var html = this.template(viewData);
+            var html = this.template(containerData);
             // print template
             this.$el.append(html);
             // set el
-            this.setElement(this.$el.find(".squid-api-modal-view-" + viewData.modalCount));
+            this.setElement(this.$el.find(".squid-api-modal-view-" + containerData.modalCount));
+            // place view into element
+            this.$el.find(".content").html(this.view.el);
         },
 
         render: function() {
-            var me = this;
-
-            // insert template
-            if (! this.viewInserted) {
-                this.$el.find(".content").html(this.view.el);
-                this.viewInserted = true;
-            }
-
+            // render view by default
+            this.view.render();
+            // display the modal
             this.$el.modal();
-            me.view.render();
 
             return this;
         }
