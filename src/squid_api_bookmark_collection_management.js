@@ -44,6 +44,39 @@
             }
         },
 
+        filterCollection: function(text) {
+            var collection = this.jsonData.collection;
+            for (i=0; i<collection.length; i++) {
+                var item = this.jsonData.collection[i];
+                for (ix=0; ix<item.bookmarks.length; ix++) {
+                    if (item.bookmarks[ix].label.toLowerCase().indexOf(text.toLowerCase()) >= 0) {
+                        item.bookmarks[ix].visible = true;
+                    } else {
+                        item.bookmarks[ix].visible = false;
+                    }
+                }
+                this.jsonData.collection[i] = item;
+            }
+            return this.jsonData;
+        },
+
+        eventSearch: function(event) {
+            // obtain search box text
+            var text = $(event.currentTarget).val();
+            // filter collection
+            var filteredCollection = this.filterCollection(text);
+            // update list
+            var listHtml = $(this.template(filteredCollection)).find(".list").html();
+            this.$el.find(".list").html(listHtml);
+
+            //this.bookmarkFolderStateCheck();
+            if (text.length > 0) {
+                this.templateWidgets("open");
+            } else {
+                this.templateWidgets();
+            }
+        },
+
         eventCreate : function() {
             var me = this;
             // create a new model
@@ -74,6 +107,9 @@
             },
             "click .create" : function(event) {
                 this.eventCreate(event);
+            },
+            "input .search" : function(event) {
+                this.eventSearch(event);
             },
             'mouseenter tr': function(event) {
                 this.eventMouseEnter(event);
@@ -138,7 +174,7 @@
             }
             return name;
         },
-        bookmarkFolderState: function(item, action) {
+        bookmarkFolderStateSet: function(item, action) {
             var project = this.config.get("project");
             var bookmarkFolderState = this.config.get("bookmarkFolderState");
             if (action == "show") {
@@ -156,12 +192,22 @@
             }
             this.config.set("bookmarkFolderState", bookmarkFolderState);
         },
-        render: function() {
-            console.log("render CollectionManagementWidget "+this.type);
+        bookmarkFolderStateCheck: function() {
             var bookmarkFolderState = this.config.get("bookmarkFolderState");
             var project = this.config.get("project");
+            // open folder if stored in config
+            if (bookmarkFolderState) {
+                if (bookmarkFolderState[project]) {
+                    this.$el.find("#" + bookmarkFolderState[project]).addClass('in');
+                }
+            }
+        },
+        render: function() {
+            console.log("render CollectionManagementWidget "+this.type);
+            var project = this.config.get("project");
+            var bookmarkFolderState = this.config.get("bookmarkFolderState");
 
-            var jsonData = {
+            this.jsonData = {
                 collectionLoaded : !this.collectionLoading,
                 collection : this.collection,
                 roles : null,
@@ -175,8 +221,8 @@
                 var collection = [];
                 var models = [];
                 var paths = [];
-                jsonData.collection = {};
-                jsonData.createRole = this.getCreateRole();
+                this.jsonData.collection = {};
+                this.jsonData.createRole = this.getCreateRole();
 
                 var selectedId = this.config.get(this.configSelectedId);
 
@@ -243,6 +289,7 @@
                                 }
                                 bookmark.roles = this.getModelRoles(item);
                                 bookmark.selected = (bookmark.oid === selectedId);
+                                bookmark.visible = true;
                             }
                             if (bookmark.selected) {
                                 collection[x].bookmarks.unshift(bookmark);
@@ -269,42 +316,45 @@
                     var textB = b.path.value.replace(/\//g, '').replace(/ /g, '').toUpperCase();
                     return (textA > textB) ? 1 : (textA < textB) ? -1 : 0;
                 });
-                jsonData.collection = collection;
+                this.jsonData.collection = collection;
                 console.log(paths);
             }
 
             // render template
-            var html = this.template(jsonData);
+            var html = this.template(this.jsonData);
             this.$el.html(html);
 
-            this.templateWidgets();
+            this.$el.find("input.search").focus();
 
-            // open folder if stored in config
-            if (bookmarkFolderState) {
-                if (bookmarkFolderState[project]) {
-                    this.$el.find("#" + bookmarkFolderState[project]).collapse('toggle');
-                }
-            }
+            this.bookmarkFolderStateCheck();
+            this.templateWidgets();
 
             return this;
         },
-        templateWidgets: function() {
+        templateWidgets: function(collapseState) {
             // hoverover
             this.$el.find("li").tooltip({
                 placement: "top",
                 trigger: "hover"
             });
-
             // accordion & events
-            this.$el.find(".collapse").collapse('hide');
             this.$el.find(".collapse").on('hidden.bs.collapse', { context: this }, function (event) {
                 var item = $(this).attr("id");
-                event.data.context.bookmarkFolderState(item, "hidden");
+                event.data.context.bookmarkFolderStateSet(item, "hidden");
             });
             this.$el.find(".collapse").on('show.bs.collapse', { context: this }, function (event) {
                 var item = $(this).attr("id");
-                event.data.context.bookmarkFolderState(item, "show");
+                event.data.context.bookmarkFolderStateSet(item, "show");
             });
+
+            if (collapseState == "open") {
+                var folders = this.$el.find(".collapse");
+                for (i=0; i<folders.length; i++) {
+                    if ($(folders[i]).find("li").length > 0) {
+                        $(folders[i]).addClass('in');
+                    }
+                }
+            }
         }
     });
 

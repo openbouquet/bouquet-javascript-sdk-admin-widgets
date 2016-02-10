@@ -208,7 +208,7 @@ function program7(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "\n                            ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collection), {hash:{},inverse:self.program(17, program17, data),fn:self.program(8, program8, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collection), {hash:{},inverse:self.program(18, program18, data),fn:self.program(8, program8, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n                        ";
   return buffer;
@@ -242,50 +242,59 @@ function program9(depth0,data) {
   }
 function program10(depth0,data) {
   
+  var buffer = "", stack1;
+  buffer += "\n                                                    ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.visible), {hash:{},inverse:self.noop,fn:self.program(11, program11, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n\n                                                ";
+  return buffer;
+  }
+function program11(depth0,data) {
+  
   var buffer = "", stack1, helper;
-  buffer += "\n                                                    <li data-toggle=\"tooltip\" title=\"";
+  buffer += "\n                                                        <li data-toggle=\"tooltip\" title=\"";
   if (helper = helpers.description) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.description); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(11, program11, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(12, program12, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += " data-attr=\"";
   if (helper = helpers.oid) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.oid); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\">\n                                                        <span class=\"select\">\n                                                            <i class=\"fa fa-bookmark-o\"></i> ";
+    + "\">\n                                                                                                                <span class=\"select\">\n                                                                                                                    <i class=\"fa fa-bookmark-o\"></i> ";
   if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\n                                                        </span>\n                                                        ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(13, program13, data),data:data});
+    + "\n                                                                                                                </span>\n                                                                                                                ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(14, program14, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                                        ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(15, program15, data),data:data});
+  buffer += "\n                                                                                                                ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(16, program16, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                                    </li>\n                                                ";
+  buffer += "\n                                                                                                            </li>\n                                                    ";
   return buffer;
   }
-function program11(depth0,data) {
+function program12(depth0,data) {
   
   
   return " class=\"selected\" ";
   }
 
-function program13(depth0,data) {
+function program14(depth0,data) {
   
   
-  return "\n                                                            <span class=\"delete collection-option\">\n                                                                <i class=\"fa fa-trash-o\" title=\"delete\"></i>\n                                                            </span>\n                                                        ";
+  return "\n                                                                                                                    <span class=\"delete collection-option\">\n                                                                                                                        <i class=\"fa fa-trash-o\" title=\"delete\"></i>\n                                                                                                                    </span>\n                                                                                                                ";
   }
 
-function program15(depth0,data) {
+function program16(depth0,data) {
   
   
-  return "\n                                                            <span class=\"edit collection-option\">\n                                                                <i class=\"fa fa-pencil-square-o\" title=\"edit\"></i>\n                                                            </span>\n                                                        ";
+  return "\n                                                                                                                    <span class=\"edit collection-option\">\n                                                                                                                        <i class=\"fa fa-pencil-square-o\" title=\"edit\"></i>\n                                                                                                                    </span>\n                                                                                                                ";
   }
 
-function program17(depth0,data) {
+function program18(depth0,data) {
   
   var buffer = "", stack1, helper;
   buffer += "\n                                <div class=\"no-data\">\n                                    No ";
@@ -296,7 +305,7 @@ function program17(depth0,data) {
   return buffer;
   }
 
-function program19(depth0,data) {
+function program20(depth0,data) {
   
   var buffer = "", stack1, helper;
   buffer += "\n                        	<div class=\"no-data\">\n                            	<i class=\"fa fa-refresh fa-spin\"></i> ";
@@ -314,7 +323,11 @@ function program19(depth0,data) {
     + "</h4>\n</div>\n<div class=\"modal-body\">\n    <div class=\"squid-api-collection-management-widget\">\n            ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.createRole), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n            <div class=\"squid-api-";
+  buffer += "\n            <div class=\"input-group search-wrapper\">\n                <input type=\"text\" class=\"form-control search\" placeholder=\"Search for...\" value=\"";
+  if (helper = helpers.searchText) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.searchText); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\">\n                    <span class=\"input-group-btn\">\n                        <button class=\"btn btn-default\" type=\"button\"><i class=\"fa fa-search\"></i></button>\n                    </span>\n            </div>\n            <div class=\"squid-api-";
   if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -322,7 +335,7 @@ function program19(depth0,data) {
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.valueSelected), {hash:{},inverse:self.program(5, program5, data),fn:self.program(3, program3, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += ">\n                        ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionLoaded), {hash:{},inverse:self.program(19, program19, data),fn:self.program(7, program7, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionLoaded), {hash:{},inverse:self.program(20, program20, data),fn:self.program(7, program7, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n                        </tbody>\n                </table>\n            </div>\n    </div>\n</div>\n<div class=\"squid-api-model-management-footer\">\n  	<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
   return buffer;
@@ -1499,6 +1512,39 @@ function program1(depth0,data) {
             }
         },
 
+        filterCollection: function(text) {
+            var collection = this.jsonData.collection;
+            for (i=0; i<collection.length; i++) {
+                var item = this.jsonData.collection[i];
+                for (ix=0; ix<item.bookmarks.length; ix++) {
+                    if (item.bookmarks[ix].label.toLowerCase().indexOf(text.toLowerCase()) >= 0) {
+                        item.bookmarks[ix].visible = true;
+                    } else {
+                        item.bookmarks[ix].visible = false;
+                    }
+                }
+                this.jsonData.collection[i] = item;
+            }
+            return this.jsonData;
+        },
+
+        eventSearch: function(event) {
+            // obtain search box text
+            var text = $(event.currentTarget).val();
+            // filter collection
+            var filteredCollection = this.filterCollection(text);
+            // update list
+            var listHtml = $(this.template(filteredCollection)).find(".list").html();
+            this.$el.find(".list").html(listHtml);
+
+            //this.bookmarkFolderStateCheck();
+            if (text.length > 0) {
+                this.templateWidgets("open");
+            } else {
+                this.templateWidgets();
+            }
+        },
+
         eventCreate : function() {
             var me = this;
             // create a new model
@@ -1529,6 +1575,9 @@ function program1(depth0,data) {
             },
             "click .create" : function(event) {
                 this.eventCreate(event);
+            },
+            "input .search" : function(event) {
+                this.eventSearch(event);
             },
             'mouseenter tr': function(event) {
                 this.eventMouseEnter(event);
@@ -1593,7 +1642,7 @@ function program1(depth0,data) {
             }
             return name;
         },
-        bookmarkFolderState: function(item, action) {
+        bookmarkFolderStateSet: function(item, action) {
             var project = this.config.get("project");
             var bookmarkFolderState = this.config.get("bookmarkFolderState");
             if (action == "show") {
@@ -1611,12 +1660,22 @@ function program1(depth0,data) {
             }
             this.config.set("bookmarkFolderState", bookmarkFolderState);
         },
-        render: function() {
-            console.log("render CollectionManagementWidget "+this.type);
+        bookmarkFolderStateCheck: function() {
             var bookmarkFolderState = this.config.get("bookmarkFolderState");
             var project = this.config.get("project");
+            // open folder if stored in config
+            if (bookmarkFolderState) {
+                if (bookmarkFolderState[project]) {
+                    this.$el.find("#" + bookmarkFolderState[project]).addClass('in');
+                }
+            }
+        },
+        render: function() {
+            console.log("render CollectionManagementWidget "+this.type);
+            var project = this.config.get("project");
+            var bookmarkFolderState = this.config.get("bookmarkFolderState");
 
-            var jsonData = {
+            this.jsonData = {
                 collectionLoaded : !this.collectionLoading,
                 collection : this.collection,
                 roles : null,
@@ -1630,8 +1689,8 @@ function program1(depth0,data) {
                 var collection = [];
                 var models = [];
                 var paths = [];
-                jsonData.collection = {};
-                jsonData.createRole = this.getCreateRole();
+                this.jsonData.collection = {};
+                this.jsonData.createRole = this.getCreateRole();
 
                 var selectedId = this.config.get(this.configSelectedId);
 
@@ -1698,6 +1757,7 @@ function program1(depth0,data) {
                                 }
                                 bookmark.roles = this.getModelRoles(item);
                                 bookmark.selected = (bookmark.oid === selectedId);
+                                bookmark.visible = true;
                             }
                             if (bookmark.selected) {
                                 collection[x].bookmarks.unshift(bookmark);
@@ -1724,42 +1784,45 @@ function program1(depth0,data) {
                     var textB = b.path.value.replace(/\//g, '').replace(/ /g, '').toUpperCase();
                     return (textA > textB) ? 1 : (textA < textB) ? -1 : 0;
                 });
-                jsonData.collection = collection;
+                this.jsonData.collection = collection;
                 console.log(paths);
             }
 
             // render template
-            var html = this.template(jsonData);
+            var html = this.template(this.jsonData);
             this.$el.html(html);
 
-            this.templateWidgets();
+            this.$el.find("input.search").focus();
 
-            // open folder if stored in config
-            if (bookmarkFolderState) {
-                if (bookmarkFolderState[project]) {
-                    this.$el.find("#" + bookmarkFolderState[project]).collapse('toggle');
-                }
-            }
+            this.bookmarkFolderStateCheck();
+            this.templateWidgets();
 
             return this;
         },
-        templateWidgets: function() {
+        templateWidgets: function(collapseState) {
             // hoverover
             this.$el.find("li").tooltip({
                 placement: "top",
                 trigger: "hover"
             });
-
             // accordion & events
-            this.$el.find(".collapse").collapse('hide');
             this.$el.find(".collapse").on('hidden.bs.collapse', { context: this }, function (event) {
                 var item = $(this).attr("id");
-                event.data.context.bookmarkFolderState(item, "hidden");
+                event.data.context.bookmarkFolderStateSet(item, "hidden");
             });
             this.$el.find(".collapse").on('show.bs.collapse', { context: this }, function (event) {
                 var item = $(this).attr("id");
-                event.data.context.bookmarkFolderState(item, "show");
+                event.data.context.bookmarkFolderStateSet(item, "show");
             });
+
+            if (collapseState == "open") {
+                var folders = this.$el.find(".collapse");
+                for (i=0; i<folders.length; i++) {
+                    if ($(folders[i]).find("li").length > 0) {
+                        $(folders[i]).addClass('in');
+                    }
+                }
+            }
         }
     });
 

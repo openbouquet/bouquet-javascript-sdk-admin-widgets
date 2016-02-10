@@ -244,6 +244,10 @@
 	overflow-y: scroll;
 	width: 100%;
 }
+
+.squid-api-collection-management-widget .search-wrapper {
+	width: 80%;
+}
 .squid-api-admin-widgets-modal-form .modal-body form .error input {
     border: 2px solid #e74c3c;
 }
