@@ -69,8 +69,12 @@
             var listHtml = $(this.template(filteredCollection)).find(".list").html();
             this.$el.find(".list").html(listHtml);
 
-            this.bookmarkFolderStateCheck();
-            this.templateWidgets();
+            //this.bookmarkFolderStateCheck();
+            if (text.length > 0) {
+                this.templateWidgets("open");
+            } else {
+                this.templateWidgets();
+            }
         },
 
         eventCreate : function() {
@@ -327,7 +331,7 @@
 
             return this;
         },
-        templateWidgets: function() {
+        templateWidgets: function(collapseState) {
             // hoverover
             this.$el.find("li").tooltip({
                 placement: "top",
@@ -342,6 +346,15 @@
                 var item = $(this).attr("id");
                 event.data.context.bookmarkFolderStateSet(item, "show");
             });
+
+            if (collapseState == "open") {
+                var folders = this.$el.find(".collapse");
+                for (i=0; i<folders.length; i++) {
+                    if ($(folders[i]).find("li").length > 0) {
+                        $(folders[i]).addClass('in');
+                    }
+                }
+            }
         }
     });
 
