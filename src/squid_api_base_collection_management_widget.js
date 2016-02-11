@@ -17,6 +17,7 @@
         modelView : null,
         cancelCallback : null,
         collectionLoading : false,
+        afterRender : null,
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -38,6 +39,9 @@
                 }
                 if (options.onSelect) {
                     this.onSelect = options.onSelect;
+                }
+                if (options.afterRender) {
+                    this.afterRender = options.afterRender;
                 }
             }
 
@@ -407,9 +411,14 @@
 
                 // store model view data
                 jsonData.collection.models = models;
+
+                var html = this.template(jsonData);
+                this.$el.html(html);
+
+                if (this.afterRender) {
+                    this.afterRender.call(this);
+                }
             }
-            var html = this.template(jsonData);
-            this.$el.html(html);
 
             return this;
         }

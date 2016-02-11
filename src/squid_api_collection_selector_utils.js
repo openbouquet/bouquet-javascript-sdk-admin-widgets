@@ -120,8 +120,12 @@
                         jsonData.selectedModel = true;
                     }
                 }
+                this.$el.html(this.template(jsonData));
+
+                if (this.afterRender) {
+                    this.afterRender.call(this);
+                }
             }
-            this.$el.html(this.template(jsonData));
 
             return this;
         }
