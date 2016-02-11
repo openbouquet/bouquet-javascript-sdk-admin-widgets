@@ -400,7 +400,7 @@ function program6(depth0,data) {
   if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + " loading   \n    ";
+    + " loading\n    ";
   return buffer;
   }
 
@@ -907,6 +907,7 @@ function program1(depth0,data) {
         modelView : null,
         cancelCallback : null,
         collectionLoading : false,
+        afterRender : null,
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -928,6 +929,9 @@ function program1(depth0,data) {
                 }
                 if (options.onSelect) {
                     this.onSelect = options.onSelect;
+                }
+                if (options.afterRender) {
+                    this.afterRender = options.afterRender;
                 }
             }
 
@@ -1297,9 +1301,14 @@ function program1(depth0,data) {
 
                 // store model view data
                 jsonData.collection.models = models;
+
+                var html = this.template(jsonData);
+                this.$el.html(html);
+
+                if (this.afterRender) {
+                    this.afterRender.call(this);
+                }
             }
-            var html = this.template(jsonData);
-            this.$el.html(html);
 
             return this;
         }
@@ -2178,8 +2187,12 @@ function program1(depth0,data) {
                         jsonData.selectedModel = true;
                     }
                 }
+                this.$el.html(this.template(jsonData));
+
+                if (this.afterRender) {
+                    this.afterRender.call(this);
+                }
             }
-            this.$el.html(this.template(jsonData));
 
             return this;
         }
