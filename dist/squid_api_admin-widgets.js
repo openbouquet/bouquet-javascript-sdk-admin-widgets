@@ -1768,13 +1768,14 @@ function program1(depth0,data) {
                                 bookmark.selected = (bookmark.oid === selectedId);
                                 bookmark.visible = true;
                             }
-                            if (bookmark.selected) {
-                                collection[x].bookmarks.unshift(bookmark);
-                            } else {
-                                collection[x].bookmarks.push(bookmark);
-                            }
+                            collection[x].bookmarks.push(bookmark);
                         }
                     }
+                }
+
+                // sort bookmarks by label
+                for (ix=0; ix<collection.length; ix++) {
+                    collection[ix].bookmarks = _.sortBy(collection[ix].bookmarks, 'label');
                 }
 
                 // store model view data
