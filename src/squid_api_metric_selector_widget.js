@@ -87,25 +87,15 @@
                     jsonData.empty = true;
                 }
 
-                if ((!me.selector) || (jsonData.options.length === 0)) {
-                    // fist render or no data to display
-                    this.renderView(jsonData);
-
-                    if (this.afterRender) {
-                        this.afterRender.call(this);
-                    }
-                } else {
-                    // update render
-                    me.selector.multiselect("dataprovider", jsonData.options);
-                    me.showConfiguration();
-                }
+                // update dropdown content
+                this.$el.find("select").multiselect("dataprovider", jsonData.options);
             }
             return this;
         },
 
-        renderView: function(jsonData) {
+        renderView: function() {
             var me = this;
-            var html = this.template(jsonData);
+            var html = this.template();
             this.$el.html(html);
 
             // Initialize plugin
@@ -118,6 +108,10 @@
                     me.showConfiguration();
                 }
             });
+
+            if (this.afterRender) {
+                this.afterRender.call(this);
+            }
 
             // Remove Button Title Tag
             this.$el.find("button").removeAttr('title');
