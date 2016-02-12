@@ -37,10 +37,11 @@
             // listen for global status change
             this.listenTo(this.status,"change:status", this.enable);
 
+            this.renderView();
         },
 
         enable: function() {
-            if (this.status.get("status") == "RUNNING") {
+            if (this.status.get("status") !== "DONE") {
                 this.$el.find("button").prop("disabled", true);
             } else {
                 this.$el.find("button").prop("disabled", false);
@@ -48,10 +49,10 @@
         },
         
         render: function() {
-            if (this.collection) {
-                var me = this, isMultiple = true;
+            var me = this, isMultiple = true;
+            var jsonData = {"selAvailable" : true, "options" : [], "multiple" : isMultiple};
 
-                var jsonData = {"selAvailable" : true, "options" : [], "multiple" : isMultiple};
+            if (this.collection) {
 
                 // iterate through all domains items
                 var items = this.collection;
@@ -88,26 +89,11 @@
 
                 if ((!me.selector) || (jsonData.options.length === 0)) {
                     // fist render or no data to display
-                    var html = me.template(jsonData);
-                    me.$el.html(html);
-                    me.$el.show();
+                    this.renderView(jsonData);
 
-                    // Initialize plugin
-                    me.selector = me.$el.find("select");
-                    if (isMultiple) {
-                        me.selector.multiselect({
-                            "buttonContainer": '<div class="squid-api-data-widgets-metric-selector-open" />',
-                            "buttonText": function() {
-                                return 'Metrics';
-                            },
-                            "onDropdownShown": function() {
-                                me.showConfiguration();
-                            }
-                        });
+                    if (this.afterRender) {
+                        this.afterRender.call(this);
                     }
-
-                    // Remove Button Title Tag
-                    me.$el.find("button").removeAttr('title');
                 } else {
                     // update render
                     me.selector.multiselect("dataprovider", jsonData.options);
@@ -115,6 +101,26 @@
                 }
             }
             return this;
+        },
+
+        renderView: function(jsonData) {
+            var me = this;
+            var html = this.template(jsonData);
+            this.$el.html(html);
+
+            // Initialize plugin
+            this.$el.find("select").multiselect({
+                "buttonContainer": '<div class="squid-api-data-widgets-metric-selector-open" />',
+                "buttonText": function() {
+                    return 'Metrics';
+                },
+                "onDropdownShown": function() {
+                    me.showConfiguration();
+                }
+            });
+
+            // Remove Button Title Tag
+            this.$el.find("button").removeAttr('title');
         },
 
         events: squid_api.view.CollectionSelectorUtils.events,
