@@ -487,77 +487,58 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
 function program1(depth0,data) {
   
-  var buffer = "", stack1;
-  buffer += "\r\n    <select class=\"sq-select form-control\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.multiple), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">\r\n        ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.empty), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n        ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.options), {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n    </select>\r\n";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
   
   return "multiple";
   }
 
-function program4(depth0,data) {
+function program3(depth0,data) {
   
   
-  return "\r\n            <option>No dimensions available</option>\r\n        ";
+  return "\r\n        <option>No dimensions available</option>\r\n    ";
   }
 
-function program6(depth0,data) {
+function program5(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\r\n            <option value=\"";
+  buffer += "\r\n        <option value=\"";
   if (helper = helpers.value) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.value); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(7, program7, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += " ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.error), {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.error), {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">\r\n                ";
+  buffer += ">\r\n            ";
   if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\r\n            </option>\r\n        ";
+    + "\r\n        </option>\r\n    ";
   return buffer;
   }
-function program7(depth0,data) {
+function program6(depth0,data) {
   
   
   return "selected";
   }
 
-function program9(depth0,data) {
+function program8(depth0,data) {
   
   
   return " disabled ";
   }
 
-function program11(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\r\n    <!-- just display filter name -->\r\n    <label class=\"squid-api-data-widgets-dimension-selector\">";
-  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</label>\r\n    <span>-</span>\r\n";
-  return buffer;
-  }
-
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selAvailable), {hash:{},inverse:self.program(11, program11, data),fn:self.program(1, program1, data),data:data});
+  buffer += "<select class=\"sq-select form-control\" ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.multiple), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n";
+  buffer += ">\r\n    ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.empty), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\r\n    ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.options), {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\r\n</select>\r\n";
   return buffer;
   });
 
@@ -3167,6 +3148,7 @@ function program1(depth0,data) {
         filters: null,
         chosen : "chosenDimensions",
         selected : "selectedDimensions",
+        afterRender : null,
 
         initialize: function(options) {
             var me = this;
@@ -3200,15 +3182,20 @@ function program1(depth0,data) {
             } else {
             	this.status = squid_api.model.status;
             }
+            if (options.afterRender) {
+                this.afterRender = options.afterRender;
+            }
 
             // listen for selection change as we use it to get dimensions
-            me.listenTo(this.filters,"change:selection", this.render);
+            this.listenTo(this.filters,"change:selection", this.render);
 
             // initilize dimension collection for management view
             this.collectionManagementView = new squid_api.view.DimensionColumnsManagementWidget();
 
             // listen for global status change
             this.listenTo(this.status,"change:status", this.enable);
+
+            this.renderView();
         },
 
         enable: function() {
@@ -3220,109 +3207,113 @@ function program1(depth0,data) {
         },
 
         render: function() {
+            var isMultiple = true;
             var me = this;
 
-            if ((this.config.get("project")) && (this.config.get("domain"))) {
-                var isMultiple = true;
+            var jsonData = {"selAvailable" : true, "options" : [], "multiple" : isMultiple};
 
-                var jsonData = {"selAvailable" : true, "options" : [], "multiple" : isMultiple};
-
-                // iterate through all filter facets
-                var selection = me.filters.get("selection");
-                if (selection) {
-                    var facets = selection.facets;
-                    if (facets) {
-                        me.dimensions = [];
-                        for (var i=0; i<facets.length; i++){
-                            var facet = facets[i];
-                            var isBoolean = false;
-                            if (facet.dimension.type === "SEGMENTS") {
+            // iterate through all filter facets
+            var selection = this.filters.get("selection");
+            if (selection) {
+                var facets = selection.facets;
+                if (facets) {
+                    this.dimensions = [];
+                    for (var i=0; i<facets.length; i++){
+                        var facet = facets[i];
+                        var isBoolean = false;
+                        if (facet.dimension.type === "SEGMENTS") {
+                            isBoolean = true;
+                        }
+                        if (facet.items) {
+                            if ((facet.items.length === 1) && (facet.items[0].value === "true")) {
                                 isBoolean = true;
                             }
-                            if (facet.items) {
-                                if ((facet.items.length === 1) && (facet.items[0].value === "true")) {
-                                    isBoolean = true;
+                        }
+                        // do not display boolean dimensions
+                        if (!isBoolean) {
+                            if (this.dimensionIdList) {
+                                // insert and sort
+                                var idx = this.dimensionIdList.indexOf(facet.dimension.oid);
+                                if (idx >= 0) {
+                                    this.dimensions[idx] = facet;
                                 }
-                            }
-                            // do not display boolean dimensions
-                            if (!isBoolean) {
-                                if (me.dimensionIdList) {
-                                    // insert and sort
-                                    var idx = me.dimensionIdList.indexOf(facet.dimension.oid);
-                                    if (idx >= 0) {
-                                        me.dimensions[idx] = facet;
-                                    }
-                                } else {
-                                    // default unordered behavior
-                                    me.dimensions.push(facet);
-                                }
-                            }
-                            // avoid holes
-                            if (!me.dimensions[i]) {
-                                me.dimensions[i] = null;
+                            } else {
+                                // default unordered behavior
+                                this.dimensions.push(facet);
                             }
                         }
-                        var noneSelected = true;
-                        var dimIdx;
-                        for (dimIdx=0; dimIdx<me.dimensions.length; dimIdx++) {
-                            var facet1 = me.dimensions[dimIdx];
-                            if (facet1) {
-                                // check if selected
-                                var selected = me.isChosen(facet1);
-                                if (selected === true) {
-                                    noneSelected = false;
-                                }
-                                // add to the list
-                                var name;
-                                if (facet1.name) {
-                                    name = facet1.name;
-                                } else {
-                                    name = facet1.dimension.name;
-                                }
-                                var option = {"label" : name, "value" : facet1.id, "selected" : selected, "error" : me.dimensions[dimIdx].error};
-                                jsonData.options.push(option);
-                            }
+                        // avoid holes
+                        if (!this.dimensions[i]) {
+                            this.dimensions[i] = null;
                         }
                     }
-
-
-                    jsonData.options = me.sort(jsonData.options);
-
-                    // check if empty
-                    if (jsonData.options.length === 0) {
-                        jsonData.empty = true;
-                    }
-
-                    var html = me.template(jsonData);
-                    me.$el.html(html);
-                    me.$el.show();
-
-                    // Initialize plugin
-                    me.selector = me.$el.find("select");
-
-                    me.selector.multiselect({
-                        buttonContainer: '<div class="squid-api-data-widgets-dimension-selector" />',
-                        buttonText: function() {
-                            return 'Dimensions';
-                        },
-                        onDropdownShown: function() {
-                            me.showConfiguration();
-                        }
-                    });
-                    
-                    // error tooltips
-                    for (var i2=0; i2<jsonData.options.length; i2++) {
-                        var facet2 = jsonData.options[i2];
-                        if (facet2.error) {
-                            var input = me.$el.find(".squid-api-data-widgets-dimension-selector li:nth-child("+(i2+1)+") label");
-                            input.tooltip({"title" : "Facet computation failed"});
+                    var noneSelected = true;
+                    var dimIdx;
+                    for (dimIdx=0; dimIdx<this.dimensions.length; dimIdx++) {
+                        var facet1 = this.dimensions[dimIdx];
+                        if (facet1) {
+                            // check if selected
+                            var selected = this.isChosen(facet1);
+                            if (selected === true) {
+                                noneSelected = false;
+                            }
+                            // add to the list
+                            var name;
+                            if (facet1.name) {
+                                name = facet1.name;
+                            } else {
+                                name = facet1.dimension.name;
+                            }
+                            var option = {"label" : name, "value" : facet1.id, "selected" : selected, "error" : this.dimensions[dimIdx].error};
+                            jsonData.options.push(option);
                         }
                     }
+                }
 
-                    // Remove Button Title Tag
-                    me.$el.find("button").removeAttr('title');
+
+                jsonData.options = this.sort(jsonData.options);
+
+                // check if empty
+                if (jsonData.options.length === 0) {
+                    jsonData.empty = true;
+                }
+
+                this.renderView(jsonData);
+
+                // error tooltips
+                for (var i2=0; i2<jsonData.options.length; i2++) {
+                    var facet2 = jsonData.options[i2];
+                    if (facet2.error) {
+                        var input = this.$el.find(".squid-api-data-widgets-dimension-selector li:nth-child("+(i2+1)+") label");
+                        input.tooltip({"title" : "Facet computation failed"});
+                    }
+                }
+
+                // Remove Button Title Tag
+                this.$el.find("button").removeAttr('title');
+
+                if (this.afterRender) {
+                    this.afterRender.call(this);
                 }
             }
+        },
+
+        renderView: function(jsonData) {
+            var me = this;
+            var html = this.template(jsonData);
+            this.$el.html(html);
+
+            // Initialize plugin
+            this.$el.find("select").multiselect({
+                buttonContainer: '<div class="squid-api-data-widgets-dimension-selector" />',
+                buttonText: function() {
+                    return 'Dimensions';
+                },
+                onDropdownShown: function() {
+                    me.showConfiguration();
+                }
+            });
+
             return this;
         },
 
