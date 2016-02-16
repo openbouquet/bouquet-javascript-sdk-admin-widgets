@@ -35,7 +35,7 @@
                 customer.get("projects").load(project).then(function(project) {
                     project.get("domains").load(domain).then(function(domain) {
                         domain.get("dimensions").load().then(function(dimensions) {
-                            me.model.schema.parentId.subSchema.dimensionId.options = [];
+                            me.model.schema.parentId.subSchema.dimensionId.options = [me.model.schema.parentId.subSchema.dimensionId.options[0]];
                             for (i=0; i<dimensions.size(); i++) {
                                 var dimension = dimensions.at(i);
                                 if (dimension.get("oid") !== me.model.get("oid")) {
