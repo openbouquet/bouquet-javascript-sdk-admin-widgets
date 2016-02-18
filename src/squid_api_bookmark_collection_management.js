@@ -253,7 +253,7 @@
                         if (obj[str] == ">") {
                             tmpString += "<span>" + obj[str] + "</span>";
                         } else {
-                            tmpString += obj[str];
+                            tmpString += " " + obj[str];
                         }
                     }
 
