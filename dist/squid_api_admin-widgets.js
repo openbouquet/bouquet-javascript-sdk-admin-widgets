@@ -1962,11 +1962,11 @@ function program1(depth0,data) {
 
     var View = squid_api.view.BookmarkCollectionManagementWidget.extend({
 
-        renderNameOnSelect: false,
+        displayName: false,
 
         init : function(options) {
-            if (options.renderNameOnSelect) {
-                this.renderNameOnSelect = options.renderNameOnSelect;
+            if (options.displayName) {
+                this.displayName = options.displayName;
             }
             var me = this;
             this.listenTo(this.config,"change", this.renderButtonState);
@@ -2007,7 +2007,7 @@ function program1(depth0,data) {
                         match = false;
                     }
                 }
-                if (this.renderNameOnSelect) {
+                if (this.displayName) {
                     this.$el.find("button").text(this.selectedModel.get("name"));
                 }
                 if (match) {
