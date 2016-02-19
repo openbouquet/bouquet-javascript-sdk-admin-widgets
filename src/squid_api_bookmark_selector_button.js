@@ -5,7 +5,12 @@
 
     var View = squid_api.view.BookmarkCollectionManagementWidget.extend({
 
-        init : function() {
+        displayName: false,
+
+        init : function(options) {
+            if (options.displayName) {
+                this.displayName = options.displayName;
+            }
             var me = this;
             this.listenTo(this.config,"change", this.renderButtonState);
         },
@@ -44,6 +49,9 @@
                     if (JSON.stringify(selectedModelConfig[x]) !== JSON.stringify(currentConfig[x])) {
                         match = false;
                     }
+                }
+                if (this.displayName) {
+                    this.$el.find("button").text(this.selectedModel.get("name"));
                 }
                 if (match) {
                     this.$el.find("button").addClass("match");

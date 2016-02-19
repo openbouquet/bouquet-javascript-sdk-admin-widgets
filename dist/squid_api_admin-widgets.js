@@ -1962,7 +1962,12 @@ function program1(depth0,data) {
 
     var View = squid_api.view.BookmarkCollectionManagementWidget.extend({
 
-        init : function() {
+        renderNameOnSelect: false,
+
+        init : function(options) {
+            if (options.renderNameOnSelect) {
+                this.renderNameOnSelect = options.renderNameOnSelect;
+            }
             var me = this;
             this.listenTo(this.config,"change", this.renderButtonState);
         },
@@ -2001,6 +2006,9 @@ function program1(depth0,data) {
                     if (JSON.stringify(selectedModelConfig[x]) !== JSON.stringify(currentConfig[x])) {
                         match = false;
                     }
+                }
+                if (this.renderNameOnSelect) {
+                    this.$el.find("button").text(this.selectedModel.get("name"));
                 }
                 if (match) {
                     this.$el.find("button").addClass("match");
