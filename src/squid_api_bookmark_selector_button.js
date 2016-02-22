@@ -19,16 +19,14 @@
             var label = this.typeLabelPlural;
             var jsonData = {
                 label : label,
-                visible : false,
+                usable : false,
                 collectionLoaded : !this.collectionLoading,
                 collection : this.collection,
                 typeLabel : this.typeLabel,
                 typeLabelPlural : this.typeLabelPlural
             };
             if (this.collection) {
-                jsonData.visible = true;
-            } else {
-                jsonData.visible = false;
+                jsonData.usable = true;
             }
 
             this.$el.html(template(jsonData));

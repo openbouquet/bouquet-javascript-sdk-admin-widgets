@@ -366,47 +366,48 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
 function program1(depth0,data) {
   
-  var buffer = "", stack1;
-  buffer += "\n	<button class=\"form-control squid-api-button-view ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selectedModel), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\">\n	";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionLoaded), {hash:{},inverse:self.program(6, program6, data),fn:self.program(4, program4, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n    </button>\n";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
   
   return "selected";
   }
 
-function program4(depth0,data) {
+function program3(depth0,data) {
+  
+  
+  return " disabled=\"true\" ";
+  }
+
+function program5(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n        ";
+  buffer += "\n    ";
   if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\n    ";
+    + "\n";
   return buffer;
   }
 
-function program6(depth0,data) {
+function program7(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n    	<i class=\"fa fa-refresh fa-spin\"></i> ";
+  buffer += "\n    <i class=\"fa fa-refresh fa-spin\"></i> ";
   if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + " loading\n    ";
+    + " loading\n";
   return buffer;
   }
 
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.visible), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  buffer += "<button class=\"form-control squid-api-button-view ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selectedModel), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n";
+  buffer += "\" ";
+  stack1 = helpers.unless.call(depth0, (depth0 && depth0.usable), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ">\n";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionLoaded), {hash:{},inverse:self.program(7, program7, data),fn:self.program(5, program5, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n</button>\n\n";
   return buffer;
   });
 
@@ -892,6 +893,7 @@ function program1(depth0,data) {
                 this.initModel(this.config, parentChanged, selectionChanged);
             });
 
+            //this.render();
         },
 
         /**
@@ -1226,7 +1228,7 @@ function program1(depth0,data) {
                 var models = [];
                 jsonData.collection = {};
                 jsonData.createRole = this.getCreateRole();
-                
+
                 var selectedId = this.config.get(this.configSelectedId);
 
                 // store model data
@@ -1984,16 +1986,14 @@ function program1(depth0,data) {
             var label = this.typeLabelPlural;
             var jsonData = {
                 label : label,
-                visible : false,
+                usable : false,
                 collectionLoaded : !this.collectionLoading,
                 collection : this.collection,
                 typeLabel : this.typeLabel,
                 typeLabelPlural : this.typeLabelPlural
             };
             if (this.collection) {
-                jsonData.visible = true;
-            } else {
-                jsonData.visible = false;
+                jsonData.usable = true;
             }
 
             this.$el.html(template(jsonData));
@@ -2140,25 +2140,26 @@ function program1(depth0,data) {
             var label = this.typeLabelPlural;
             var jsonData = {
                 label : label,
-                visible : false,
+                usable : false,
                 collectionLoaded : !this.collectionLoading,
                 collection : this.collection,
                 typeLabelPlural : this.typeLabelPlural
             };
             if (this.collection || this.collectionLoading) {
-                jsonData.visible = true;
+                jsonData.usable = true;
                 if (this.selectedModel) {  
                     if (this.selectedModel.get("oid")) {
                         jsonData.label = this.selectedModel.get("name");
                         jsonData.selectedModel = true;
                     }
                 }
-                this.$el.html(this.template(jsonData));
 
                 if (this.afterRender) {
                     this.afterRender.call(this);
                 }
             }
+
+            this.$el.html(this.template(jsonData));
 
             return this;
         }
@@ -3753,7 +3754,7 @@ function program1(depth0,data) {
             var label = this.typeLabelPlural;
             var jsonData = {
                 label : "Create a new one",
-                visible : this.getCreateRole(),
+                usable : this.getCreateRole(),
                 collectionLoaded : !this.collectionLoading,
                 collection : this.collection,
                 typeLabelPlural : this.typeLabelPlural

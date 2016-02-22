@@ -14,7 +14,7 @@
             var label = this.typeLabelPlural;
             var jsonData = {
                 label : "Create a new one",
-                visible : this.getCreateRole(),
+                usable : this.getCreateRole(),
                 collectionLoaded : !this.collectionLoading,
                 collection : this.collection,
                 typeLabelPlural : this.typeLabelPlural

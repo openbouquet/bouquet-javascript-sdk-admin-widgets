@@ -55,6 +55,7 @@
                 this.initModel(this.config, parentChanged, selectionChanged);
             });
 
+            //this.render();
         },
 
         /**
@@ -389,7 +390,7 @@
                 var models = [];
                 jsonData.collection = {};
                 jsonData.createRole = this.getCreateRole();
-                
+
                 var selectedId = this.config.get(this.configSelectedId);
 
                 // store model data
