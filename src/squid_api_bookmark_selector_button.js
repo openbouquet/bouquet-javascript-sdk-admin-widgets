@@ -6,10 +6,14 @@
     var View = squid_api.view.BookmarkCollectionManagementWidget.extend({
 
         displayName: false,
+        displayPath: false,
 
         init : function(options) {
             if (options.displayName) {
                 this.displayName = options.displayName;
+            }
+            if (options.displayPath) {
+                this.displayPath = options.displayPath;
             }
             var me = this;
             this.listenTo(this.config,"change", this.renderButtonState);
@@ -50,6 +54,20 @@
                 }
                 if (this.displayName) {
                     this.$el.find("button").text(this.selectedModel.get("name"));
+                }
+                if (this.displayPath) {
+                    var path = this.selectedModel.get("path").split("/");
+                    var display = "";
+                    for (i=2; i<path.length; i++) {
+                        if (path[i].length > 0) {
+                            display += path[i];
+                            if (i !== path.length) {
+                                display += " > ";
+                            }
+                        }
+                    }
+                    display += this.selectedModel.get("name");
+                    this.$el.find("button").text(display);
                 }
                 if (match) {
                     this.$el.find("button").addClass("match");
