@@ -12,6 +12,8 @@
         modelView : null,
         configParentId : "project",
         headerText : null,
+        filteredPaths: null,
+        filteredOids: null,
 
         init : function(options) {
             var me = this;
@@ -20,12 +22,18 @@
             if (options.headerText) {
                 this.headerText = options.headerText;
             }
+            if (options.filteredPaths) {
+                this.filteredPaths = options.filteredPaths;
+            }
+            if (options.filteredOids) {
+                this.filteredOids = options.filteredOids;
+            }
         },
 
         loadCollection : function(parentId) {
             return squid_api.getCustomer().then(function(customer) {
                 return customer.get("projects").load(parentId).then(function(project) {
-                    return project.get("bookmarks").load();
+                	return project.get("bookmarks").load();
                 });
             });
         },
@@ -143,9 +151,8 @@
             // anyone can create a bookmark
             return true;
         },
-
-        getModelLabel : function(model) {
-            var name = model.get("name");
+        
+        getPathLabel : function(model) {
             var path = model.get("path");
             if (path) {
                 var user = path.indexOf("/USER/");
@@ -175,6 +182,14 @@
                         }
                     }
                 }
+            }
+            return path;
+        },
+        
+        getModelLabel : function(model) {
+            var name = model.get("name");
+            var path = getPathLabel(model);
+            if (path) {
                 name = path +"/"+ name;
             }
             return name;
@@ -237,72 +252,94 @@
                 // store model data
                 for (i=0; i<this.collection.size(); i++) {
                     var item = this.collection.at(i);
-                    var bookmark = {
-                        label : item.get("name"),
-                        description : item.get("description")
-                    };
-
-                    var existingPath = this.getModelLabel(item);
-                    var path = existingPath.substr(0, existingPath.lastIndexOf("/"));
-                    var friendlyPath = path;
-
-                    // if multiple levels exist, remove the first folder from friendlypath
-                    if (friendlyPath.split("/").length > 1) {
-                        friendlyPath = friendlyPath.slice(friendlyPath.search(/.\//i) + 2);
+                    var validPath = false;
+                    if (this.filteredPaths === null) {
+                    	validPath = true;
+                    } else {
+                    	for (j=0; j<this.filteredPaths.length; j++) {
+                            if (this.filteredPaths[j] === item.get("path")) {
+                            	validPath = true;
+                            }                    		
+                    	}
                     }
-
-                    // replace all '/' with '>'
-                    friendlyPath = friendlyPath.replace(/\//g, ' > ');
-
-                    // split friendlyPath to wrap styling divs
-                    var obj = friendlyPath.split(" ");
-                    var tmpString = "";
-                    for (var str in obj) {
-                        if (obj[str] == ">") {
-                            tmpString += "<span>" + obj[str] + "</span>";
-                        } else {
-                            tmpString += " " + obj[str];
-                        }
+                    var validOid = false;
+                    if (this.filteredOids === null) {
+                    	validOid = true ;
+                    } else {
+                    	for (j=0; j<this.filteredOids.length; j++) {
+                            if (this.filteredOids[j] === item.get("oid")) {
+                            	 validOid = true;
+                            }                    		
+                    	}
                     }
-
-                    friendlyPath = tmpString;
-
-                    // see if path already exists
-                    var pathExists = false;
-                    for (ix=0; ix<collection.length; ix++) {
-                        if (collection[ix].path.value === path) {
-                            pathExists = true;
-                        }
+                    if (validOid && validPath) {
+	                    var bookmark = {
+	                        label : item.get("name"),
+	                        description : item.get("description")
+	                    };
+	
+	                    //var existingPath = this.getModelLabel(item);
+	                    var path =  this.getPathLabel(item);
+	                    var friendlyPath = path;
+	
+	                    // if multiple levels exist, remove the first folder from friendlypath
+	                    if (friendlyPath.split("/").length > 1) {
+	                        friendlyPath = friendlyPath.slice(friendlyPath.search(/.\//i) + 2);
+	                    }
+	
+	                    // replace all '/' with '>'
+	                    friendlyPath = friendlyPath.replace(/\//g, ' > ');
+	
+	                    // split friendlyPath to wrap styling divs
+	                    var obj = friendlyPath.split(" ");
+	                    var tmpString = "";
+	                    for (var str in obj) {
+	                        if (obj[str] == ">") {
+	                            tmpString += "<span>" + obj[str] + "</span>";
+	                        } else {
+	                            tmpString += " " + obj[str];
+	                        }
+	                    }
+	
+	                    friendlyPath = tmpString;
+	
+	                    // see if path already exists
+	                    var pathExists = false;
+	                    for (ix=0; ix<collection.length; ix++) {
+	                        if (collection[ix].path.value === path) {
+	                            pathExists = true;
+	                        }
+	                    }
+	                    if (! pathExists) {
+	                        // store different paths
+	                        paths.push(path);
+	                        collection.push({
+	                            "path" : {
+	                                "value" : path,
+	                                "userFriendlyName" : friendlyPath,
+	                                "type" : path.substr(1).split(" ", 1)[0]
+	                            },
+	                            "bookmarks" : []
+	                        });
+	                    }
+	
+	                    // update collection models
+	                    for (var x in collection) {
+	                        if (collection[x].path.value == path) {
+	                            if (bookmark.label !== null) {
+	                                // copy model attributes
+	                                for (var att in item.attributes) {
+	                                    bookmark[att] = item.get(att);
+	                                }
+	                                bookmark.roles = this.getModelRoles(item);
+	                                bookmark.selected = (bookmark.oid === selectedId);
+	                                bookmark.visible = true;
+	                            }
+	                            collection[x].bookmarks.push(bookmark);
+	                        }
+	                    }
                     }
-                    if (! pathExists) {
-                        // store different paths
-                        paths.push(path);
-                        collection.push({
-                            "path" : {
-                                "value" : path,
-                                "userFriendlyName" : friendlyPath,
-                                "type" : path.substr(1).split(" ", 1)[0]
-                            },
-                            "bookmarks" : []
-                        });
-                    }
-
-                    // update collection models
-                    for (var x in collection) {
-                        if (collection[x].path.value == path) {
-                            if (bookmark.label !== null) {
-                                // copy model attributes
-                                for (var att in item.attributes) {
-                                    bookmark[att] = item.get(att);
-                                }
-                                bookmark.roles = this.getModelRoles(item);
-                                bookmark.selected = (bookmark.oid === selectedId);
-                                bookmark.visible = true;
-                            }
-                            collection[x].bookmarks.push(bookmark);
-                        }
-                    }
-                }
+	            }
 
                 // sort bookmarks by label
                 for (ix=0; ix<collection.length; ix++) {
