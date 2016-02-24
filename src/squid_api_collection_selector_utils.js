@@ -107,25 +107,26 @@
             var label = this.typeLabelPlural;
             var jsonData = {
                 label : label,
-                visible : false,
+                usable : false,
                 collectionLoaded : !this.collectionLoading,
                 collection : this.collection,
                 typeLabelPlural : this.typeLabelPlural
             };
             if (this.collection || this.collectionLoading) {
-                jsonData.visible = true;
+                jsonData.usable = true;
                 if (this.selectedModel) {  
                     if (this.selectedModel.get("oid")) {
                         jsonData.label = this.selectedModel.get("name");
                         jsonData.selectedModel = true;
                     }
                 }
-                this.$el.html(this.template(jsonData));
 
                 if (this.afterRender) {
                     this.afterRender.call(this);
                 }
             }
+
+            this.$el.html(this.template(jsonData));
 
             return this;
         }

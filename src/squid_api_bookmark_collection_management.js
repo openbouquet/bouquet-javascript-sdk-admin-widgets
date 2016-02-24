@@ -11,10 +11,15 @@
         configSelectedId : "bookmark",
         modelView : null,
         configParentId : "project",
+        headerText : null,
 
-        init : function() {
+        init : function(options) {
             var me = this;
             this.modelView = squid_api.view.BookmarkModelManagementWidget;
+
+            if (options.headerText) {
+                this.headerText = options.headerText;
+            }
         },
 
         loadCollection : function(parentId) {
@@ -217,6 +222,9 @@
                 modalHtml : true,
                 type : this.type
             };
+            if (this.headerText) {
+                this.jsonData.typeLabelPlural = this.headerText;
+            }
             if (this.collection) {
                 var collection = [];
                 var models = [];
@@ -253,7 +261,7 @@
                         if (obj[str] == ">") {
                             tmpString += "<span>" + obj[str] + "</span>";
                         } else {
-                            tmpString += obj[str];
+                            tmpString += " " + obj[str];
                         }
                     }
 

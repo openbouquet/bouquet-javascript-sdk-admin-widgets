@@ -15,3 +15,10 @@ Admin widgets allow manipulation / creation of user based objects stored within 
   * fadeAnimation (boolean) : If set to true then a fade in / fade out animation will occur on the given modal (default false)
   * header : If set to true then a modal header will be rendered
   * footer : If set to true then a modal footer will be rendered
+
+## DimensionSelector
+*Renders the list of dimensions within the domain*
+* filters : the filters model
+* options :
+* template : a custom Handlebars template
+* afterRender : called after render & when the widget is in a usable state

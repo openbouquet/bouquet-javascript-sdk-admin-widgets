@@ -366,47 +366,48 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
 function program1(depth0,data) {
   
-  var buffer = "", stack1;
-  buffer += "\n	<button class=\"form-control squid-api-button-view ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selectedModel), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\">\n	";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionLoaded), {hash:{},inverse:self.program(6, program6, data),fn:self.program(4, program4, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n    </button>\n";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
   
   return "selected";
   }
 
-function program4(depth0,data) {
+function program3(depth0,data) {
+  
+  
+  return " disabled=\"true\" ";
+  }
+
+function program5(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n        ";
+  buffer += "\n    ";
   if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\n    ";
+    + "\n";
   return buffer;
   }
 
-function program6(depth0,data) {
+function program7(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n    	<i class=\"fa fa-refresh fa-spin\"></i> ";
+  buffer += "\n    <i class=\"fa fa-refresh fa-spin\"></i> ";
   if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + " loading\n    ";
+    + " loading\n";
   return buffer;
   }
 
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.visible), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  buffer += "<button class=\"form-control squid-api-button-view ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selectedModel), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n";
+  buffer += "\" ";
+  stack1 = helpers.unless.call(depth0, (depth0 && depth0.usable), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ">\n";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionLoaded), {hash:{},inverse:self.program(7, program7, data),fn:self.program(5, program5, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n</button>\n\n";
   return buffer;
   });
 
@@ -487,77 +488,58 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
 function program1(depth0,data) {
   
-  var buffer = "", stack1;
-  buffer += "\r\n    <select class=\"sq-select form-control\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.multiple), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">\r\n        ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.empty), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n        ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.options), {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n    </select>\r\n";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
   
   return "multiple";
   }
 
-function program4(depth0,data) {
+function program3(depth0,data) {
   
   
-  return "\r\n            <option>No dimensions available</option>\r\n        ";
+  return "\r\n        <option>No dimensions available</option>\r\n    ";
   }
 
-function program6(depth0,data) {
+function program5(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\r\n            <option value=\"";
+  buffer += "\r\n        <option value=\"";
   if (helper = helpers.value) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.value); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(7, program7, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += " ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.error), {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.error), {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">\r\n                ";
+  buffer += ">\r\n            ";
   if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\r\n            </option>\r\n        ";
+    + "\r\n        </option>\r\n    ";
   return buffer;
   }
-function program7(depth0,data) {
+function program6(depth0,data) {
   
   
   return "selected";
   }
 
-function program9(depth0,data) {
+function program8(depth0,data) {
   
   
   return " disabled ";
   }
 
-function program11(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\r\n    <!-- just display filter name -->\r\n    <label class=\"squid-api-data-widgets-dimension-selector\">";
-  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</label>\r\n    <span>-</span>\r\n";
-  return buffer;
-  }
-
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selAvailable), {hash:{},inverse:self.program(11, program11, data),fn:self.program(1, program1, data),data:data});
+  buffer += "<select class=\"sq-select form-control\" ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.multiple), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n";
+  buffer += ">\r\n    ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.empty), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\r\n    ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.options), {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\r\n</select>\r\n";
   return buffer;
   });
 
@@ -568,74 +550,40 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
 function program1(depth0,data) {
   
-  var buffer = "", stack1;
-  buffer += "\r\n    <select class=\"sq-select form-control squid-api-data-widgets-metric-selector\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.multiple), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">\r\n        ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.empty), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n        ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.options), {hash:{},inverse:self.program(9, program9, data),fn:self.program(6, program6, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n</select>\r\n";
-  return buffer;
-  }
-function program2(depth0,data) {
   
-  
-  return "multiple";
+  return "\r\n        <option disabled=\"true\">No metrics available</option>\r\n    ";
   }
 
-function program4(depth0,data) {
-  
-  
-  return "\r\n            <option disabled=\"true\">No metrics available</option>\r\n        ";
-  }
-
-function program6(depth0,data) {
+function program3(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\r\n            <option value=\"";
+  buffer += "\r\n        <option value=\"";
   if (helper = helpers.value) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.value); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(7, program7, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">\r\n                ";
+  buffer += ">\r\n            ";
   if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\r\n            </option>\r\n        ";
+    + "\r\n        </option>\r\n    ";
   return buffer;
   }
-function program7(depth0,data) {
+function program4(depth0,data) {
   
   
   return "selected";
   }
 
-function program9(depth0,data) {
-  
-  
-  return "\r\n    ";
-  }
-
-function program11(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\r\n    <!-- just display filter name -->\r\n    <label>";
-  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</label>\r\n    <span>-</span>\r\n";
-  return buffer;
-  }
-
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selAvailable), {hash:{},inverse:self.program(11, program11, data),fn:self.program(1, program1, data),data:data});
+  buffer += "<select class=\"sq-select form-control squid-api-data-widgets-metric-selector\" multiple>\r\n    ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.empty), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n";
+  buffer += "\r\n    ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.options), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\r\n</select>\r\n";
   return buffer;
   });
 
@@ -935,6 +883,8 @@ function program1(depth0,data) {
                 }
             }
 
+            this.init(options);
+
             this.initModel(this.config, true, false);
             // listen for config change
             this.listenTo(this.config,"change", function () {
@@ -942,7 +892,8 @@ function program1(depth0,data) {
                 var selectionChanged = this.config.hasChanged(me.configSelectedId);
                 this.initModel(this.config, parentChanged, selectionChanged);
             });
-            this.init(options);
+
+            //this.render();
         },
 
         /**
@@ -1277,7 +1228,7 @@ function program1(depth0,data) {
                 var models = [];
                 jsonData.collection = {};
                 jsonData.createRole = this.getCreateRole();
-                
+
                 var selectedId = this.config.get(this.configSelectedId);
 
                 // store model data
@@ -1488,10 +1439,15 @@ function program1(depth0,data) {
         configSelectedId : "bookmark",
         modelView : null,
         configParentId : "project",
+        headerText : null,
 
-        init : function() {
+        init : function(options) {
             var me = this;
             this.modelView = squid_api.view.BookmarkModelManagementWidget;
+
+            if (options.headerText) {
+                this.headerText = options.headerText;
+            }
         },
 
         loadCollection : function(parentId) {
@@ -1694,6 +1650,9 @@ function program1(depth0,data) {
                 modalHtml : true,
                 type : this.type
             };
+            if (this.headerText) {
+                this.jsonData.typeLabelPlural = this.headerText;
+            }
             if (this.collection) {
                 var collection = [];
                 var models = [];
@@ -1730,7 +1689,7 @@ function program1(depth0,data) {
                         if (obj[str] == ">") {
                             tmpString += "<span>" + obj[str] + "</span>";
                         } else {
-                            tmpString += obj[str];
+                            tmpString += " " + obj[str];
                         }
                     }
 
@@ -2013,7 +1972,16 @@ function program1(depth0,data) {
 
     var View = squid_api.view.BookmarkCollectionManagementWidget.extend({
 
-        init : function() {
+        displayName: false,
+        displayPath: false,
+
+        init : function(options) {
+            if (options.displayName) {
+                this.displayName = options.displayName;
+            }
+            if (options.displayPath) {
+                this.displayPath = options.displayPath;
+            }
             var me = this;
             this.listenTo(this.config,"change", this.renderButtonState);
         },
@@ -2022,16 +1990,14 @@ function program1(depth0,data) {
             var label = this.typeLabelPlural;
             var jsonData = {
                 label : label,
-                visible : false,
+                usable : false,
                 collectionLoaded : !this.collectionLoading,
                 collection : this.collection,
                 typeLabel : this.typeLabel,
                 typeLabelPlural : this.typeLabelPlural
             };
             if (this.collection) {
-                jsonData.visible = true;
-            } else {
-                jsonData.visible = false;
+                jsonData.usable = true;
             }
 
             this.$el.html(template(jsonData));
@@ -2052,6 +2018,23 @@ function program1(depth0,data) {
                     if (JSON.stringify(selectedModelConfig[x]) !== JSON.stringify(currentConfig[x])) {
                         match = false;
                     }
+                }
+                if (this.displayName) {
+                    this.$el.find("button").text(this.selectedModel.get("name"));
+                }
+                if (this.displayPath) {
+                    var path = this.selectedModel.get("path").split("/");
+                    var display = "";
+                    for (i=2; i<path.length; i++) {
+                        if (path[i].length > 0) {
+                            display += path[i];
+                            if (i !== path.length) {
+                                display += " > ";
+                            }
+                        }
+                    }
+                    display += this.selectedModel.get("name");
+                    this.$el.find("button").text(display);
                 }
                 if (match) {
                     this.$el.find("button").addClass("match");
@@ -2175,25 +2158,26 @@ function program1(depth0,data) {
             var label = this.typeLabelPlural;
             var jsonData = {
                 label : label,
-                visible : false,
+                usable : false,
                 collectionLoaded : !this.collectionLoading,
                 collection : this.collection,
                 typeLabelPlural : this.typeLabelPlural
             };
             if (this.collection || this.collectionLoading) {
-                jsonData.visible = true;
+                jsonData.usable = true;
                 if (this.selectedModel) {  
                     if (this.selectedModel.get("oid")) {
                         jsonData.label = this.selectedModel.get("name");
                         jsonData.selectedModel = true;
                     }
                 }
-                this.$el.html(this.template(jsonData));
 
                 if (this.afterRender) {
                     this.afterRender.call(this);
                 }
             }
+
+            this.$el.html(this.template(jsonData));
 
             return this;
         }
@@ -3167,6 +3151,7 @@ function program1(depth0,data) {
         filters: null,
         chosen : "chosenDimensions",
         selected : "selectedDimensions",
+        afterRender : null,
 
         initialize: function(options) {
             var me = this;
@@ -3200,15 +3185,20 @@ function program1(depth0,data) {
             } else {
             	this.status = squid_api.model.status;
             }
+            if (options.afterRender) {
+                this.afterRender = options.afterRender;
+            }
 
             // listen for selection change as we use it to get dimensions
-            me.listenTo(this.filters,"change:selection", this.render);
+            this.listenTo(this.filters,"change:selection", this.render);
 
             // initilize dimension collection for management view
             this.collectionManagementView = new squid_api.view.DimensionColumnsManagementWidget();
 
             // listen for global status change
             this.listenTo(this.status,"change:status", this.enable);
+
+            this.renderView();
         },
 
         enable: function() {
@@ -3220,109 +3210,113 @@ function program1(depth0,data) {
         },
 
         render: function() {
+            var isMultiple = true;
             var me = this;
 
-            if ((this.config.get("project")) && (this.config.get("domain"))) {
-                var isMultiple = true;
+            var jsonData = {"selAvailable" : true, "options" : [], "multiple" : isMultiple};
 
-                var jsonData = {"selAvailable" : true, "options" : [], "multiple" : isMultiple};
-
-                // iterate through all filter facets
-                var selection = me.filters.get("selection");
-                if (selection) {
-                    var facets = selection.facets;
-                    if (facets) {
-                        me.dimensions = [];
-                        for (var i=0; i<facets.length; i++){
-                            var facet = facets[i];
-                            var isBoolean = false;
-                            if (facet.dimension.type === "SEGMENTS") {
+            // iterate through all filter facets
+            var selection = this.filters.get("selection");
+            if (selection) {
+                var facets = selection.facets;
+                if (facets) {
+                    this.dimensions = [];
+                    for (var i=0; i<facets.length; i++){
+                        var facet = facets[i];
+                        var isBoolean = false;
+                        if (facet.dimension.type === "SEGMENTS") {
+                            isBoolean = true;
+                        }
+                        if (facet.items) {
+                            if ((facet.items.length === 1) && (facet.items[0].value === "true")) {
                                 isBoolean = true;
                             }
-                            if (facet.items) {
-                                if ((facet.items.length === 1) && (facet.items[0].value === "true")) {
-                                    isBoolean = true;
+                        }
+                        // do not display boolean dimensions
+                        if (!isBoolean) {
+                            if (this.dimensionIdList) {
+                                // insert and sort
+                                var idx = this.dimensionIdList.indexOf(facet.dimension.oid);
+                                if (idx >= 0) {
+                                    this.dimensions[idx] = facet;
                                 }
-                            }
-                            // do not display boolean dimensions
-                            if (!isBoolean) {
-                                if (me.dimensionIdList) {
-                                    // insert and sort
-                                    var idx = me.dimensionIdList.indexOf(facet.dimension.oid);
-                                    if (idx >= 0) {
-                                        me.dimensions[idx] = facet;
-                                    }
-                                } else {
-                                    // default unordered behavior
-                                    me.dimensions.push(facet);
-                                }
-                            }
-                            // avoid holes
-                            if (!me.dimensions[i]) {
-                                me.dimensions[i] = null;
+                            } else {
+                                // default unordered behavior
+                                this.dimensions.push(facet);
                             }
                         }
-                        var noneSelected = true;
-                        var dimIdx;
-                        for (dimIdx=0; dimIdx<me.dimensions.length; dimIdx++) {
-                            var facet1 = me.dimensions[dimIdx];
-                            if (facet1) {
-                                // check if selected
-                                var selected = me.isChosen(facet1);
-                                if (selected === true) {
-                                    noneSelected = false;
-                                }
-                                // add to the list
-                                var name;
-                                if (facet1.name) {
-                                    name = facet1.name;
-                                } else {
-                                    name = facet1.dimension.name;
-                                }
-                                var option = {"label" : name, "value" : facet1.id, "selected" : selected, "error" : me.dimensions[dimIdx].error};
-                                jsonData.options.push(option);
-                            }
+                        // avoid holes
+                        if (!this.dimensions[i]) {
+                            this.dimensions[i] = null;
                         }
                     }
-
-
-                    jsonData.options = me.sort(jsonData.options);
-
-                    // check if empty
-                    if (jsonData.options.length === 0) {
-                        jsonData.empty = true;
-                    }
-
-                    var html = me.template(jsonData);
-                    me.$el.html(html);
-                    me.$el.show();
-
-                    // Initialize plugin
-                    me.selector = me.$el.find("select");
-
-                    me.selector.multiselect({
-                        buttonContainer: '<div class="squid-api-data-widgets-dimension-selector" />',
-                        buttonText: function() {
-                            return 'Dimensions';
-                        },
-                        onDropdownShown: function() {
-                            me.showConfiguration();
-                        }
-                    });
-                    
-                    // error tooltips
-                    for (var i2=0; i2<jsonData.options.length; i2++) {
-                        var facet2 = jsonData.options[i2];
-                        if (facet2.error) {
-                            var input = me.$el.find(".squid-api-data-widgets-dimension-selector li:nth-child("+(i2+1)+") label");
-                            input.tooltip({"title" : "Facet computation failed"});
+                    var noneSelected = true;
+                    var dimIdx;
+                    for (dimIdx=0; dimIdx<this.dimensions.length; dimIdx++) {
+                        var facet1 = this.dimensions[dimIdx];
+                        if (facet1) {
+                            // check if selected
+                            var selected = this.isChosen(facet1);
+                            if (selected === true) {
+                                noneSelected = false;
+                            }
+                            // add to the list
+                            var name;
+                            if (facet1.name) {
+                                name = facet1.name;
+                            } else {
+                                name = facet1.dimension.name;
+                            }
+                            var option = {"label" : name, "value" : facet1.id, "selected" : selected, "error" : this.dimensions[dimIdx].error};
+                            jsonData.options.push(option);
                         }
                     }
+                }
 
-                    // Remove Button Title Tag
-                    me.$el.find("button").removeAttr('title');
+
+                jsonData.options = this.sort(jsonData.options);
+
+                // check if empty
+                if (jsonData.options.length === 0) {
+                    jsonData.empty = true;
+                }
+
+                this.renderView(jsonData);
+
+                // error tooltips
+                for (var i2=0; i2<jsonData.options.length; i2++) {
+                    var facet2 = jsonData.options[i2];
+                    if (facet2.error) {
+                        var input = this.$el.find(".squid-api-data-widgets-dimension-selector li:nth-child("+(i2+1)+") label");
+                        input.tooltip({"title" : "Facet computation failed"});
+                    }
+                }
+
+                // Remove Button Title Tag
+                this.$el.find("button").removeAttr('title');
+
+                if (this.afterRender) {
+                    this.afterRender.call(this);
                 }
             }
+        },
+
+        renderView: function(jsonData) {
+            var me = this;
+            var html = this.template(jsonData);
+            this.$el.html(html);
+
+            // Initialize plugin
+            this.$el.find("select").multiselect({
+                buttonContainer: '<div class="squid-api-data-widgets-dimension-selector" />',
+                buttonText: function() {
+                    return 'Dimensions';
+                },
+                onDropdownShown: function() {
+                    me.showConfiguration();
+                }
+            });
+
             return this;
         },
 
@@ -3559,10 +3553,11 @@ function program1(depth0,data) {
             // listen for global status change
             this.listenTo(this.status,"change:status", this.enable);
 
+            this.renderView();
         },
 
         enable: function() {
-            if (this.status.get("status") == "RUNNING") {
+            if (this.status.get("status") !== "DONE") {
                 this.$el.find("button").prop("disabled", true);
             } else {
                 this.$el.find("button").prop("disabled", false);
@@ -3570,10 +3565,10 @@ function program1(depth0,data) {
         },
         
         render: function() {
-            if (this.collection) {
-                var me = this, isMultiple = true;
+            var me = this, isMultiple = true;
+            var jsonData = {"selAvailable" : true, "options" : [], "multiple" : isMultiple};
 
-                var jsonData = {"selAvailable" : true, "options" : [], "multiple" : isMultiple};
+            if (this.collection) {
 
                 // iterate through all domains items
                 var items = this.collection;
@@ -3608,35 +3603,34 @@ function program1(depth0,data) {
                     jsonData.empty = true;
                 }
 
-                if ((!me.selector) || (jsonData.options.length === 0)) {
-                    // fist render or no data to display
-                    var html = me.template(jsonData);
-                    me.$el.html(html);
-                    me.$el.show();
-
-                    // Initialize plugin
-                    me.selector = me.$el.find("select");
-                    if (isMultiple) {
-                        me.selector.multiselect({
-                            "buttonContainer": '<div class="squid-api-data-widgets-metric-selector-open" />',
-                            "buttonText": function() {
-                                return 'Metrics';
-                            },
-                            "onDropdownShown": function() {
-                                me.showConfiguration();
-                            }
-                        });
-                    }
-
-                    // Remove Button Title Tag
-                    me.$el.find("button").removeAttr('title');
-                } else {
-                    // update render
-                    me.selector.multiselect("dataprovider", jsonData.options);
-                    me.showConfiguration();
-                }
+                // update dropdown content
+                this.$el.find("select").multiselect("dataprovider", jsonData.options);
             }
             return this;
+        },
+
+        renderView: function() {
+            var me = this;
+            var html = this.template();
+            this.$el.html(html);
+
+            // Initialize plugin
+            this.$el.find("select").multiselect({
+                "buttonContainer": '<div class="squid-api-data-widgets-metric-selector-open" />',
+                "buttonText": function() {
+                    return 'Metrics';
+                },
+                "onDropdownShown": function() {
+                    me.showConfiguration();
+                }
+            });
+
+            if (this.afterRender) {
+                this.afterRender.call(this);
+            }
+
+            // Remove Button Title Tag
+            this.$el.find("button").removeAttr('title');
         },
 
         events: squid_api.view.CollectionSelectorUtils.events,
@@ -3778,7 +3772,7 @@ function program1(depth0,data) {
             var label = this.typeLabelPlural;
             var jsonData = {
                 label : "Create a new one",
-                visible : this.getCreateRole(),
+                usable : this.getCreateRole(),
                 collectionLoaded : !this.collectionLoading,
                 collection : this.collection,
                 typeLabelPlural : this.typeLabelPlural

@@ -45,6 +45,8 @@
                 }
             }
 
+            this.init(options);
+
             this.initModel(this.config, true, false);
             // listen for config change
             this.listenTo(this.config,"change", function () {
@@ -52,7 +54,8 @@
                 var selectionChanged = this.config.hasChanged(me.configSelectedId);
                 this.initModel(this.config, parentChanged, selectionChanged);
             });
-            this.init(options);
+
+            //this.render();
         },
 
         /**
@@ -387,7 +390,7 @@
                 var models = [];
                 jsonData.collection = {};
                 jsonData.createRole = this.getCreateRole();
-                
+
                 var selectedId = this.config.get(this.configSelectedId);
 
                 // store model data
