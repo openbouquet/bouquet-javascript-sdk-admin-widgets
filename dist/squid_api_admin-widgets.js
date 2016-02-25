@@ -3198,6 +3198,7 @@ function program1(depth0,data) {
         chosen : "chosenDimensions",
         selected : "selectedDimensions",
         afterRender : null,
+        singleSelect : false,
 
         initialize: function(options) {
             var me = this;
@@ -3234,6 +3235,9 @@ function program1(depth0,data) {
             if (options.afterRender) {
                 this.afterRender = options.afterRender;
             }
+            if (options.singleSelect) {
+                this.singleSelect = options.singleSelect;
+            }
 
             // listen for selection change as we use it to get dimensions
             this.listenTo(this.filters,"change:selection", this.render);
@@ -3256,7 +3260,7 @@ function program1(depth0,data) {
         },
 
         render: function() {
-            var isMultiple = true;
+            var isMultiple = ! this.singleSelect;
             var me = this;
 
             var jsonData = {"selAvailable" : true, "options" : [], "multiple" : isMultiple};
@@ -3353,15 +3357,17 @@ function program1(depth0,data) {
             this.$el.html(html);
 
             // Initialize plugin
-            this.$el.find("select").multiselect({
-                buttonContainer: '<div class="squid-api-data-widgets-dimension-selector" />',
-                buttonText: function() {
-                    return 'Dimensions';
-                },
-                onDropdownShown: function() {
-                    me.showConfiguration();
-                }
-            });
+            if (! this.singleSelect) {
+                this.$el.find("select").multiselect({
+                    buttonContainer: '<div class="squid-api-data-widgets-dimension-selector" />',
+                    buttonText: function() {
+                        return 'Dimensions';
+                    },
+                    onDropdownShown: function() {
+                        me.showConfiguration();
+                    }
+                });
+            }
 
             return this;
         },
