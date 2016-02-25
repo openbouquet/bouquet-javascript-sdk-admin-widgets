@@ -1442,6 +1442,7 @@ function program1(depth0,data) {
         headerText : null,
         filteredPaths: null,
         filteredOids: null,
+        onChangeHandler : null,
 
         init : function(options) {
             var me = this;
@@ -1455,6 +1456,9 @@ function program1(depth0,data) {
             }
             if (options.filteredOids) {
                 this.filteredOids = options.filteredOids;
+            }
+            if (options.onChangeHandler) {
+            	this.onChangeHandler = options.onChangeHandler;
             }
         },
 
@@ -1478,10 +1482,15 @@ function program1(depth0,data) {
 
         eventSelect : function(event) {
             var value = $(event.target).parents("li").attr("data-attr");
-            squid_api.setBookmarkId(value);
-
-            if (this.onSelect) {
-                this.onSelect.call();
+            //Callback to keep filters selection on Counter apps for ex
+            if (this.onChangeHandler) {
+            	this.onChangeHandler(value);
+            }
+            else {
+            	squid_api.setBookmarkId(value);           
+            	if (this.onSelect) {
+            		this.onSelect.call();
+            	}
             }
         },
 

@@ -14,6 +14,7 @@
         headerText : null,
         filteredPaths: null,
         filteredOids: null,
+        onChangeHandler : null,
 
         init : function(options) {
             var me = this;
@@ -27,6 +28,9 @@
             }
             if (options.filteredOids) {
                 this.filteredOids = options.filteredOids;
+            }
+            if (options.onChangeHandler) {
+            	this.onChangeHandler = options.onChangeHandler;
             }
         },
 
@@ -50,10 +54,15 @@
 
         eventSelect : function(event) {
             var value = $(event.target).parents("li").attr("data-attr");
-            squid_api.setBookmarkId(value);
-
-            if (this.onSelect) {
-                this.onSelect.call();
+            //Callback to keep filters selection on Counter apps for ex
+            if (this.onChangeHandler) {
+            	this.onChangeHandler(value);
+            }
+            else {
+            	squid_api.setBookmarkId(value);           
+            	if (this.onSelect) {
+            		this.onSelect.call();
+            	}
             }
         },
 
