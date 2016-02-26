@@ -3254,6 +3254,14 @@ function program1(depth0,data) {
             this.renderView();
         },
 
+        hide: function() {
+            this.$el.hide();
+        },
+
+        show: function() {
+            this.$el.show();
+        },
+
         enable: function() {
             if (this.status.get("status") == "RUNNING") {
                 this.$el.find("button").prop("disabled", true);
