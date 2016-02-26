@@ -3199,6 +3199,7 @@ function program1(depth0,data) {
         selected : "selectedDimensions",
         afterRender : null,
         singleSelect : false,
+        configurationEnabled : true,
 
         initialize: function(options) {
             var me = this;
@@ -3238,7 +3239,9 @@ function program1(depth0,data) {
             if (options.singleSelect) {
                 this.singleSelect = options.singleSelect;
             }
-
+            if (! options.configurationEnabled) {
+                this.configurationEnabled = options.configurationEnabled;
+            }
             // listen for selection change as we use it to get dimensions
             this.listenTo(this.filters,"change:selection", this.render);
 
@@ -3257,6 +3260,15 @@ function program1(depth0,data) {
             } else {
                 this.$el.find("button").prop("disabled", false);
             }
+        },
+
+        singleMultiSwitcher: function(single) {
+           if (single) {
+               this.singleSelect = true;
+           } else {
+               this.singleSelect = false;
+           }
+           this.render();
         },
 
         render: function() {
@@ -3363,8 +3375,11 @@ function program1(depth0,data) {
                     buttonText: function() {
                         return 'Dimensions';
                     },
+                    buttonClass: "form-control",
                     onDropdownShown: function() {
-                        me.showConfiguration();
+                        if (me.configurationEnabled) {
+                            me.showConfiguration();
+                        }
                     }
                 });
             }
