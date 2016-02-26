@@ -67,7 +67,7 @@
                         });
                     }
 
-                    me.$el.find("li").first().before("<li class='configure'> configure</option>");
+                    me.$el.find("ul").prepend("<li class='configure'> configure</option>");
                     me.$el.find("li").first().on("click", function() {
                         // trigger dimension management view
                        me.columnConfigurationModal.render();
