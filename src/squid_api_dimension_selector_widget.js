@@ -9,6 +9,8 @@
         chosen : "chosenDimensions",
         selected : "selectedDimensions",
         afterRender : null,
+        singleSelect : false,
+        configurationEnabled : true,
 
         initialize: function(options) {
             var me = this;
@@ -45,7 +47,12 @@
             if (options.afterRender) {
                 this.afterRender = options.afterRender;
             }
-
+            if (options.singleSelect) {
+                this.singleSelect = options.singleSelect;
+            }
+            if (! options.configurationEnabled) {
+                this.configurationEnabled = options.configurationEnabled;
+            }
             // listen for selection change as we use it to get dimensions
             this.listenTo(this.filters,"change:selection", this.render);
 
@@ -58,6 +65,14 @@
             this.renderView();
         },
 
+        hide: function() {
+            this.$el.hide();
+        },
+
+        show: function() {
+            this.$el.show();
+        },
+
         enable: function() {
             if (this.status.get("status") == "RUNNING") {
                 this.$el.find("button").prop("disabled", true);
@@ -66,8 +81,17 @@
             }
         },
 
+        singleMultiSwitcher: function(single) {
+           if (single) {
+               this.singleSelect = true;
+           } else {
+               this.singleSelect = false;
+           }
+           this.render();
+        },
+
         render: function() {
-            var isMultiple = true;
+            var isMultiple = ! this.singleSelect;
             var me = this;
 
             var jsonData = {"selAvailable" : true, "options" : [], "multiple" : isMultiple};
@@ -164,15 +188,20 @@
             this.$el.html(html);
 
             // Initialize plugin
-            this.$el.find("select").multiselect({
-                buttonContainer: '<div class="squid-api-data-widgets-dimension-selector" />',
-                buttonText: function() {
-                    return 'Dimensions';
-                },
-                onDropdownShown: function() {
-                    me.showConfiguration();
-                }
-            });
+            if (! this.singleSelect) {
+                this.$el.find("select").multiselect({
+                    buttonContainer: '<div class="squid-api-data-widgets-dimension-selector" />',
+                    buttonText: function() {
+                        return 'Dimensions';
+                    },
+                    buttonClass: "form-control",
+                    onDropdownShown: function() {
+                        if (me.configurationEnabled) {
+                            me.showConfiguration();
+                        }
+                    }
+                });
+            }
 
             return this;
         },
