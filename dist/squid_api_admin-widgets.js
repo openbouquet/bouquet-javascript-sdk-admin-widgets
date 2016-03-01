@@ -3200,6 +3200,7 @@ function program1(depth0,data) {
         afterRender : null,
         singleSelect : false,
         configurationEnabled : true,
+        updateMultiQuantity : null,
 
         initialize: function(options) {
             var me = this;
@@ -3238,6 +3239,9 @@ function program1(depth0,data) {
             }
             if (options.singleSelect) {
                 this.singleSelect = options.singleSelect;
+            }
+            if (options.updateMultiQuantity) {
+                this.updateMultiQuantity = options.updateMultiQuantity;
             }
             if (! options.configurationEnabled) {
                 this.configurationEnabled = options.configurationEnabled;
@@ -3381,7 +3385,11 @@ function program1(depth0,data) {
                 this.$el.find("select").multiselect({
                     buttonContainer: '<div class="squid-api-data-widgets-dimension-selector" />',
                     buttonText: function() {
-                        return 'Dimensions';
+                        if (! me.updateMultiQuantity) {
+                            return 'Dimensions';
+                        } else {
+                            return 'Dimensions (' + me.$el.find("option:selected").length + ')';
+                        }
                     },
                     buttonClass: "form-control",
                     onDropdownShown: function() {
