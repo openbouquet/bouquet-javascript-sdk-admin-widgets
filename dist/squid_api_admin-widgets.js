@@ -3199,7 +3199,7 @@ function program1(depth0,data) {
         selected : "selectedDimensions",
         afterRender : null,
         singleSelect : false,
-        configurationEnabled : true,
+        configurationEnabled : null,
         updateMultiQuantity : null,
 
         initialize: function(options) {
@@ -3243,7 +3243,7 @@ function program1(depth0,data) {
             if (options.updateMultiQuantity) {
                 this.updateMultiQuantity = options.updateMultiQuantity;
             }
-            if (! options.configurationEnabled) {
+            if (options.configurationEnabled) {
                 this.configurationEnabled = options.configurationEnabled;
             }
             // listen for selection change as we use it to get dimensions
