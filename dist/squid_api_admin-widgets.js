@@ -3735,6 +3735,7 @@ function program1(depth0,data) {
                     }
                     return label;
                 },
+                enableHTML: true,
                 "onDropdownShown": function() {
                     if (me.configurationEnabled) {
                         me.showConfiguration();

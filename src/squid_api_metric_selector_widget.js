@@ -132,6 +132,7 @@
                     }
                     return label;
                 },
+                enableHTML: true,
                 "onDropdownShown": function() {
                     if (me.configurationEnabled) {
                         me.showConfiguration();
