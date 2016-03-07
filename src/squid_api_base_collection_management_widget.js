@@ -311,6 +311,9 @@
             'mouseleave tr': function(event) {
                 this.eventMouseLeave(event);
             },
+            'input .search' : function(event) {
+                this.eventSearch(event);
+            },
             "click .create" : function(event) {
                 this.eventCreate(event);
             },
@@ -325,6 +328,34 @@
             },
             "click .select": function(event) {
                 this.eventSelect(event);
+            }
+        },
+
+        eventSearch: function(event) {
+            // obtain search box text
+            var text = $(event.currentTarget).val();
+            // filter collection
+            var filteredCollection = this.filterCollection(text);
+            // update list
+            var listHtml = $(this.template(filteredCollection)).find(".list").html();
+            this.$el.find(".list").html(listHtml);
+        },
+
+        filterCollection: function(text) {
+            if (this.jsonData.collection) {
+                if (this.jsonData.collection.models) {
+                    var models = this.jsonData.collection.models;
+                    for (i=0; i<models.length; i++) {
+                        var item = this.jsonData.collection.models[i];
+                        if (item.label.toLowerCase().indexOf(text.toLowerCase()) >= 0) {
+                            item.visible = true;
+                        } else {
+                            item.visible = false;
+                        }
+                        this.jsonData.collection.models[i] = item;
+                    }
+                }
+                return this.jsonData;
             }
         },
 
@@ -377,7 +408,7 @@
 
         render: function() {
             console.log("render CollectionManagementWidget "+this.type);
-            var jsonData = {
+            this.jsonData = {
                 collectionLoaded : !this.collectionLoading,
                 collection : this.collection,
                 roles : null,
@@ -388,8 +419,8 @@
             };
             if (this.collection) {
                 var models = [];
-                jsonData.collection = {};
-                jsonData.createRole = this.getCreateRole();
+                this.jsonData.collection = {};
+                this.jsonData.createRole = this.getCreateRole();
 
                 var selectedId = this.config.get(this.configSelectedId);
 
@@ -403,6 +434,7 @@
                         for (var att in item.attributes) {
                             model[att] = item.get(att);
                         }
+                        model.visible = true;
                         model.roles = this.getModelRoles(item);
                         model.selected = (model.oid === selectedId);
                         models.push(model);
@@ -413,10 +445,12 @@
                 models.sort(this.comparator);
 
                 // store model view data
-                jsonData.collection.models = models;
+                this.jsonData.collection.models = models;
 
-                var html = this.template(jsonData);
+                var html = this.template(this.jsonData);
                 this.$el.html(html);
+
+                this.$el.find("input.search").focus();
 
                 if (this.afterRender) {
                     this.afterRender.call(this);
