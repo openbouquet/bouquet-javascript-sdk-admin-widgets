@@ -33,7 +33,7 @@ function program7(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "\n                            ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.collection)),stack1 == null || stack1 === false ? stack1 : stack1.models), {hash:{},inverse:self.program(21, program21, data),fn:self.program(8, program8, data),data:data});
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.collection)),stack1 == null || stack1 === false ? stack1 : stack1.models), {hash:{},inverse:self.program(22, program22, data),fn:self.program(8, program8, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n                        ";
   return buffer;
@@ -49,73 +49,82 @@ function program8(depth0,data) {
   }
 function program9(depth0,data) {
   
+  var buffer = "", stack1;
+  buffer += "\n                                    ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.visible), {hash:{},inverse:self.noop,fn:self.program(10, program10, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                                ";
+  return buffer;
+  }
+function program10(depth0,data) {
+  
   var buffer = "", stack1, helper;
-  buffer += "\n                                    <tr ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(10, program10, data),data:data});
+  buffer += "\n                                        <tr ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(11, program11, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += " data-attr=\"";
   if (helper = helpers.oid) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.oid); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\">\n                                        <td class=\"select selected\">\n                                            ";
+    + "\">\n                                                                                <td class=\"select selected\">\n                                                                                    ";
   if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\n                                        </td>\n                                        ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.roles), {hash:{},inverse:self.noop,fn:self.program(12, program12, data),data:data});
+    + "\n                                                                                </td>\n                                                                                ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.roles), {hash:{},inverse:self.noop,fn:self.program(13, program13, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                    </tr>\n                                ";
+  buffer += "\n                                                                            </tr>\n                                    ";
   return buffer;
   }
-function program10(depth0,data) {
+function program11(depth0,data) {
   
   
   return " class=\"selected\" ";
   }
 
-function program12(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n                                            ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.relation), {hash:{},inverse:self.noop,fn:self.program(13, program13, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                            ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.refresh), {hash:{},inverse:self.noop,fn:self.program(15, program15, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                            ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(17, program17, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n	                                        ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(19, program19, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                        ";
-  return buffer;
-  }
 function program13(depth0,data) {
   
+  var buffer = "", stack1;
+  buffer += "\n                                                                                    ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.relation), {hash:{},inverse:self.noop,fn:self.program(14, program14, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                                                                                    ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.refresh), {hash:{},inverse:self.noop,fn:self.program(16, program16, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                                                                                    ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(18, program18, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                                        	                                        ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(20, program20, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                                                                                ";
+  return buffer;
+  }
+function program14(depth0,data) {
   
-  return "\n                                                <td class=\"relation collection-option\">\n                                                    <svg title=\"relations\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"16.5\" height=\"21\" viewBox=\"0 0 44.09 50.85\" version=\"1.1\">\n                                                    <defs>\n                                                    <clipPath id=\"clip1\">\n                                                      <path d=\"M 14 0 L 44.089844 0 L 44.089844 22 L 14 22 Z M 14 0 \"/>\n                                                    </clipPath>\n                                                    <clipPath id=\"clip2\">\n                                                      <path d=\"M 22 9 L 44.089844 9 L 44.089844 42 L 22 42 Z M 22 9 \"/>\n                                                    </clipPath>\n                                                    <clipPath id=\"clip3\">\n                                                      <path d=\"M 14 29 L 44.089844 29 L 44.089844 50.851562 L 14 50.851562 Z M 14 29 \"/>\n                                                    </clipPath>\n                                                    <clipPath id=\"clip4\">\n                                                      <path d=\"M 6 21 L 38 21 L 38 50.851562 L 6 50.851562 Z M 6 21 \"/>\n                                                    </clipPath>\n                                                    </defs>\n                                                    <g id=\"surface1\">\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:50;\" d=\"M 66.658125 -0.001875 C 66.658125 5.502031 62.197187 9.962969 56.693281 9.962969 C 51.189375 9.962969 46.732344 5.502031 46.732344 -0.001875 C 46.732344 -5.501875 51.189375 -9.962812 56.693281 -9.962812 C 62.197187 -9.962812 66.658125 -5.501875 66.658125 -0.001875 Z M 66.658125 -0.001875 \" transform=\"matrix(1,0,0,-1,-44.33,27.42)\"/>\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 56.693281 10.361406 L 56.693281 10.361406 \" transform=\"matrix(1,0,0,-1,-46.33,25.42)\"/>\n                                                    <g clip-path=\"url(#clip1)\" clip-rule=\"nonzero\">\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 81.720625 20.045 C 81.720625 22.795 79.490156 25.025469 76.73625 25.025469 C 73.98625 25.025469 71.755781 22.795 71.755781 20.045 C 71.755781 17.295 73.98625 15.064531 76.73625 15.064531 C 79.490156 15.064531 81.720625 17.295 81.720625 20.045 Z M 81.720625 20.045 \" transform=\"matrix(1,0,0,-1,-48.33,27.42)\"/>\n                                                    </g>\n                                                    <g clip-path=\"url(#clip2)\" clip-rule=\"nonzero\">\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 90.021406 -0.001875 C 90.021406 2.752031 87.790937 4.9825 85.040937 4.9825 C 82.290937 4.9825 80.060469 2.752031 80.060469 -0.001875 C 80.060469 -2.751875 82.290937 -4.982344 85.040937 -4.982344 C 87.790937 -4.982344 90.021406 -2.751875 90.021406 -0.001875 Z M 90.021406 -0.001875 \" transform=\"matrix(1,0,0,-1,-48.33,25.42)\"/>\n                                                    </g>\n                                                    <g clip-path=\"url(#clip3)\" clip-rule=\"nonzero\">\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 81.720625 -20.044844 C 81.720625 -17.294844 79.490156 -15.064375 76.73625 -15.064375 C 73.98625 -15.064375 71.755781 -17.294844 71.755781 -20.044844 C 71.755781 -22.794844 73.98625 -25.025312 76.73625 -25.025312 C 79.490156 -25.025312 81.720625 -22.794844 81.720625 -20.044844 Z M 81.720625 -20.044844 \" transform=\"matrix(1,0,0,-1,-47.33,23.42)\"/>\n                                                    </g>\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 64.021406 7.32625 L 72.931562 16.240313 \" transform=\"matrix(1,0,0,-1,-46.33,25.42)\"/>\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 67.056562 -0.001875 L 79.662031 -0.001875 \" transform=\"matrix(1,0,0,-1,-46.33,25.42)\"/>\n                                                    <g clip-path=\"url(#clip4)\" clip-rule=\"nonzero\">\n                                                    <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 64.021406 -7.326094 L 72.931562 -16.240156 \" transform=\"matrix(1,0,0,-1,-45.33,25.42)\"/>\n                                                    </g>\n                                                    </g>\n                                                    </svg>\n                                                </td>\n                                            ";
+  
+  return "\n                                                                                        <td class=\"relation collection-option\">\n                                                                                            <svg title=\"relations\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"16.5\" height=\"21\" viewBox=\"0 0 44.09 50.85\" version=\"1.1\">\n                                                                                            <defs>\n                                                                                            <clipPath id=\"clip1\">\n                                                                                              <path d=\"M 14 0 L 44.089844 0 L 44.089844 22 L 14 22 Z M 14 0 \"/>\n                                                                                            </clipPath>\n                                                                                            <clipPath id=\"clip2\">\n                                                                                              <path d=\"M 22 9 L 44.089844 9 L 44.089844 42 L 22 42 Z M 22 9 \"/>\n                                                                                            </clipPath>\n                                                                                            <clipPath id=\"clip3\">\n                                                                                              <path d=\"M 14 29 L 44.089844 29 L 44.089844 50.851562 L 14 50.851562 Z M 14 29 \"/>\n                                                                                            </clipPath>\n                                                                                            <clipPath id=\"clip4\">\n                                                                                              <path d=\"M 6 21 L 38 21 L 38 50.851562 L 6 50.851562 Z M 6 21 \"/>\n                                                                                            </clipPath>\n                                                                                            </defs>\n                                                                                            <g id=\"surface1\">\n                                                                                            <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:50;\" d=\"M 66.658125 -0.001875 C 66.658125 5.502031 62.197187 9.962969 56.693281 9.962969 C 51.189375 9.962969 46.732344 5.502031 46.732344 -0.001875 C 46.732344 -5.501875 51.189375 -9.962812 56.693281 -9.962812 C 62.197187 -9.962812 66.658125 -5.501875 66.658125 -0.001875 Z M 66.658125 -0.001875 \" transform=\"matrix(1,0,0,-1,-44.33,27.42)\"/>\n                                                                                            <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 56.693281 10.361406 L 56.693281 10.361406 \" transform=\"matrix(1,0,0,-1,-46.33,25.42)\"/>\n                                                                                            <g clip-path=\"url(#clip1)\" clip-rule=\"nonzero\">\n                                                                                            <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 81.720625 20.045 C 81.720625 22.795 79.490156 25.025469 76.73625 25.025469 C 73.98625 25.025469 71.755781 22.795 71.755781 20.045 C 71.755781 17.295 73.98625 15.064531 76.73625 15.064531 C 79.490156 15.064531 81.720625 17.295 81.720625 20.045 Z M 81.720625 20.045 \" transform=\"matrix(1,0,0,-1,-48.33,27.42)\"/>\n                                                                                            </g>\n                                                                                            <g clip-path=\"url(#clip2)\" clip-rule=\"nonzero\">\n                                                                                            <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 90.021406 -0.001875 C 90.021406 2.752031 87.790937 4.9825 85.040937 4.9825 C 82.290937 4.9825 80.060469 2.752031 80.060469 -0.001875 C 80.060469 -2.751875 82.290937 -4.982344 85.040937 -4.982344 C 87.790937 -4.982344 90.021406 -2.751875 90.021406 -0.001875 Z M 90.021406 -0.001875 \" transform=\"matrix(1,0,0,-1,-48.33,25.42)\"/>\n                                                                                            </g>\n                                                                                            <g clip-path=\"url(#clip3)\" clip-rule=\"nonzero\">\n                                                                                            <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 81.720625 -20.044844 C 81.720625 -17.294844 79.490156 -15.064375 76.73625 -15.064375 C 73.98625 -15.064375 71.755781 -17.294844 71.755781 -20.044844 C 71.755781 -22.794844 73.98625 -25.025312 76.73625 -25.025312 C 79.490156 -25.025312 81.720625 -22.794844 81.720625 -20.044844 Z M 81.720625 -20.044844 \" transform=\"matrix(1,0,0,-1,-47.33,23.42)\"/>\n                                                                                            </g>\n                                                                                            <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 64.021406 7.32625 L 72.931562 16.240313 \" transform=\"matrix(1,0,0,-1,-46.33,25.42)\"/>\n                                                                                            <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 67.056562 -0.001875 L 79.662031 -0.001875 \" transform=\"matrix(1,0,0,-1,-46.33,25.42)\"/>\n                                                                                            <g clip-path=\"url(#clip4)\" clip-rule=\"nonzero\">\n                                                                                            <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 64.021406 -7.326094 L 72.931562 -16.240156 \" transform=\"matrix(1,0,0,-1,-45.33,25.42)\"/>\n                                                                                            </g>\n                                                                                            </g>\n                                                                                            </svg>\n                                                                                        </td>\n                                                                                    ";
   }
 
-function program15(depth0,data) {
+function program16(depth0,data) {
   
   
-  return "\n                                                <td class=\"refresh collection-option\"><i class=\"fa fa-refresh\" title=\"force refresh\"></i></td>\n                                            ";
+  return "\n                                                                                        <td class=\"refresh collection-option\"><i class=\"fa fa-refresh\" title=\"force refresh\"></i></td>\n                                                                                    ";
   }
 
-function program17(depth0,data) {
+function program18(depth0,data) {
   
   
-  return "\n                                                <td class=\"edit collection-option\" ><i class=\"fa fa-pencil-square-o\" title=\"edit\"></i></td>\n                                            ";
+  return "\n                                                                                        <td class=\"edit collection-option\" ><i class=\"fa fa-pencil-square-o\" title=\"edit\"></i></td>\n                                                                                    ";
   }
 
-function program19(depth0,data) {
+function program20(depth0,data) {
   
   
-  return "\n	                                            <td class=\"delete collection-option\"><i class=\"fa fa-trash-o\" title=\"delete\"></i></td>\n	                                        ";
+  return "\n                                        	                                            <td class=\"delete collection-option\"><i class=\"fa fa-trash-o\" title=\"delete\"></i></td>\n                                        	                                        ";
   }
 
-function program21(depth0,data) {
+function program22(depth0,data) {
   
   var buffer = "", stack1, helper;
   buffer += "\n                                <div class=\"no-data\">\n                                    No ";
@@ -126,7 +135,7 @@ function program21(depth0,data) {
   return buffer;
   }
 
-function program23(depth0,data) {
+function program24(depth0,data) {
   
   var buffer = "", stack1, helper;
   buffer += "\n                        	<div class=\"no-data\">\n                            	<i class=\"fa fa-refresh fa-spin\"></i> ";
@@ -144,7 +153,11 @@ function program23(depth0,data) {
     + "</h4>\n</div>\n<div class=\"modal-body\">\n    <div class=\"squid-api-collection-management-widget\">\n            ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.createRole), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n            <div class=\"squid-api-";
+  buffer += "\n            <div class=\"input-group search-wrapper\">\n                            <input type=\"text\" class=\"form-control search\" placeholder=\"Search for...\" value=\"";
+  if (helper = helpers.searchText) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.searchText); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\">\n                                <span class=\"input-group-btn\">\n                                    <button class=\"btn btn-default\" type=\"button\"><i class=\"fa fa-search\"></i></button>\n                                </span>\n                        </div>\n            <div class=\"squid-api-";
   if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -152,7 +165,7 @@ function program23(depth0,data) {
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.valueSelected), {hash:{},inverse:self.program(5, program5, data),fn:self.program(3, program3, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += ">\n                        ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionLoaded), {hash:{},inverse:self.program(23, program23, data),fn:self.program(7, program7, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionLoaded), {hash:{},inverse:self.program(24, program24, data),fn:self.program(7, program7, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n                        </tbody>\n                </table>\n            </div>\n    </div>\n</div>\n<div class=\"squid-api-model-management-footer\">\n  	<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
   return buffer;
@@ -1149,6 +1162,9 @@ function program1(depth0,data) {
             'mouseleave tr': function(event) {
                 this.eventMouseLeave(event);
             },
+            'input .search' : function(event) {
+                this.eventSearch(event);
+            },
             "click .create" : function(event) {
                 this.eventCreate(event);
             },
@@ -1163,6 +1179,34 @@ function program1(depth0,data) {
             },
             "click .select": function(event) {
                 this.eventSelect(event);
+            }
+        },
+
+        eventSearch: function(event) {
+            // obtain search box text
+            var text = $(event.currentTarget).val();
+            // filter collection
+            var filteredCollection = this.filterCollection(text);
+            // update list
+            var listHtml = $(this.template(filteredCollection)).find(".list").html();
+            this.$el.find(".list").html(listHtml);
+        },
+
+        filterCollection: function(text) {
+            if (this.jsonData.collection) {
+                if (this.jsonData.collection.models) {
+                    var models = this.jsonData.collection.models;
+                    for (i=0; i<models.length; i++) {
+                        var item = this.jsonData.collection.models[i];
+                        if (item.label.toLowerCase().indexOf(text.toLowerCase()) >= 0) {
+                            item.visible = true;
+                        } else {
+                            item.visible = false;
+                        }
+                        this.jsonData.collection.models[i] = item;
+                    }
+                }
+                return this.jsonData;
             }
         },
 
@@ -1215,7 +1259,7 @@ function program1(depth0,data) {
 
         render: function() {
             console.log("render CollectionManagementWidget "+this.type);
-            var jsonData = {
+            this.jsonData = {
                 collectionLoaded : !this.collectionLoading,
                 collection : this.collection,
                 roles : null,
@@ -1226,8 +1270,8 @@ function program1(depth0,data) {
             };
             if (this.collection) {
                 var models = [];
-                jsonData.collection = {};
-                jsonData.createRole = this.getCreateRole();
+                this.jsonData.collection = {};
+                this.jsonData.createRole = this.getCreateRole();
 
                 var selectedId = this.config.get(this.configSelectedId);
 
@@ -1241,6 +1285,7 @@ function program1(depth0,data) {
                         for (var att in item.attributes) {
                             model[att] = item.get(att);
                         }
+                        model.visible = true;
                         model.roles = this.getModelRoles(item);
                         model.selected = (model.oid === selectedId);
                         models.push(model);
@@ -1251,10 +1296,12 @@ function program1(depth0,data) {
                 models.sort(this.comparator);
 
                 // store model view data
-                jsonData.collection.models = models;
+                this.jsonData.collection.models = models;
 
-                var html = this.template(jsonData);
+                var html = this.template(this.jsonData);
                 this.$el.html(html);
+
+                this.$el.find("input.search").focus();
 
                 if (this.afterRender) {
                     this.afterRender.call(this);
@@ -2148,7 +2195,11 @@ function program1(depth0,data) {
                 chosenNew = _.intersection(_.union(chosen, selected), selected);
 
                 // Update
-                this.config.set(this.chosen,chosenNew);
+                if (this.onChangeHandler) {
+                    this.onChangeHandler.call(this);
+                } else {
+                    this.config.set(this.chosen,chosenNew);
+                }
             }
         },
 
@@ -3199,7 +3250,7 @@ function program1(depth0,data) {
         selected : "selectedDimensions",
         afterRender : null,
         singleSelect : false,
-        configurationEnabled : true,
+        configurationEnabled : null,
         updateMultiQuantity : null,
 
         initialize: function(options) {
@@ -3243,7 +3294,7 @@ function program1(depth0,data) {
             if (options.updateMultiQuantity) {
                 this.updateMultiQuantity = options.updateMultiQuantity;
             }
-            if (! options.configurationEnabled) {
+            if (options.configurationEnabled) {
                 this.configurationEnabled = options.configurationEnabled;
             }
             // listen for selection change as we use it to get dimensions
@@ -3467,6 +3518,9 @@ function program1(depth0,data) {
             "click .create" : function(event) {
                 this.eventCreate(event);
             },
+            'input .search' : function(event) {
+                this.eventSearch(event);
+            },
             "click .edit": function(event) {
                 this.eventEdit(event);
             },
@@ -3606,6 +3660,10 @@ function program1(depth0,data) {
         template : null,
         chosen : "chosenMetrics",
         selected : "selectedMetrics",
+        configurationEnabled : null,
+        onChangeHandler : null,
+        filterBy : null,
+        buttonText : null,
 
         init: function(options) {
 
@@ -3622,6 +3680,20 @@ function program1(depth0,data) {
                 if (options.metricIndex !== null) {
                     this.metricIndex = options.metricIndex;
                 }
+                if (options.configurationEnabled) {
+                    this.configurationEnabled = options.configurationEnabled;
+                }
+                if (options.filterBy) {
+                    this.filterBy = options.filterBy;
+                }
+                if (options.buttonText) {
+                    this.buttonText = options.buttonText;
+                }
+                if (options.onChangeHandler) {
+                    this.onChangeHandler = options.onChangeHandler;
+                }
+            } else {
+                this.template = template;
             }
 
             // setup the models
@@ -3631,12 +3703,12 @@ function program1(depth0,data) {
 
             this.collectionManagementView = new squid_api.view.MetricColumnsManagementWidget();
             
-            this.listenTo(this.config,"change:chosenMetrics", this.render);
+            this.listenTo(this.config,"change:chosenMetrics", this.updateView);
 
             // listen for global status change
             this.listenTo(this.status,"change:status", this.enable);
 
-            this.renderView();
+            this.render();
         },
 
         enable: function() {
@@ -3647,7 +3719,7 @@ function program1(depth0,data) {
             }
         },
         
-        render: function() {
+        updateView: function() {
             var me = this, isMultiple = true;
             var jsonData = {"selAvailable" : true, "options" : [], "multiple" : isMultiple};
 
@@ -3674,7 +3746,13 @@ function program1(depth0,data) {
                     
                     // check dynamic rules
                     if ((domain.get("dynamic") === true) || (item.get("dynamic") === false)) {
-                        jsonData.options.push(option);
+                        if (this.filterBy) {
+                            if (_.contains(this.filterBy, item.get("oid"))) {
+                                jsonData.options.push(option);
+                            }
+                        } else {
+                            jsonData.options.push(option);
+                        }
                     }
                 }
 
@@ -3692,7 +3770,7 @@ function program1(depth0,data) {
             return this;
         },
 
-        renderView: function() {
+        render: function() {
             var me = this;
             var html = this.template();
             this.$el.html(html);
@@ -3701,10 +3779,17 @@ function program1(depth0,data) {
             this.$el.find("select").multiselect({
                 "buttonContainer": '<div class="squid-api-data-widgets-metric-selector-open" />',
                 "buttonText": function() {
-                    return 'Metrics';
+                    var label = "Metrics";
+                    if (me.buttonText) {
+                        label = me.buttonText;
+                    }
+                    return label;
                 },
+                enableHTML: true,
                 "onDropdownShown": function() {
-                    me.showConfiguration();
+                    if (me.configurationEnabled) {
+                        me.showConfiguration();
+                    }
                 }
             });
 
@@ -3714,6 +3799,9 @@ function program1(depth0,data) {
 
             // Remove Button Title Tag
             this.$el.find("button").removeAttr('title');
+
+            // update view data if render is called after the metric change event
+            this.updateView();
         },
 
         events: squid_api.view.CollectionSelectorUtils.events,

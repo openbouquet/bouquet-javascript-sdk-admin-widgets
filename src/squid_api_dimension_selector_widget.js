@@ -10,7 +10,7 @@
         selected : "selectedDimensions",
         afterRender : null,
         singleSelect : false,
-        configurationEnabled : true,
+        configurationEnabled : null,
         updateMultiQuantity : null,
 
         initialize: function(options) {
@@ -54,7 +54,7 @@
             if (options.updateMultiQuantity) {
                 this.updateMultiQuantity = options.updateMultiQuantity;
             }
-            if (! options.configurationEnabled) {
+            if (options.configurationEnabled) {
                 this.configurationEnabled = options.configurationEnabled;
             }
             // listen for selection change as we use it to get dimensions

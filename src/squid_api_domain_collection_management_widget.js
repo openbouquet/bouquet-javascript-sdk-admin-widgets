@@ -36,6 +36,9 @@
             "click .create" : function(event) {
                 this.eventCreate(event);
             },
+            'input .search' : function(event) {
+                this.eventSearch(event);
+            },
             "click .edit": function(event) {
                 this.eventEdit(event);
             },
