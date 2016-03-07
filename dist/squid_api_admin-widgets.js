@@ -2148,7 +2148,11 @@ function program1(depth0,data) {
                 chosenNew = _.intersection(_.union(chosen, selected), selected);
 
                 // Update
-                this.config.set(this.chosen,chosenNew);
+                if (this.onChangeHandler) {
+                    this.onChangeHandler.call(this);
+                } else {
+                    this.config.set(this.chosen,chosenNew);
+                }
             }
         },
 
@@ -3606,6 +3610,10 @@ function program1(depth0,data) {
         template : null,
         chosen : "chosenMetrics",
         selected : "selectedMetrics",
+        configurationEnabled : null,
+        onChangeHandler : null,
+        filterBy : null,
+        buttonText : null,
 
         init: function(options) {
 
@@ -3622,6 +3630,20 @@ function program1(depth0,data) {
                 if (options.metricIndex !== null) {
                     this.metricIndex = options.metricIndex;
                 }
+                if (options.configurationEnabled) {
+                    this.configurationEnabled = options.configurationEnabled;
+                }
+                if (options.filterBy) {
+                    this.filterBy = options.filterBy;
+                }
+                if (options.buttonText) {
+                    this.buttonText = options.buttonText;
+                }
+                if (options.onChangeHandler) {
+                    this.onChangeHandler = options.onChangeHandler;
+                }
+            } else {
+                this.template = template;
             }
 
             // setup the models
@@ -3631,12 +3653,12 @@ function program1(depth0,data) {
 
             this.collectionManagementView = new squid_api.view.MetricColumnsManagementWidget();
             
-            this.listenTo(this.config,"change:chosenMetrics", this.render);
+            this.listenTo(this.config,"change:chosenMetrics", this.updateView);
 
             // listen for global status change
             this.listenTo(this.status,"change:status", this.enable);
 
-            this.renderView();
+            this.render();
         },
 
         enable: function() {
@@ -3647,7 +3669,7 @@ function program1(depth0,data) {
             }
         },
         
-        render: function() {
+        updateView: function() {
             var me = this, isMultiple = true;
             var jsonData = {"selAvailable" : true, "options" : [], "multiple" : isMultiple};
 
@@ -3674,7 +3696,13 @@ function program1(depth0,data) {
                     
                     // check dynamic rules
                     if ((domain.get("dynamic") === true) || (item.get("dynamic") === false)) {
-                        jsonData.options.push(option);
+                        if (this.filterBy) {
+                            if (_.contains(this.filterBy, item.get("oid"))) {
+                                jsonData.options.push(option);
+                            }
+                        } else {
+                            jsonData.options.push(option);
+                        }
                     }
                 }
 
@@ -3692,7 +3720,7 @@ function program1(depth0,data) {
             return this;
         },
 
-        renderView: function() {
+        render: function() {
             var me = this;
             var html = this.template();
             this.$el.html(html);
@@ -3701,10 +3729,16 @@ function program1(depth0,data) {
             this.$el.find("select").multiselect({
                 "buttonContainer": '<div class="squid-api-data-widgets-metric-selector-open" />',
                 "buttonText": function() {
-                    return 'Metrics';
+                    var label = "Metrics";
+                    if (me.buttonText) {
+                        label = me.buttonText;
+                    }
+                    return label;
                 },
                 "onDropdownShown": function() {
-                    me.showConfiguration();
+                    if (me.configurationEnabled) {
+                        me.showConfiguration();
+                    }
                 }
             });
 
@@ -3714,6 +3748,9 @@ function program1(depth0,data) {
 
             // Remove Button Title Tag
             this.$el.find("button").removeAttr('title');
+
+            // update view data if render is called after the metric change event
+            this.updateView();
         },
 
         events: squid_api.view.CollectionSelectorUtils.events,

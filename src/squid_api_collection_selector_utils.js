@@ -51,7 +51,11 @@
                 chosenNew = _.intersection(_.union(chosen, selected), selected);
 
                 // Update
-                this.config.set(this.chosen,chosenNew);
+                if (this.onChangeHandler) {
+                    this.onChangeHandler.call(this);
+                } else {
+                    this.config.set(this.chosen,chosenNew);
+                }
             }
         },
 
