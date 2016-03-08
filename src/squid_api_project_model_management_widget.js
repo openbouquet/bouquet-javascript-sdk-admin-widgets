@@ -28,8 +28,11 @@
             // populate database driver names
             $.getJSON(squid_api.apiURL + "/status" + "?access_token=" + squid_api.model.login.get("accessToken"), function( data ) {
                 var drivers = [];
-                for (var driver in data) {
-                    drivers.push(driver.toLowerCase());
+                var plugins = data["bouquet-plugins"];
+                for (i=0; i<plugins.length; i++) {
+                    for (var plugin in plugins[i]) {
+                        drivers.push(plugin.toLowerCase());
+                    }
                 }
                 me.formContent.fields.dbDriverName.editor.setOptions(drivers);
             });
@@ -54,6 +57,20 @@
             delete data.dbDatabase;
             delete data.dbOptions;
             return data;
+        },
+
+        beforeRender: function() {
+            var dbUrl = this.model.get("dbUrl");
+            if (dbUrl) {
+                var obj = {
+                    dbDriverName : dbUrl.substr(dbUrl.indexOf(':') + 1, dbUrl.indexOf('://') - 5),
+                    dbHost : dbUrl.match(/\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/g)[0],
+                    dbPort : dbUrl.substring(dbUrl.lastIndexOf(":") + 1, dbUrl.lastIndexOf("/")),
+                    dbDatabase : dbUrl.substr(dbUrl.lastIndexOf("/") + 1),
+                    dbOptions : ""
+                };
+                this.model.set(obj);
+            }
         },
         
         onSave : function(model) {

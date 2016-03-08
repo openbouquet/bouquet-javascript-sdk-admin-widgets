@@ -116,6 +116,10 @@
             return dfd.resolve(this.schema);
         },
 
+        beforeRender: function() {
+            // to be overridden from other model management widgets
+        },
+
         render: function() {
             var me = this;
             var jsonData = {modelDefinition : "unknown"};
@@ -132,7 +136,8 @@
             }
 
             this.setSchema().then(function(schema) {
-                // create form
+                me.beforeRender();
+
                 me.formContent = new Backbone.Form({
                     schema: schema,
                     model: me.model
