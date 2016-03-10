@@ -116,6 +116,10 @@
             return dfd.resolve(this.schema);
         },
 
+        afterRender: function() {
+            // to be overridden from other model management widgets
+        },
+
         render: function() {
             var me = this;
             var jsonData = {modelDefinition : "unknown"};
@@ -146,6 +150,9 @@
 
                 // form events
                 me.formEvents();
+
+                // after render handler
+                me.afterRender();
             });
 
             return this;

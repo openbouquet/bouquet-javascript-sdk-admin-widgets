@@ -1433,6 +1433,10 @@ function program1(depth0,data) {
             return dfd.resolve(this.schema);
         },
 
+        afterRender: function() {
+            // to be overridden from other model management widgets
+        },
+
         render: function() {
             var me = this;
             var jsonData = {modelDefinition : "unknown"};
@@ -1463,6 +1467,9 @@ function program1(depth0,data) {
 
                 // form events
                 me.formEvents();
+
+                // after render handler
+                me.afterRender();
             });
 
             return this;
@@ -1764,64 +1771,66 @@ function program1(depth0,data) {
 	
 	                    //var existingPath = this.getModelLabel(item);
 	                    var path =  this.getPathLabel(item);
-	                    var friendlyPath = path;
-	
-	                    // if multiple levels exist, remove the first folder from friendlypath
-	                    if (friendlyPath.split("/").length > 1) {
-	                        friendlyPath = friendlyPath.slice(friendlyPath.search(/.\//i) + 2);
-	                    }
-	
-	                    // replace all '/' with '>'
-	                    friendlyPath = friendlyPath.replace(/\//g, ' > ');
-	
-	                    // split friendlyPath to wrap styling divs
-	                    var obj = friendlyPath.split(" ");
-	                    var tmpString = "";
-	                    for (var str in obj) {
-	                        if (obj[str] == ">") {
-	                            tmpString += "<span>" + obj[str] + "</span>";
-	                        } else {
-	                            tmpString += " " + obj[str];
-	                        }
-	                    }
-	
-	                    friendlyPath = tmpString;
-	
-	                    // see if path already exists
-	                    var pathExists = false;
-	                    for (ix=0; ix<collection.length; ix++) {
-	                        if (collection[ix].path.value === path) {
-	                            pathExists = true;
-	                        }
-	                    }
-	                    if (! pathExists) {
-	                        // store different paths
-	                        paths.push(path);
-	                        collection.push({
-	                            "path" : {
-	                                "value" : path,
-	                                "userFriendlyName" : friendlyPath,
-	                                "type" : path.substr(1).split(" ", 1)[0]
-	                            },
-	                            "bookmarks" : []
-	                        });
-	                    }
-	
-	                    // update collection models
-	                    for (var x in collection) {
-	                        if (collection[x].path.value == path) {
-	                            if (bookmark.label !== null) {
-	                                // copy model attributes
-	                                for (var att in item.attributes) {
-	                                    bookmark[att] = item.get(att);
-	                                }
-	                                bookmark.roles = this.getModelRoles(item);
-	                                bookmark.selected = (bookmark.oid === selectedId);
-	                                bookmark.visible = true;
-	                            }
-	                            collection[x].bookmarks.push(bookmark);
-	                        }
-	                    }
+                        if (path) {
+                            var friendlyPath = path;
+
+                            // if multiple levels exist, remove the first folder from friendlypath
+                            if (friendlyPath.split("/").length > 1) {
+                                friendlyPath = friendlyPath.slice(friendlyPath.search(/.\//i) + 2);
+                            }
+
+                            // replace all '/' with '>'
+                            friendlyPath = friendlyPath.replace(/\//g, ' > ');
+
+                            // split friendlyPath to wrap styling divs
+                            var obj = friendlyPath.split(" ");
+                            var tmpString = "";
+                            for (var str in obj) {
+                                if (obj[str] == ">") {
+                                    tmpString += "<span>" + obj[str] + "</span>";
+                                } else {
+                                    tmpString += " " + obj[str];
+                                }
+                            }
+
+                            friendlyPath = tmpString;
+
+                            // see if path already exists
+                            var pathExists = false;
+                            for (ix=0; ix<collection.length; ix++) {
+                                if (collection[ix].path.value === path) {
+                                    pathExists = true;
+                                }
+                            }
+                            if (! pathExists) {
+                                // store different paths
+                                paths.push(path);
+                                collection.push({
+                                    "path" : {
+                                        "value" : path,
+                                        "userFriendlyName" : friendlyPath,
+                                        "type" : path.substr(1).split(" ", 1)[0]
+                                    },
+                                    "bookmarks" : []
+                                });
+                            }
+
+                            // update collection models
+                            for (var x in collection) {
+                                if (collection[x].path.value == path) {
+                                    if (bookmark.label !== null) {
+                                        // copy model attributes
+                                        for (var att in item.attributes) {
+                                            bookmark[att] = item.get(att);
+                                        }
+                                        bookmark.roles = this.getModelRoles(item);
+                                        bookmark.selected = (bookmark.oid === selectedId);
+                                        bookmark.visible = true;
+                                    }
+                                    collection[x].bookmarks.push(bookmark);
+                                }
+                            }
+                        }
                     }
 	            }
 
@@ -2864,7 +2873,10 @@ function program1(depth0,data) {
             var me = this;
 
             // prevent redirect
-            event.preventDefault();
+            if (event) {
+                event.preventDefault();
+            }
+            
             // add class for spinning wheel
             this.$el.addClass("in-progress");
             // collect prerequisites
@@ -3997,6 +4009,13 @@ function program1(depth0,data) {
             model.set({"_role" : "OWNER"}, {silent : true});
             // set new project as current
             this.config.set("project", model.get("id").projectId);
+        },
+        afterRender: function() {
+            var formValues = this.formContent.getValue();
+            // check connection immediately after rending (only if the form value dbUrl exists)
+            if (formValues.dbUrl) {
+                this.formContent.fields.dbCheckConnection.editor.checkConnection();
+            }
         }
     });
 
