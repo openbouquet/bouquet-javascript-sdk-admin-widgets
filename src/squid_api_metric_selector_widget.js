@@ -55,7 +55,7 @@
             // listen for global status change
             this.listenTo(this.status,"change:status", this.enable);
 
-            this.render();
+            this.renderBase();
         },
 
         enable: function() {
@@ -113,14 +113,20 @@
 
                 // update dropdown content
                 this.$el.find("select").multiselect("dataprovider", jsonData.options);
+                if (this.configurationEnabled) {
+                    this.showConfiguration();
+                }
             }
             return this;
         },
 
-        render: function() {
-            var me = this;
+        renderBase: function() {
             var html = this.template();
             this.$el.html(html);
+        },
+
+        render: function() {
+            var me = this;
 
             // Initialize plugin
             this.$el.find("select").multiselect({
