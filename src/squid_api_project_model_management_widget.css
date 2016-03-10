@@ -33,8 +33,8 @@
     top: 3px;
     width: 65px;
     height: 19px;
-    background: #DDDDDD;
     border-radius: 15px;
+    border: 1px solid #ccc;
     transition: background-color .2s;
 }
 .squid-api-project-model-management .dbSchemas [type="checkbox"]:not(:checked) + label:after,
