@@ -752,6 +752,91 @@ div.object-id input[disabled] {
 	display: none;
 }
 
+.squid-api-project-model-management .id {
+    display: none;
+}
+.squid-api-project-model-management .dbSchemas > label {
+    padding: 10px 0px 10px 0px;
+}
+.squid-api-project-model-management .dbSchemas ul {
+    padding-left: 0px;
+}
+.squid-api-project-model-management .dbSchemas li {
+    min-width: 25%;
+    display: inline-block;
+    height: 35px;
+}
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:not(:checked), .squid-api-project-model-management [type="checkbox"]:checked {
+    position: absolute;
+    left: -9999px;
+}
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:not(:checked) + label , .squid-api-project-model-management .dbSchemas [type="checkbox"]:checked + label {
+    position: relative;
+    padding-left: 75px;
+    padding-top: 3px;
+    cursor: pointer;
+}
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:not(:checked) + label:before, .squid-api-project-model-management .dbSchemas [type="checkbox"]:checked + label:before, .squid-api-project-model-management .dbSchemas [type="checkbox"]:not(:checked) + label:after, .squid-api-project-model-management .dbSchemas [type="checkbox"]:checked + label:after {
+    content: '';
+    position: absolute;
+}
+
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:not(:checked) + label:before,
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:checked + label:before {
+    left: 0;
+    top: 3px;
+    width: 65px;
+    height: 19px;
+    background: #DDDDDD;
+    border-radius: 15px;
+    transition: background-color .2s;
+}
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:not(:checked) + label:after,
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:checked + label:after {
+    width: 10px;
+    height: 10px;
+    transition: all .2s;
+    border-radius: 50%;
+    background: #4d4d4d;
+    top: 7px;
+    left: 5px;
+}
+
+/* on checked */
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:checked + label:before {
+    background:#34495E;
+}
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:checked + label:after {
+    background: #ecf0f1;
+    top: 7px;
+    left: 50px;
+}
+
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:checked + label .ui,
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:not(:checked) + label .ui:before,
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:checked + label .ui:after {
+    position: absolute;
+    left: 6px;
+    width: 65px;
+    border-radius: 15px;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 22px;
+    transition: all .2s;
+}
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:not(:checked) + label .ui:before {
+    content: "no";
+    left: 32px
+}
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:checked + label .ui:after {
+    content: "yes";
+    color: #39D2B4;
+}
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:focus + label:before {
+    border: 1px dashed #777;
+    box-sizing: border-box;
+    margin-top: -1px;
+}
 .squid-api-Relation-collection-management tr td {
 	width: 25%;
 	padding-left: 10px;
