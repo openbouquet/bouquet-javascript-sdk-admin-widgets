@@ -1433,6 +1433,10 @@ function program1(depth0,data) {
             return dfd.resolve(this.schema);
         },
 
+        afterRender: function() {
+            // to be overridden from other model management widgets
+        },
+
         render: function() {
             var me = this;
             var jsonData = {modelDefinition : "unknown"};
@@ -1463,6 +1467,9 @@ function program1(depth0,data) {
 
                 // form events
                 me.formEvents();
+
+                // after render handler
+                me.afterRender();
             });
 
             return this;
@@ -2866,7 +2873,10 @@ function program1(depth0,data) {
             var me = this;
 
             // prevent redirect
-            event.preventDefault();
+            if (event) {
+                event.preventDefault();
+            }
+            
             // add class for spinning wheel
             this.$el.addClass("in-progress");
             // collect prerequisites
@@ -3999,6 +4009,13 @@ function program1(depth0,data) {
             model.set({"_role" : "OWNER"}, {silent : true});
             // set new project as current
             this.config.set("project", model.get("id").projectId);
+        },
+        afterRender: function() {
+            var formValues = this.formContent.getValue();
+            // check connection immediately after rending (only if the form value dbUrl exists)
+            if (formValues.dbUrl) {
+                this.formContent.fields.dbCheckConnection.editor.checkConnection();
+            }
         }
     });
 

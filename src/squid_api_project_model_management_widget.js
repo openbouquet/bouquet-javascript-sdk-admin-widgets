@@ -36,6 +36,13 @@
             model.set({"_role" : "OWNER"}, {silent : true});
             // set new project as current
             this.config.set("project", model.get("id").projectId);
+        },
+        afterRender: function() {
+            var formValues = this.formContent.getValue();
+            // check connection immediately after rending (only if the form value dbUrl exists)
+            if (formValues.dbUrl) {
+                this.formContent.fields.dbCheckConnection.editor.checkConnection();
+            }
         }
     });
 

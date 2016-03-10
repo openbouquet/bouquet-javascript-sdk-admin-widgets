@@ -363,7 +363,10 @@
             var me = this;
 
             // prevent redirect
-            event.preventDefault();
+            if (event) {
+                event.preventDefault();
+            }
+            
             // add class for spinning wheel
             this.$el.addClass("in-progress");
             // collect prerequisites
