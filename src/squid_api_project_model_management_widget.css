@@ -43,14 +43,14 @@
     height: 10px;
     transition: all .2s;
     border-radius: 50%;
-    background: #4d4d4d;
+    background: #5f5d5f;
     top: 7px;
     left: 5px;
 }
 
 /* on checked */
 .squid-api-project-model-management .dbSchemas [type="checkbox"]:checked + label:before {
-    background:#34495E;
+    background: #449d44;
 }
 .squid-api-project-model-management .dbSchemas [type="checkbox"]:checked + label:after {
     background: #ecf0f1;
