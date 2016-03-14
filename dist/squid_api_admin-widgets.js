@@ -2152,6 +2152,37 @@ function program1(depth0,data) {
 }));
 
 (function (root, factory) {
+    root.squid_api.view.BookmarkWidget = factory(root.Backbone, root.squid_api);
+
+}(this, function (Backbone, squid_api) {
+
+    var View = Backbone.View.extend({
+
+        initialize: function() {
+            var bookmarkCollection = new squid_api.view.BookmarkCollectionManagementWidget({
+                onSelect: function() {
+                    bookmarkModal.close();
+                }
+            });
+
+            var bookmarkModal = new squid_api.view.ModalView({
+                view : bookmarkCollection
+            });
+
+            var bookmarkButton = new squid_api.view.BookmarkSelectorButton({
+                el : this.$el
+            });
+
+            bookmarkButton.$el.click(function() {
+                bookmarkModal.render();
+            });
+        }
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
     root.squid_api.view.CollectionSelectorUtils = factory(root.Backbone, root.squid_api);
 
 }(this, function (Backbone, squid_api) {
@@ -3331,9 +3362,9 @@ function program1(depth0,data) {
 
         enable: function() {
             if (this.status.get("status") == "RUNNING") {
-                this.$el.find("button").prop("disabled", true);
+                this.$el.find("button").multiselect('disable');
             } else {
-                this.$el.find("button").prop("disabled", false);
+                this.$el.find("button").multiselect('enable');
             }
         },
 
