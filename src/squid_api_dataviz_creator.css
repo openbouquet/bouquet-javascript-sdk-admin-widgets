@@ -19,16 +19,8 @@
     position: relative;
     left: -30px;
 }
-/*.squid-api-dataviz-creator .apply, .squid-api-dataviz-creator .fullscreen {*/
-    /*position: absolute;*/
-    /*z-index: 1;*/
-    /*background: #fff;*/
-/*}*/
-/*.squid-api-dataviz-creator .apply {*/
-    /*top: -10px;*/
-    /*left: 45%;*/
-/*}*/
-/*.squid-api-dataviz-creator .fullscreen  {*/
-    /*top: -10px;*/
-    /*right: 0px;*/
-/*}*/
+.squid-api-dataviz-creator .fullscreen {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
