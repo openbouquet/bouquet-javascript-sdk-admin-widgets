@@ -11,9 +11,9 @@
 }
 .squid-api-dataviz-creator .apply {
     top: -10px;
-    left: 40%;
+    left: 45%;
 }
 .squid-api-dataviz-creator .fullscreen  {
     top: -10px;
-    left: 47%;
+    right: 0px;
 }
