@@ -1,8 +1,24 @@
 <div class="squid-api-dataviz-creator">
     <div class="row">
-        <div class="col-md-6" id="squid-api-dataviz-creator-editor" />
-        <button class="btn btn-default apply">Apply</button>
-        <button class="btn btn-default fullscreen"><i class="fa fa-arrows-alt"></i></button>
-        <div class="col-md-6" id="squid-api-dataviz-creator-preview"/>
+        <div class="col-md-6">
+            <div class="col-md-12" id="squid-api-dataviz-creator-editor" />
+            <div class="configuration">
+                <div class="col-md-6 pull-left">
+                    <div class="col-md-3">
+                        <button class="btn btn-default save"><i class="fa fa-floppy-o"></i> Save</button>
+                    </div>
+                    <div class="col-md-9">
+                        <input class="form-control viz-name" placeholder="Name"/>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <button class="btn btn-default pull-right apply"><i class="fa fa-line-chart"></i> Apply</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="col-md-12" id="squid-api-dataviz-creator-preview"/>
+            <button class="btn btn-default pull-right fullscreen"><i class="fa fa-arrows-alt"></i></button>
+        </div>
     </div>
 </div>

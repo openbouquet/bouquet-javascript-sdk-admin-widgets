@@ -28,7 +28,6 @@
 
         events: {
             'click .apply': function() {
-                this.saveViz();
                 this.renderPreview();
             },
             'click .fullscreen': function() {
@@ -42,26 +41,48 @@
                 } else if (i.msRequestFullscreen) {
                     i.msRequestFullscreen();
                 }
+            },
+            'click .save': function() {
+                this.saveViz();
             }
         },
 
         saveViz: function() {
+            var me = this;
             var body = this.editor.getSession().getValue();
             var model = this.model;
+            var bookmarkName = this.$el.find(".viz-name").val();
+            var bookmark = this.config.get("bookmark");
 
-            if (model) {
-                model.trigger("change:results", model);
-
-                // set config
+            if (bookmarkName.length !== 0 && bookmark) {
                 var dataViz = this.config.get("dataviz");
                 var arr = [];
-                var length = 0;
                 if (dataViz) {
                     arr = dataViz;
-                    length = dataViz.length;
                 }
-                arr.push({id : "squid-dataviz-" + (length + 1), body: body});
-                this.config.set("dataviz", arr);
+                arr.push({id : bookmarkName, body: body});
+
+                // save model
+                var bookmarkModel = new squid_api.model.BookmarkModel();
+                bookmarkModel.set("id", {
+                    projectId : this.config.get("project"),
+                    bookmarkId : bookmark
+                });
+                bookmarkModel.fetch({
+                   success: function(b) {
+                       var bConfig = b.get("config");
+                       bConfig.dataviz = arr;
+                       b.save({"config" : bConfig}, {success: function(m) {
+                           me.status.set("message", bookmarkName + " saved to bookmark '" + b.get("name") + "'");
+                       }});
+
+                       // save bookmark in config
+                       me.config.set("dataviz", arr);
+                   }
+                });
+
+            } else {
+                this.status.set("message", "please specify a name for your visulisation");
             }
         },
 

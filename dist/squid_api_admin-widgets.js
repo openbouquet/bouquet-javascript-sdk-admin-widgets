@@ -500,7 +500,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<div class=\"squid-api-dataviz-creator\">\n    <div class=\"row\">\n        <div class=\"col-md-6\" id=\"squid-api-dataviz-creator-editor\" />\n        <button class=\"btn btn-default apply\">Apply</button>\n        <button class=\"btn btn-default fullscreen\"><i class=\"fa fa-arrows-alt\"></i></button>\n        <div class=\"col-md-6\" id=\"squid-api-dataviz-creator-preview\"/>\n    </div>\n</div>";
+  return "<div class=\"squid-api-dataviz-creator\">\n    <div class=\"row\">\n        <div class=\"col-md-6\">\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-editor\" />\n            <div class=\"configuration\">\n                <div class=\"col-md-6 pull-left\">\n                    <div class=\"col-md-3\">\n                        <button class=\"btn btn-default save\"><i class=\"fa fa-floppy-o\"></i> Save</button>\n                    </div>\n                    <div class=\"col-md-9\">\n                        <input class=\"form-control viz-name\" placeholder=\"Name\"/>\n                    </div>\n                </div>\n                <div class=\"col-md-6\">\n                    <button class=\"btn btn-default pull-right apply\"><i class=\"fa fa-line-chart\"></i> Apply</button>\n                </div>\n            </div>\n        </div>\n        <div class=\"col-md-6\">\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-preview\"/>\n            <button class=\"btn btn-default pull-right fullscreen\"><i class=\"fa fa-arrows-alt\"></i></button>\n        </div>\n    </div>\n</div>";
   });
 
 this["squid_api"]["template"]["squid_api_dimension_selector_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -3157,7 +3157,6 @@ function program1(depth0,data) {
 
         events: {
             'click .apply': function() {
-                this.saveViz();
                 this.renderPreview();
             },
             'click .fullscreen': function() {
@@ -3171,26 +3170,48 @@ function program1(depth0,data) {
                 } else if (i.msRequestFullscreen) {
                     i.msRequestFullscreen();
                 }
+            },
+            'click .save': function() {
+                this.saveViz();
             }
         },
 
         saveViz: function() {
+            var me = this;
             var body = this.editor.getSession().getValue();
             var model = this.model;
+            var bookmarkName = this.$el.find(".viz-name").val();
+            var bookmark = this.config.get("bookmark");
 
-            if (model) {
-                model.trigger("change:results", model);
-
-                // set config
+            if (bookmarkName.length !== 0 && bookmark) {
                 var dataViz = this.config.get("dataviz");
                 var arr = [];
-                var length = 0;
                 if (dataViz) {
                     arr = dataViz;
-                    length = dataViz.length;
                 }
-                arr.push({id : "squid-dataviz-" + (length + 1), body: body});
-                this.config.set("dataviz", arr);
+                arr.push({id : bookmarkName, body: body});
+
+                // save model
+                var bookmarkModel = new squid_api.model.BookmarkModel();
+                bookmarkModel.set("id", {
+                    projectId : this.config.get("project"),
+                    bookmarkId : bookmark
+                });
+                bookmarkModel.fetch({
+                   success: function(b) {
+                       var bConfig = b.get("config");
+                       bConfig.dataviz = arr;
+                       b.save({"config" : bConfig}, {success: function(m) {
+                           me.status.set("message", bookmarkName + " saved to bookmark '" + b.get("name") + "'");
+                       }});
+
+                       // save bookmark in config
+                       me.config.set("dataviz", arr);
+                   }
+                });
+
+            } else {
+                this.status.set("message", "please specify a name for your visulisation");
             }
         },
 

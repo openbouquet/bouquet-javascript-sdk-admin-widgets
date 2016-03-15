@@ -2,18 +2,33 @@
     position: relative;
 }
 .squid-api-dataviz-creator #squid-api-dataviz-creator-editor {
-    height: 100vh;
+    height: 60vh;
 }
-.squid-api-dataviz-creator .apply, .squid-api-dataviz-creator .fullscreen {
-    position: absolute;
-    z-index: 1;
-    background: #fff;
+.squid-api-dataviz-creator .configuration {
+    display: inline-block;
+    margin-top: 20px;
+    width: 100%;
+    background: #f3f3f3;
+    padding: 10px 0px;
+    border-radius: 8px;
 }
-.squid-api-dataviz-creator .apply {
-    top: -10px;
-    left: 45%;
+.squid-api-dataviz-creator .configuration input {
+    margin-top: 3px;
 }
-.squid-api-dataviz-creator .fullscreen  {
-    top: -10px;
-    right: 0px;
+.squid-api-dataviz-creator .configuration .save-bookmark {
+    position: relative;
+    left: -30px;
 }
+/*.squid-api-dataviz-creator .apply, .squid-api-dataviz-creator .fullscreen {*/
+    /*position: absolute;*/
+    /*z-index: 1;*/
+    /*background: #fff;*/
+/*}*/
+/*.squid-api-dataviz-creator .apply {*/
+    /*top: -10px;*/
+    /*left: 45%;*/
+/*}*/
+/*.squid-api-dataviz-creator .fullscreen  {*/
+    /*top: -10px;*/
+    /*right: 0px;*/
+/*}*/
