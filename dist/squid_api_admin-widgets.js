@@ -500,7 +500,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<div class=\"squid-api-dataviz-creator\">\n    <div class=\"row\">\n        <div class=\"col-md-6\" id=\"squid-api-dataviz-creator-preview\">\n        </div>\n        <button class=\"btn btn-default apply\">Apply</button>\n        <div class=\"col-md-6\" id=\"squid-api-dataviz-creator-editor\">\n        </div>\n    </div>\n</div>";
+  return "<div class=\"squid-api-dataviz-creator\">\n    <div class=\"row\">\n        <div class=\"col-md-6\" id=\"squid-api-dataviz-creator-preview\">\n        </div>\n        <button class=\"btn btn-default apply\">Apply</button>\n        <button class=\"btn btn-default fullscreen\"><i class=\"fa fa-arrows-alt\"></i></button>\n        <div class=\"col-md-6\" id=\"squid-api-dataviz-creator-editor\">\n        </div>\n    </div>\n</div>";
   });
 
 this["squid_api"]["template"]["squid_api_dimension_selector_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -3159,6 +3159,18 @@ function program1(depth0,data) {
             'click .apply': function() {
                 this.saveViz();
                 this.renderPreview();
+            },
+            'click .fullscreen': function() {
+                var i = document.getElementById("squid-api-dataviz-creator-preview");
+                if (i.requestFullscreen) {
+                    i.requestFullscreen();
+                } else if (i.webkitRequestFullscreen) {
+                    i.webkitRequestFullscreen();
+                } else if (i.mozRequestFullScreen) {
+                    i.mozRequestFullScreen();
+                } else if (i.msRequestFullscreen) {
+                    i.msRequestFullscreen();
+                }
             }
         },
 

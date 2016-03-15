@@ -30,6 +30,18 @@
             'click .apply': function() {
                 this.saveViz();
                 this.renderPreview();
+            },
+            'click .fullscreen': function() {
+                var i = document.getElementById("squid-api-dataviz-creator-preview");
+                if (i.requestFullscreen) {
+                    i.requestFullscreen();
+                } else if (i.webkitRequestFullscreen) {
+                    i.webkitRequestFullscreen();
+                } else if (i.mozRequestFullScreen) {
+                    i.mozRequestFullScreen();
+                } else if (i.msRequestFullscreen) {
+                    i.msRequestFullscreen();
+                }
             }
         },
 
