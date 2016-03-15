@@ -679,11 +679,11 @@ div.object-id input[disabled] {
 }
 .squid-api-dataviz-creator .apply {
     top: -10px;
-    right: 50px;
+    left: 40%;
 }
 .squid-api-dataviz-creator .fullscreen  {
     top: -10px;
-    right: 0px;
+    left: 47%;
 }
 #origin .dropdownDisabled {
 	top: 0px;

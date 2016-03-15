@@ -500,7 +500,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<div class=\"squid-api-dataviz-creator\">\n    <div class=\"row\">\n        <div class=\"col-md-6\" id=\"squid-api-dataviz-creator-preview\">\n        </div>\n        <button class=\"btn btn-default apply\">Apply</button>\n        <button class=\"btn btn-default fullscreen\"><i class=\"fa fa-arrows-alt\"></i></button>\n        <div class=\"col-md-6\" id=\"squid-api-dataviz-creator-editor\">\n        </div>\n    </div>\n</div>";
+  return "<div class=\"squid-api-dataviz-creator\">\n    <div class=\"row\">\n        <div class=\"col-md-6\" id=\"squid-api-dataviz-creator-editor\" />\n        <button class=\"btn btn-default apply\">Apply</button>\n        <button class=\"btn btn-default fullscreen\"><i class=\"fa fa-arrows-alt\"></i></button>\n        <div class=\"col-md-6\" id=\"squid-api-dataviz-creator-preview\"/>\n    </div>\n</div>";
   });
 
 this["squid_api"]["template"]["squid_api_dimension_selector_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
