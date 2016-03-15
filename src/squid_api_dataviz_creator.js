@@ -20,7 +20,7 @@
             } else {
                 console.warn("no analysis model passed to the widget");
             }
-            this.listenTo(this.config,"change", this.renderCreator);
+            this.listenTo(this.config,"change:dataviz", this.renderCreator);
             this.listenTo(this.model,"change:results", this.renderPreview);
 
             this.renderBase();
@@ -108,6 +108,7 @@
 
         renderBase: function() {
             this.$el.html(this.template());
+            this.renderCreator();
         },
 
         renderPreview: function() {

@@ -3149,7 +3149,7 @@ function program1(depth0,data) {
             } else {
                 console.warn("no analysis model passed to the widget");
             }
-            this.listenTo(this.config,"change", this.renderCreator);
+            this.listenTo(this.config,"change:dataviz", this.renderCreator);
             this.listenTo(this.model,"change:results", this.renderPreview);
 
             this.renderBase();
@@ -3237,6 +3237,7 @@ function program1(depth0,data) {
 
         renderBase: function() {
             this.$el.html(this.template());
+            this.renderCreator();
         },
 
         renderPreview: function() {
