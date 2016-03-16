@@ -46,7 +46,8 @@
             },
             'click .editor-toggle': function() {
                 // store editor / preview div's
-                var editor = this.$el.find(".editor-container");
+                var editor = this.$el.find(".editor-container #squid-api-dataviz-creator-editor");
+                var applyBtn = this.$el.find(".editor-container .apply");
                 var preview = this.$el.find(".preview-container");
                 var button = $(event.currentTarget).find("button.editor-toggle");
                 var buttonText;
@@ -56,6 +57,7 @@
                 if (! editor.hasClass("hidden")) {
                     hidden = true;
                     editor.addClass("hidden");
+                    applyBtn.addClass("hidden");
 
                     // expand preview to 100%
                     preview.removeClass("col-md-6");
@@ -64,6 +66,7 @@
                     buttonText = "Show Editor";
                 } else {
                     editor.removeClass("hidden");
+                    applyBtn.removeClass("hidden");
 
                     // revert to 50/50
                     preview.removeClass("col-md-12");
