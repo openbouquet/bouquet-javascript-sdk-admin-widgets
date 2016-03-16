@@ -21,6 +21,7 @@
 }
 .squid-api-dataviz-creator .editor-toggle {
     position: absolute;
-    top: 0px;
+    top: -40px;
+    width: 125px;
     right: 0px;
 }

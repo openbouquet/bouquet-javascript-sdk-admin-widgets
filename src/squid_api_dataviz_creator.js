@@ -40,12 +40,18 @@
                 // manipulate divs
                 if (! editor.hasClass("hidden")) {
                     editor.addClass("hidden");
-                    preview.removeClass("col-md-6").addClass("col-md-6");
+
+                    // expand preview to 100%
+                    preview.removeClass("col-md-6");
+                    preview.addClass("col-md-12");
 
                     buttonText = "Show Editor";
                 } else {
                     editor.removeClass("hidden");
-                    preview.removeClass("col-md-12").addClass("col-md-6");
+
+                    // revert to 50/50
+                    preview.removeClass("col-md-12");
+                    preview.addClass("col-md-6");
 
                     buttonText = "Hide Editor";
                 }
