@@ -3195,11 +3195,13 @@ function program1(depth0,data) {
             var bookmark = this.config.get("bookmark");
 
             if (bookmarkName.length !== 0 && bookmark) {
-                var dataViz = this.config.get("dataviz");
+
+                // Multi dataviz per bookmark
+                //var dataViz = this.config.get("dataviz");
                 var arr = [];
-                if (dataViz) {
-                    arr = dataViz;
-                }
+                //if (dataViz) {
+                //    arr = dataViz;
+                //}
                 arr.push({id : bookmarkName, body: body});
 
                 // save model
