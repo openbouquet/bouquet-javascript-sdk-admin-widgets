@@ -698,6 +698,7 @@ div.object-id input[disabled] {
     top: 1px;
     left: 0%;
     width: 100%;
+    border-radius: 0px 8px 0px 0px;
     height: 100vh;
     z-index: 4;
     border-radius: 4px;

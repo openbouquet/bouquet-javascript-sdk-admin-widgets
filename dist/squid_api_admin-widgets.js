@@ -3135,6 +3135,7 @@ function program1(depth0,data) {
     var View = Backbone.View.extend({
         template: null,
         model: null,
+        bookmarks: null,
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -3144,11 +3145,19 @@ function program1(depth0,data) {
             } else {
                 this.template = template;
             }
+            if (options.bookmarks) {
+                this.bookmarks = options.bookmarks;
+            } else {
+                this.bookmarks = new squid_api.view.BookmarkCollectionManagementWidget({
+
+                });
+            }
             if (options.model) {
                 this.model = options.model;
             } else {
                 console.warn("no analysis model passed to the widget");
             }
+
             this.listenTo(this.config,"change:bookmark", this.widgetToggle);
             this.listenTo(this.config,"change:dataviz", this.renderCreator);
             this.listenTo(this.model,"change:results", this.renderPreview);
@@ -3205,40 +3214,56 @@ function program1(depth0,data) {
 
         saveViz: function() {
             var me = this;
-            var body = this.editor.getSession().getValue();
-            var model = this.model;
-            var bookmarkName = this.$el.find(".viz-name").val();
+
+            var bookmarkCollection = this.bookmarks;
             var bookmark = this.config.get("bookmark");
 
-            if (bookmarkName.length !== 0 && bookmark) {
+            var editorBody = this.editor.getSession().getValue();
+            var vizName = this.$el.find(".viz-name").val();
 
-                // Multi dataviz per bookmark
-                //var dataViz = this.config.get("dataviz");
-                var arr = [];
-                //if (dataViz) {
-                //    arr = dataViz;
-                //}
-                arr.push({id : bookmarkName, body: body});
+            if (vizName.length !== 0 && bookmark) {
+                if (bookmarkCollection) {
+                    var bookmarkModel = bookmarkCollection.collection.where({oid : bookmark})[0];
+                    var bookmarkModelConfig = $.extend(true, {}, bookmarkModel.get("config"));
+                    var bookmarkName = bookmarkModel.get("name") + "_" + vizName;
 
-                // save model
-                var bookmarkModel = new squid_api.model.BookmarkModel();
-                bookmarkModel.set("id", {
-                    projectId : this.config.get("project"),
-                    bookmarkId : bookmark
-                });
-                bookmarkModel.fetch({
-                   success: function(b) {
-                       var bConfig = b.get("config");
-                       bConfig.dataviz = arr;
-                       b.save({"config" : bConfig}, {success: function(m) {
-                           me.status.set("message", bookmarkName + " saved to bookmark '" + b.get("name") + "'");
-                       }});
+                    // store bookmark
+                    var arr = [{id : vizName, body: editorBody}];
+                    bookmarkModelConfig.dataviz = arr;
 
-                       // save bookmark in config
-                       me.config.set("dataviz", arr);
-                   }
-                });
+                    if (bookmarkModel.get("config").dataviz) {
+                        // dataviz exists
+                        if (_.where(bookmarkModel.get("config").dataviz, {id : vizName}).length > 0) {
+                            // overwrite existing dataviz
+                            bookmarkModel.save({"config" : bookmarkModelConfig}, {success: function(m) {
+                                me.status.set("message", vizName + " has been updated within bookmark '" + m.get("name") + "'");
+                            }});
+                        } else {
+                            // create a new bookmark with the new dataviz inside
+                            var newBookmarkModel = new squid_api.model.BookmarkModel();
+                            newBookmarkModel.set({
+                                "id" : {
+                                    projectId: this.config.get("project")
+                                },
+                                "name" : bookmarkName,
+                                "config" : bookmarkModelConfig
+                            });
+                            newBookmarkModel.save({"config" : bookmarkModelConfig}, {success: function(m) {
+                                me.bookmarks.collection.add(m);
+                                me.status.set("message", bookmarkName + " has been saved as a new bookmark");
+                            }});
+                        }
+                    } else {
+                        // save in current bookmark
+                        bookmarkModel.save({"config" : bookmarkModelConfig}, {success: function(m) {
+                            me.bookmarks.collection.add(m);
+                            me.status.set("message", vizName + " has been saved to bookmark '" + m.get("name") + "'");
+                        }});
+                    }
 
+                    // set config
+                    this.config.set("dataviz", arr);
+                }
             } else {
                 this.status.set("message", "please specify a name for your visulisation");
             }
