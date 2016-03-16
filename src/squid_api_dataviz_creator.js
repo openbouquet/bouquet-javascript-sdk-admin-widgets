@@ -7,6 +7,7 @@
         template: null,
         model: null,
         bookmarks: null,
+        onEditorToggleChange: null,
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -22,6 +23,9 @@
                 this.bookmarks = new squid_api.view.BookmarkCollectionManagementWidget({
 
                 });
+            }
+            if (options.onEditorToggleChange) {
+                this.onEditorToggleChange = options.onEditorToggleChange;
             }
             if (options.model) {
                 this.model = options.model;
@@ -46,9 +50,11 @@
                 var preview = this.$el.find(".preview-container");
                 var button = $(event.currentTarget).find("button.editor-toggle");
                 var buttonText;
+                var hidden = false;
 
                 // manipulate divs
                 if (! editor.hasClass("hidden")) {
+                    hidden = true;
                     editor.addClass("hidden");
 
                     // expand preview to 100%
@@ -64,6 +70,10 @@
                     preview.addClass("col-md-6");
 
                     buttonText = "Hide Editor";
+                }
+
+                if (this.onEditorToggleChange) {
+                    this.onEditorToggleChange.call(this, hidden);
                 }
 
                 // update button text
