@@ -10,7 +10,7 @@
     width: 100%;
     background: #f1eff1;
     padding: 10px 0px;
-    border-radius: 0px 8px 8px 8px;
+    margin-bottom: 10px;
 }
 .squid-api-dataviz-creator .configuration input {
     margin-top: 3px;
