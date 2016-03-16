@@ -27,20 +27,31 @@
         },
 
         events: {
-            'click .apply': function() {
+            'click .apply': function(event) {
                 this.renderPreview();
             },
-            'click .fullscreen': function() {
-                var i = document.getElementById("squid-api-dataviz-creator-preview");
-                if (i.requestFullscreen) {
-                    i.requestFullscreen();
-                } else if (i.webkitRequestFullscreen) {
-                    i.webkitRequestFullscreen();
-                } else if (i.mozRequestFullScreen) {
-                    i.mozRequestFullScreen();
-                } else if (i.msRequestFullscreen) {
-                    i.msRequestFullscreen();
+            'click .editor-toggle': function() {
+                // store editor / preview div's
+                var editor = this.$el.find(".editor-container");
+                var preview = this.$el.find(".preview-container");
+                var button = $(event.currentTarget).find("button.editor-toggle");
+                var buttonText;
+
+                // manipulate divs
+                if (! editor.hasClass("hidden")) {
+                    editor.addClass("hidden");
+                    preview.removeClass("col-md-6").addClass("col-md-6");
+
+                    buttonText = "Show Editor";
+                } else {
+                    editor.removeClass("hidden");
+                    preview.removeClass("col-md-12").addClass("col-md-6");
+
+                    buttonText = "Hide Editor";
                 }
+
+                // update button text
+                button.text(buttonText);
             },
             'click .save': function() {
                 this.saveViz();

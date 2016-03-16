@@ -674,11 +674,11 @@ div.object-id input[disabled] {
 }
 .squid-api-dataviz-creator .configuration {
     display: inline-block;
-    margin-top: 20px;
+    margin-top: 0px;
     width: 100%;
-    background: #f3f3f3;
+    background: #f1eff1;
     padding: 10px 0px;
-    border-radius: 8px;
+    border-radius: 0px 8px 8px 8px;
 }
 .squid-api-dataviz-creator .configuration input {
     margin-top: 3px;
@@ -687,7 +687,7 @@ div.object-id input[disabled] {
     position: relative;
     left: -30px;
 }
-.squid-api-dataviz-creator .fullscreen {
+.squid-api-dataviz-creator .editor-toggle {
     position: absolute;
     top: 0px;
     right: 0px;
