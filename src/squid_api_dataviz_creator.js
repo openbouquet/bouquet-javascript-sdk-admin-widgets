@@ -20,6 +20,7 @@
             } else {
                 console.warn("no analysis model passed to the widget");
             }
+            this.listenTo(this.config,"change:bookmark", this.widgetToggle);
             this.listenTo(this.config,"change:dataviz", this.renderCreator);
             this.listenTo(this.model,"change:results", this.renderPreview);
 
@@ -61,6 +62,15 @@
             },
             'click .save': function() {
                 this.saveViz();
+            }
+        },
+
+        widgetToggle: function() {
+            var bookmark = this.config.get("bookmark");
+            if (bookmark) {
+                this.$el.find(".overlay").remove();
+            } else {
+                this.$el.find(".squid-api-dataviz-creator").append("<div class='overlay'></div>'");
             }
         },
 
