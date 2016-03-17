@@ -9,6 +9,7 @@
         bookmarks: null,
         onEditorToggleChange: null,
         dataVizEl : "squid-api-dataviz-creator-preview",
+        defaultVisulisation : tableViz,
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -154,10 +155,45 @@
             }
         },
 
-        defaultVisulisation: function(analysis) {
-            // remove any existing tables created
-            d3.select('#'+el+' table').remove();
-            console.log(analysis);
+        editorContents: function(dataviz) {
+            var entire = this.defaultVisulisation.toString();
+            var body = entire.slice(entire.indexOf("{") + 1, entire.lastIndexOf("}"));
+            if (dataviz) {
+                body = dataviz;
+            }
+            return body;
+        },
+
+        renderBase: function() {
+            this.$el.html(this.template());
+            this.renderCreator();
+        },
+
+        renderPreview: function() {
+            var body = this.editor.getSession().getValue();
+            /*jslint evil: true */
+            if (this.model.get("results")) {
+                new Function('analysis', 'el', body)(this.model, this.dataVizEl);
+            }
+        },
+
+        renderCreator: function() {
+            // set up editor
+            this.editor = ace.edit("squid-api-dataviz-creator-editor");
+            var body = null;
+            this.editor.getSession().setMode("ace/mode/javascript");
+            if (this.config.get("dataviz")) {
+                body = this.config.get("dataviz")[0].body;
+            }
+            this.editor.getSession().setValue(this.editorContents(body));
+
+            return this;
+        },
+        
+        tableViz: function(analysis) {
+            // cleanup the viewport which DOM id is given by the "el" attribute
+            d3.select('#'+el).html("");
+
             // specify the rendering div
             var container = d3.select('#'+el);
 
@@ -197,41 +233,71 @@
                     return d;
                 });
         },
+        
+        barChartViz: function(analysis) {
+            // cleanup the viewport which DOM id is given by the "el" attribute
+            d3.select('#'+el).html("");
 
-        editorContents: function(dataviz) {
-            var entire = this.defaultVisulisation.toString();
-            var body = entire.slice(entire.indexOf("{") + 1, entire.lastIndexOf("}"));
-            if (dataviz) {
-                body = dataviz;
-            }
-            return body;
+            // get the data for Bouquet's analysisJob object passed as "analyisis" attribute
+            var data = analysis.get("results").rows;
+            // just take the first n rows
+            data = data.splice(0,20);
+
+            // build a simple barchart - using code from https://bl.ocks.org/mbostock/3885304
+            var margin = {top: 20, right: 20, bottom: 30, left: 40},
+                width = 600 - margin.left - margin.right,
+                height = 500 - margin.top - margin.bottom;
+
+            var x = d3.scale.ordinal()
+                .rangeRoundBands([0, width], 0.2);
+
+            var y = d3.scale.linear()
+                .range([height, 0]);
+
+            var xAxis = d3.svg.axis()
+                .scale(x)
+                .orient("bottom");
+
+            var yAxis = d3.svg.axis()
+                .scale(y)
+                .orient("left");
+
+            var svg = d3.select("#"+el).append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+              .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+              // x axis values are in the first column (0) of the results array
+              x.domain(data.map(function(d) { return d.v[0]; }));
+
+              // y axis values are in the second column (1) of the results array
+              y.domain([0, d3.max(data, function(d) { return d.v[1]; })]);
+
+              svg.append("g")
+                  .attr("class", "x axis")
+                  .attr("transform", "translate(0," + height + ")")
+                  .call(xAxis);
+
+              svg.append("g")
+                  .attr("class", "y axis")
+                  .call(yAxis)
+                .append("text")
+                  .attr("transform", "rotate(-90)")
+                  .attr("y", 6)
+                  .attr("dy", ".71em")
+                  .style("text-anchor", "end")
+                  .text("Y Axis");
+
+              svg.selectAll(".bar")
+                  .data(data)
+                .enter().append("rect")
+                  .attr("style", "fill: steelblue;")
+                  .attr("x", function(d) { return x(d.v[0]); })
+                  .attr("width", x.rangeBand())
+                  .attr("y", function(d) { return y(d.v[1]); })
+                  .attr("height", function(d) { return height - y(d.v[1]); });
         },
-
-        renderBase: function() {
-            this.$el.html(this.template());
-            this.renderCreator();
-        },
-
-        renderPreview: function() {
-            var body = this.editor.getSession().getValue();
-            /*jslint evil: true */
-            if (this.model.get("results")) {
-                new Function('analysis', 'el', body)(this.model, this.dataVizEl);
-            }
-        },
-
-        renderCreator: function() {
-            // set up editor
-            this.editor = ace.edit("squid-api-dataviz-creator-editor");
-            var body = null;
-            this.editor.getSession().setMode("ace/mode/javascript");
-            if (this.config.get("dataviz")) {
-                body = this.config.get("dataviz")[0].body;
-            }
-            this.editor.getSession().setValue(this.editorContents(body));
-
-            return this;
-        }
     });
 
     return View;
