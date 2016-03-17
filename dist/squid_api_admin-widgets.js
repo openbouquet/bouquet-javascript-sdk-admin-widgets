@@ -502,30 +502,44 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n        			<option id=\"";
+  buffer += "\n                    <label class=\"guide\">";
+  if (helper = helpers.headerText) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.headerText); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</label>\n                ";
+  return buffer;
+  }
+
+function program3(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n                        <option id=\"";
   if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += ">";
   if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</option>\n        			";
+    + "</option>\n                        ";
   return buffer;
   }
-function program2(depth0,data) {
+function program4(depth0,data) {
   
   
   return "selected=selected";
   }
 
-  buffer += "<div class=\"squid-api-dataviz-creator\">\n    <div class=\"row\">\n        <div class=\"col-md-6 editor-container\">\n        	<div id=\"squid-api-dataviz-template-selector\">\n        		Sample templates \n        		<select id=\"template-selector\">\n        			";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.templates), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  buffer += "<div class=\"squid-api-dataviz-creator\">\n    <div class=\"row\">\n        <div class=\"col-md-6 editor-container\">\n            <div class=\"col-md-6\">\n                ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.headerText), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n        		</select>\n        	</div>\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-editor\"></div>\n            <div class=\"configuration\">\n                <div class=\"col-md-8 pull-left\">\n                    <div class=\"col-md-6\">\n                        <button class=\"btn btn-default save\">3. Publish Bookmark</button>\n                    </div>\n                    <div class=\"col-md-6\">\n                        <input class=\"form-control viz-name\" placeholder=\"Name\"/>\n                    </div>\n                </div>\n                <div class=\"col-md-4\">\n                    <button class=\"btn btn-default pull-right apply\"><i class=\"fa fa-arrow-circle-right\"></i> Apply</button>\n                </div>\n            </div>\n        </div>\n        <button class=\"btn btn-default pull-right form-control editor-toggle\">Hide Editor</button>\n        <div class=\"col-md-6 preview-container\">\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-preview\"></div>\n        </div>\n    </div>\n</div>";
+  buffer += "\n            </div>\n            <div class=\"col-md-3\">\n                <div id=\"squid-api-dataviz-template-selector\">\n                    <select class=\"form-control\" id=\"template-selector\">\n                        ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.templates), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                    </select>\n                </div>\n            </div>\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-editor\"></div>\n            <div class=\"configuration\">\n                <div class=\"col-md-8 pull-left\">\n                    <div class=\"col-md-6\">\n                        <button class=\"btn btn-default save\">3. Publish Bookmark</button>\n                    </div>\n                    <div class=\"col-md-6\">\n                        <input class=\"form-control viz-name\" placeholder=\"Name\"/>\n                    </div>\n                </div>\n                <div class=\"col-md-4\">\n                    <button class=\"btn btn-default pull-right apply\"><i class=\"fa fa-arrow-circle-right\"></i> Apply</button>\n                </div>\n            </div>\n        </div>\n        <button class=\"btn btn-default pull-right form-control editor-toggle\">Hide Editor</button>\n        <div class=\"col-md-6 preview-container\">\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-preview\"></div>\n        </div>\n    </div>\n</div>";
   return buffer;
   });
 
@@ -3164,7 +3178,7 @@ function program1(depth0,data) {
         bookmarks: null,
         onEditorToggleChange: null,
         dataVizEl : "squid-api-dataviz-creator-preview",
-        
+        headerText: null,
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -3183,6 +3197,9 @@ function program1(depth0,data) {
             }
             if (options.onEditorToggleChange) {
                 this.onEditorToggleChange = options.onEditorToggleChange;
+            }
+            if (options.headerText) {
+                this.headerText = options.headerText;
             }
             if (options.model) {
                 this.model = options.model;
@@ -3357,7 +3374,8 @@ function program1(depth0,data) {
                         id : "tableViz",
                         name : "Table",
                         selected : false
-                    } ]
+                    } ],
+                    "headerText" : this.headerText
             };
             
             this.$el.html(this.template(data));

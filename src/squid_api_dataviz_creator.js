@@ -9,7 +9,7 @@
         bookmarks: null,
         onEditorToggleChange: null,
         dataVizEl : "squid-api-dataviz-creator-preview",
-        
+        headerText: null,
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -28,6 +28,9 @@
             }
             if (options.onEditorToggleChange) {
                 this.onEditorToggleChange = options.onEditorToggleChange;
+            }
+            if (options.headerText) {
+                this.headerText = options.headerText;
             }
             if (options.model) {
                 this.model = options.model;
@@ -202,7 +205,8 @@
                         id : "tableViz",
                         name : "Table",
                         selected : false
-                    } ]
+                    } ],
+                    "headerText" : this.headerText
             };
             
             this.$el.html(this.template(data));
