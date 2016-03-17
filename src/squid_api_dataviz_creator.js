@@ -83,8 +83,8 @@
                 // update button text
                 button.text(buttonText);
             },
-            'click .save': function() {
-                this.saveViz();
+            'click .save': function(event) {
+                this.saveViz(event);
             }
         },
 
@@ -97,7 +97,11 @@
             }
         },
 
-        saveViz: function() {
+        afterSave: function() {
+
+        },
+
+        saveViz: function(e) {
             var me = this;
 
             var bookmarkCollection = this.bookmarks;
@@ -112,6 +116,9 @@
                     var bookmarkModelConfig = $.extend(true, {}, bookmarkModel.get("config"));
                     var bookmarkName = bookmarkModel.get("name") + "_" + vizName;
 
+                    // disable button
+                    $(e.currentTarget).attr("disabled", true);
+
                     // store bookmark
                     var arr = [{id : vizName, body: editorBody}];
                     bookmarkModelConfig.dataviz = arr;
@@ -122,6 +129,8 @@
                             // overwrite existing dataviz
                             bookmarkModel.save({"config" : bookmarkModelConfig}, {success: function(m) {
                                 me.status.set("message", vizName + " has been updated within bookmark '" + m.get("name") + "'");
+                                // enable button
+                                $(e.currentTarget).attr("disabled", false);
                             }});
                         } else {
                             // create a new bookmark with the new dataviz inside
@@ -136,6 +145,8 @@
                             newBookmarkModel.save({"config" : bookmarkModelConfig}, {success: function(m) {
                                 me.bookmarks.collection.add(m);
                                 me.status.set("message", bookmarkName + " has been saved as a new bookmark");
+                                // enable button
+                                $(e.currentTarget).attr("disabled", false);
                             }});
                         }
                     } else {
@@ -143,6 +154,8 @@
                         bookmarkModel.save({"config" : bookmarkModelConfig}, {success: function(m) {
                             me.bookmarks.collection.add(m);
                             me.status.set("message", vizName + " has been saved to bookmark '" + m.get("name") + "'");
+                            // enable button
+                            $(e.currentTarget).attr("disabled", false);
                         }});
                     }
 
