@@ -144,6 +144,9 @@
                             });
                             newBookmarkModel.save({"config" : bookmarkModelConfig}, {success: function(m) {
                                 me.bookmarks.collection.add(m);
+                                // set new bookmark as current one
+                                squid_api.setBookmarkId(m.get("oid"));
+                                
                                 me.status.set("message", bookmarkName + " has been saved as a new bookmark");
                                 // enable button
                                 $(e.currentTarget).attr("disabled", false);
