@@ -1,6 +1,6 @@
 .squid-api-dataviz-creator {
     position: relative;
-    padding-top: 50px;
+    padding-top: 60px;
 }
 .squid-api-dataviz-creator #squid-api-dataviz-creator-editor {
     height: 60vh;
@@ -16,11 +16,8 @@
 .squid-api-dataviz-creator .editor-container select#template-selector, .squid-api-dataviz-creator .guide  {
     position: absolute;
 }
-.squid-api-dataviz-creator .guide {
+.squid-api-dataviz-creator .guide, .squid-api-dataviz-creator select#template-selector{
     top: -50px;
-}
-.squid-api-dataviz-creator select#template-selector{
-    top: -40px;
 }
 .squid-api-dataviz-creator .editor-container select {
     white-space: nowrap;
