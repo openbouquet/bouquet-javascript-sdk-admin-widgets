@@ -3137,6 +3137,7 @@ function program1(depth0,data) {
         model: null,
         bookmarks: null,
         onEditorToggleChange: null,
+        dataVizEl : "squid-api-dataviz-creator-preview",
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -3284,10 +3285,10 @@ function program1(depth0,data) {
 
         defaultVisulisation: function(analysis) {
             // remove any existing tables created
-            d3.select('#squid-api-dataviz-creator-preview table').remove();
+            d3.select('#'+el+' table').remove();
             console.log(analysis);
             // specify the rendering div
-            var container = d3.select('#squid-api-dataviz-creator-preview');
+            var container = d3.select('#'+el);
 
             // create table & append table headers
             container.append('table')
@@ -3344,7 +3345,7 @@ function program1(depth0,data) {
             var body = this.editor.getSession().getValue();
             /*jslint evil: true */
             if (this.model.get("results")) {
-                new Function('analysis', body)(this.model);
+                new Function('analysis', 'el', body)(this.model, this.dataVizEl);
             }
         },
 
