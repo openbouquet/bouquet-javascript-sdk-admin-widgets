@@ -502,7 +502,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n                    <div class=\"col-md-10\">\n                        <label class=\"guide\">";
+  buffer += "\n                    <div class=\"col-md-9\">\n                        <label class=\"guide\">";
   if (helper = helpers.headerText) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.headerText); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -517,26 +517,18 @@ function program3(depth0,data) {
   if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">";
+    + "\">";
   if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "</option>\n                            ";
   return buffer;
   }
-function program4(depth0,data) {
-  
-  
-  return "selected=selected";
-  }
 
   buffer += "<div class=\"squid-api-dataviz-creator bothVisible\">\n    <div class=\"row\">\n        <div class=\"col-md-6 editor-container\">\n            <div class=\"col-md-12\">\n                ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.headerText), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                <div class=\"col-md-2\">\n                    <div id=\"squid-api-dataviz-template-selector\">\n                        <select class=\"form-control\" id=\"template-selector\">\n                            ";
+  buffer += "\n                <div class=\"col-md-3\">\n                    <div id=\"squid-api-dataviz-template-selector\">\n                        <select class=\"form-control\" id=\"template-selector\">\n                            <option selected=selected value=\"none-selected\">Choose Template</option>\n                            ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.templates), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n                        </select>\n                    </div>\n                </div>\n            </div>\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-editor\">\n\n            </div>\n            <div class=\"configuration bothVisible\">\n                <div class=\"col-md-8 save-wrapper pull-left\">\n                    <div class=\"col-md-7\">\n                        <button class=\"btn btn-default save\">3. Publish your Bookmark</button>\n                    </div>\n                    <div class=\"col-md-5\">\n                        <input class=\"form-control viz-name\" placeholder=\"Name\"/>\n                    </div>\n                </div>\n                <div class=\"col-md-4\">\n                    <div class=\"apply-wrapper\">\n                        <button class=\"btn btn-default pull-right apply\"><i class=\"fa fa-arrow-circle-right\"></i> Apply</button>\n                    </div>\n                </div>\n            </div>\n        </div>\n        <button class=\"btn btn-default pull-right form-control editor-toggle\">Hide Editor</button>\n        <div class=\"col-md-6 preview-container\">\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-preview\"></div>\n        </div>\n    </div>\n</div>";
@@ -3178,7 +3170,6 @@ function program1(depth0,data) {
         bookmarks: null,
         onEditorToggleChange: null,
         dataVizEl : "squid-api-dataviz-creator-preview",
-        defaultVisulisation : "barChartViz",
         headerText: null,
 
         initialize: function(options) {
@@ -3189,9 +3180,6 @@ function program1(depth0,data) {
             } else {
                 this.template = template;
             }
-            if (options.defaultVisulisation) {
-                this.defaultVisulisation = options.defaultVisulisation;
-            }
             if (options.bookmarks) {
                 this.bookmarks = options.bookmarks;
             } else {
@@ -3199,6 +3187,9 @@ function program1(depth0,data) {
 
                 });
             }
+
+            this.defaultVisulisation = this.barChartViz;
+
             if (options.onEditorToggleChange) {
                 this.onEditorToggleChange = options.onEditorToggleChange;
             }
@@ -3277,10 +3268,12 @@ function program1(depth0,data) {
             'change #template-selector': function(event) {
                 var val = $(event.currentTarget).val();
                 // update the editor value
-                var entire = this[val].toString();
-                var body = entire.slice(entire.indexOf("{") + 1, entire.lastIndexOf("}"));
-                this.editor.getSession().setValue(body);
-                this.renderPreview();
+                if (this[val]) {
+                    var entire = this[val].toString();
+                    var body = entire.slice(entire.indexOf("{") + 1, entire.lastIndexOf("}"));
+                    this.editor.getSession().setValue(body);
+                    this.renderPreview();
+                }
             }
         },
 
@@ -3293,7 +3286,7 @@ function program1(depth0,data) {
             }
 
             // reset selector
-            this.$el.find("#template-selector").val(this.defaultVisulisation);
+            this.$el.find("#template-selector").val("none-selected");
         },
 
         afterSave: function() {
@@ -3378,24 +3371,14 @@ function program1(depth0,data) {
             return body;
         },
 
-        getDefaultViz: function(viz) {
-            if (this.defaultVisulisation == viz) {
-                return true;
-            } else {
-                return false;
-            }
-        },
-
         renderBase: function() {
             var data = {
                     "templates" : [ {
                         id : "barChartViz",
-                        name : "Bar Chart",
-                        selected : this.getDefaultViz("barChartViz")
+                        name : "Bar Chart"
                     }, {
                         id : "tableViz",
-                        name : "Table",
-                        selected : this.getDefaultViz("tableViz")
+                        name : "Table"
                     } ],
                     "headerText" : this.headerText
             };

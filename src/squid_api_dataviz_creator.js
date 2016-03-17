@@ -9,7 +9,6 @@
         bookmarks: null,
         onEditorToggleChange: null,
         dataVizEl : "squid-api-dataviz-creator-preview",
-        defaultVisulisation : "barChartViz",
         headerText: null,
 
         initialize: function(options) {
@@ -20,9 +19,6 @@
             } else {
                 this.template = template;
             }
-            if (options.defaultVisulisation) {
-                this.defaultVisulisation = options.defaultVisulisation;
-            }
             if (options.bookmarks) {
                 this.bookmarks = options.bookmarks;
             } else {
@@ -30,6 +26,9 @@
 
                 });
             }
+
+            this.defaultVisulisation = this.barChartViz;
+
             if (options.onEditorToggleChange) {
                 this.onEditorToggleChange = options.onEditorToggleChange;
             }
@@ -108,10 +107,12 @@
             'change #template-selector': function(event) {
                 var val = $(event.currentTarget).val();
                 // update the editor value
-                var entire = this[val].toString();
-                var body = entire.slice(entire.indexOf("{") + 1, entire.lastIndexOf("}"));
-                this.editor.getSession().setValue(body);
-                this.renderPreview();
+                if (this[val]) {
+                    var entire = this[val].toString();
+                    var body = entire.slice(entire.indexOf("{") + 1, entire.lastIndexOf("}"));
+                    this.editor.getSession().setValue(body);
+                    this.renderPreview();
+                }
             }
         },
 
@@ -124,7 +125,7 @@
             }
 
             // reset selector
-            this.$el.find("#template-selector").val(this.defaultVisulisation);
+            this.$el.find("#template-selector").val("none-selected");
         },
 
         afterSave: function() {
@@ -209,24 +210,14 @@
             return body;
         },
 
-        getDefaultViz: function(viz) {
-            if (this.defaultVisulisation == viz) {
-                return true;
-            } else {
-                return false;
-            }
-        },
-
         renderBase: function() {
             var data = {
                     "templates" : [ {
                         id : "barChartViz",
-                        name : "Bar Chart",
-                        selected : this.getDefaultViz("barChartViz")
+                        name : "Bar Chart"
                     }, {
                         id : "tableViz",
-                        name : "Table",
-                        selected : this.getDefaultViz("tableViz")
+                        name : "Table"
                     } ],
                     "headerText" : this.headerText
             };
