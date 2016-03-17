@@ -666,6 +666,78 @@ div.object-id input[disabled] {
     padding: 7px;
 }
 
+.squid-api-dataviz-creator {
+    position: relative;
+    padding-top: 10px;
+}
+.squid-api-dataviz-creator.bothVisible {
+    padding-top: 70px;
+}
+.squid-api-dataviz-creator #squid-api-dataviz-creator-editor {
+    height: 60vh;
+}
+.squid-api-dataviz-creator .configuration {
+    display: inline-block;
+    margin-top: 0px;
+    width: 100%;
+    position: relative;
+    left: -30px;
+    padding: 10px 0px;
+    margin-bottom: 10px;
+}
+.squid-api-dataviz-creator .configuration .apply {
+    position: relative;
+    left: 45px;
+}
+.squid-api-dataviz-creator .editor-container select#template-selector, .squid-api-dataviz-creator .guide  {
+    position: absolute;
+}
+.squid-api-dataviz-creator .guide, .squid-api-dataviz-creator select#template-selector{
+    top: -60px;
+}
+.squid-api-dataviz-creator .editor-container select {
+    white-space: nowrap;
+    vertical-align: middle;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    color: #1B1B1B;
+    font-size: 14px;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border: none;
+    box-shadow: none;
+    text-decoration: underline;
+}
+.squid-api-dataviz-creator .configuration input {
+    margin-top: 3px;
+}
+.squid-api-dataviz-creator .configuration .save-bookmark {
+    position: relative;
+    left: -30px;
+}
+.squid-api-dataviz-creator .editor-toggle {
+    position: absolute;
+    top: 0px;
+    width: 125px;
+    right: 0px;
+}
+.squid-api-dataviz-creator .overlay {
+    position: absolute;
+    top: -51px;
+    left: 0%;
+    width: 100%;
+    border-radius: 0px 8px 0px 0px;
+    height: 100vh;
+    z-index: 4;
+    border-radius: 4px;
+    opacity: 0.4;
+    background: #eee;
+}
 #origin .dropdownDisabled {
 	top: 0px;
 	height: 100%;
@@ -752,6 +824,91 @@ div.object-id input[disabled] {
 	display: none;
 }
 
+.squid-api-project-model-management .id {
+    display: none;
+}
+.squid-api-project-model-management .dbSchemas > label {
+    padding: 10px 0px 10px 0px;
+}
+.squid-api-project-model-management .dbSchemas ul {
+    padding-left: 0px;
+}
+.squid-api-project-model-management .dbSchemas li {
+    min-width: 25%;
+    display: inline-block;
+    height: 35px;
+}
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:not(:checked), .squid-api-project-model-management [type="checkbox"]:checked {
+    position: absolute;
+    left: -9999px;
+}
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:not(:checked) + label , .squid-api-project-model-management .dbSchemas [type="checkbox"]:checked + label {
+    position: relative;
+    padding-left: 75px;
+    padding-top: 3px;
+    cursor: pointer;
+}
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:not(:checked) + label:before, .squid-api-project-model-management .dbSchemas [type="checkbox"]:checked + label:before, .squid-api-project-model-management .dbSchemas [type="checkbox"]:not(:checked) + label:after, .squid-api-project-model-management .dbSchemas [type="checkbox"]:checked + label:after {
+    content: '';
+    position: absolute;
+}
+
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:not(:checked) + label:before,
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:checked + label:before {
+    left: 0;
+    top: 3px;
+    width: 65px;
+    height: 19px;
+    border-radius: 15px;
+    border: 1px solid #ccc;
+    transition: background-color .2s;
+}
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:not(:checked) + label:after,
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:checked + label:after {
+    width: 10px;
+    height: 10px;
+    transition: all .2s;
+    border-radius: 50%;
+    background: #5f5d5f;
+    top: 7px;
+    left: 5px;
+}
+
+/* on checked */
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:checked + label:before {
+    background: #449d44;
+}
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:checked + label:after {
+    background: #ecf0f1;
+    top: 7px;
+    left: 50px;
+}
+
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:checked + label .ui,
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:not(:checked) + label .ui:before,
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:checked + label .ui:after {
+    position: absolute;
+    left: 6px;
+    width: 65px;
+    border-radius: 15px;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 22px;
+    transition: all .2s;
+}
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:not(:checked) + label .ui:before {
+    content: "no";
+    left: 32px
+}
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:checked + label .ui:after {
+    content: "yes";
+    color: #39D2B4;
+}
+.squid-api-project-model-management .dbSchemas [type="checkbox"]:focus + label:before {
+    border: 1px dashed #777;
+    box-sizing: border-box;
+    margin-top: -1px;
+}
 .squid-api-Relation-collection-management tr td {
 	width: 25%;
 	padding-left: 10px;
