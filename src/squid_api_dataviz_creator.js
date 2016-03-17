@@ -9,6 +9,7 @@
         bookmarks: null,
         onEditorToggleChange: null,
         dataVizEl : "squid-api-dataviz-creator-preview",
+        defaultVisulisation : "barChartViz",
         headerText: null,
 
         initialize: function(options) {
@@ -18,6 +19,9 @@
                 this.template = options.template;
             } else {
                 this.template = template;
+            }
+            if (options.defaultVisulisation) {
+                this.defaultVisulisation = options.defaultVisulisation;
             }
             if (options.bookmarks) {
                 this.bookmarks = options.bookmarks;
@@ -37,8 +41,6 @@
             } else {
                 console.warn("no analysis model passed to the widget");
             }
-            
-            this.defaultVisulisation = this.barChartViz;
 
             this.listenTo(this.config,"change:bookmark", this.widgetToggle);
             this.listenTo(this.config,"change:dataviz", this.renderCreator);
@@ -101,9 +103,9 @@
                 this.saveViz(event);
             },
             'change #template-selector': function(event) {
-                var id = event.target[event.target.selectedIndex].id;
+                var val = $(event.currentTarget).val();
                 // update the editor value
-                var entire = this[id].toString();
+                var entire = this[val].toString();
                 var body = entire.slice(entire.indexOf("{") + 1, entire.lastIndexOf("}"));
                 this.editor.getSession().setValue(body);
                 this.renderPreview();
@@ -117,6 +119,9 @@
             } else {
                 this.$el.find(".squid-api-dataviz-creator").append("<div class='overlay'></div>'");
             }
+
+            // reset selector
+            this.$el.find("#template-selector").val(this.defaultVisulisation);
         },
 
         afterSave: function() {
@@ -201,16 +206,24 @@
             return body;
         },
 
+        getDefaultViz: function(viz) {
+            if (this.defaultVisulisation == viz) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+
         renderBase: function() {
             var data = {
                     "templates" : [ {
                         id : "barChartViz",
                         name : "Bar Chart",
-                        selected : false
+                        selected : this.getDefaultViz("barChartViz")
                     }, {
                         id : "tableViz",
                         name : "Table",
-                        selected : true
+                        selected : this.getDefaultViz("tableViz")
                     } ],
                     "headerText" : this.headerText
             };

@@ -11,7 +11,7 @@
                     <div id="squid-api-dataviz-template-selector">
                         <select class="form-control" id="template-selector">
                             {{#each templates}}
-                            <option id="{{id}}" {{#if selected}}selected=selected{{/if}}>{{name}}</option>
+                                <option value="{{id}}" {{#if selected}}selected=selected{{/if}}>{{name}}</option>
                             {{/each}}
                         </select>
                     </div>
