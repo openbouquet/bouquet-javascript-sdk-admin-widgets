@@ -3267,6 +3267,9 @@ function program1(depth0,data) {
 
                 // update button text
                 button.text(buttonText);
+
+                // trigger an apply
+                this.renderPreview();
             },
             'click .save': function(event) {
                 this.saveViz(event);

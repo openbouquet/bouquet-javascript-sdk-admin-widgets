@@ -98,6 +98,9 @@
 
                 // update button text
                 button.text(buttonText);
+
+                // trigger an apply
+                this.renderPreview();
             },
             'click .save': function(event) {
                 this.saveViz(event);
