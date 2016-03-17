@@ -227,6 +227,10 @@
 
         renderPreview: function() {
             var body = this.editor.getSession().getValue();
+
+            // empty existing dataviz
+            $("#" + this.dataVizEl).empty();
+
             /*jslint evil: true */
             if (this.model.get("results")) {
                 new Function('analysis', 'el', body)(this.model, this.dataVizEl);

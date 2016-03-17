@@ -500,7 +500,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<div class=\"squid-api-dataviz-creator\">\n    <div class=\"row\">\n        <div class=\"col-md-6 editor-container\">\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-editor\" />\n            <div class=\"configuration\">\n                <div class=\"col-md-8 pull-left\">\n                    <div class=\"col-md-6\">\n                        <button class=\"btn btn-default save\"><i class=\"fa fa-floppy-o\"></i> Publish Bookmark</button>\n                    </div>\n                    <div class=\"col-md-6\">\n                        <input class=\"form-control viz-name\" placeholder=\"Name\"/>\n                    </div>\n                </div>\n                <div class=\"col-md-4\">\n                    <button class=\"btn btn-default pull-right apply\"><i class=\"fa fa-arrow-circle-right\"></i> Apply</button>\n                </div>\n            </div>\n        </div>\n        <div class=\"col-md-6 preview-container\">\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-preview\"/>\n            <button class=\"btn btn-default pull-right form-control editor-toggle\">Hide Editor</button>\n        </div>\n    </div>\n</div>";
+  return "<div class=\"squid-api-dataviz-creator\">\n    <div class=\"row\">\n        <div class=\"col-md-6 editor-container\">\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-editor\" />\n            <div class=\"configuration\">\n                <div class=\"col-md-8 pull-left\">\n                    <div class=\"col-md-6\">\n                        <button class=\"btn btn-default save\"><i class=\"fa fa-floppy-o\"></i> Publish Bookmark</button>\n                    </div>\n                    <div class=\"col-md-6\">\n                        <input class=\"form-control viz-name\" placeholder=\"Name\"/>\n                    </div>\n                </div>\n                <div class=\"col-md-4\">\n                    <button class=\"btn btn-default pull-right apply\"><i class=\"fa fa-arrow-circle-right\"></i> Apply</button>\n                </div>\n            </div>\n        </div>\n        <button class=\"btn btn-default pull-right form-control editor-toggle\">Hide Editor</button>\n        <div class=\"col-md-6 preview-container\">\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-preview\"/>\n        </div>\n    </div>\n</div>";
   });
 
 this["squid_api"]["template"]["squid_api_dimension_selector_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -3356,6 +3356,10 @@ function program1(depth0,data) {
 
         renderPreview: function() {
             var body = this.editor.getSession().getValue();
+
+            // empty existing dataviz
+            $("#" + this.dataVizEl).empty();
+
             /*jslint evil: true */
             if (this.model.get("results")) {
                 new Function('analysis', 'el', body)(this.model, this.dataVizEl);
