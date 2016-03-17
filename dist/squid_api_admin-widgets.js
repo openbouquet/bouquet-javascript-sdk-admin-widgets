@@ -497,10 +497,36 @@ function program5(depth0,data) {
 this["squid_api"]["template"]["squid_api_dataviz_creator"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
   
+  var buffer = "", stack1, helper;
+  buffer += "\n        			<option id=\"";
+  if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ">";
+  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</option>\n        			";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  
+  return "selected=selected";
+  }
 
-
-  return "<div class=\"squid-api-dataviz-creator\">\n    <div class=\"row\">\n        <div class=\"col-md-6 editor-container\">\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-editor\" />\n            <div class=\"configuration\">\n                <div class=\"col-md-8 pull-left\">\n                    <div class=\"col-md-6\">\n                        <button class=\"btn btn-default save\"><i class=\"fa fa-floppy-o\"></i> Publish Bookmark</button>\n                    </div>\n                    <div class=\"col-md-6\">\n                        <input class=\"form-control viz-name\" placeholder=\"Name\"/>\n                    </div>\n                </div>\n                <div class=\"col-md-4\">\n                    <button class=\"btn btn-default pull-right apply\"><i class=\"fa fa-arrow-circle-right\"></i> Apply</button>\n                </div>\n            </div>\n        </div>\n        <div class=\"col-md-6 preview-container\">\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-preview\"/>\n            <button class=\"btn btn-default pull-right form-control editor-toggle\">Hide Editor</button>\n        </div>\n    </div>\n</div>";
+  buffer += "<div class=\"squid-api-dataviz-creator\">\n    <div class=\"row\">\n        <div class=\"col-md-6 editor-container\">\n        	<div id=\"squid-api-dataviz-template-selector\">\n        		Sample templates \n        		<select id=\"template-selector\">\n        			";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.templates), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n        		</select>\n        	</div>\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-editor\"></div>\n            <div class=\"configuration\">\n                <div class=\"col-md-8 pull-left\">\n                    <div class=\"col-md-6\">\n                        <button class=\"btn btn-default save\"><i class=\"fa fa-floppy-o\"></i> Publish Bookmark</button>\n                    </div>\n                    <div class=\"col-md-6\">\n                        <input class=\"form-control viz-name\" placeholder=\"Name\"/>\n                    </div>\n                </div>\n                <div class=\"col-md-4\">\n                    <button class=\"btn btn-default pull-right apply\"><i class=\"fa fa-arrow-circle-right\"></i> Apply</button>\n                </div>\n            </div>\n        </div>\n        <button class=\"btn btn-default pull-right form-control editor-toggle\">Hide Editor</button>\n        <div class=\"col-md-6 preview-container\">\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-preview\"></div>\n        </div>\n    </div>\n</div>";
+  return buffer;
   });
 
 this["squid_api"]["template"]["squid_api_dimension_selector_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -3138,7 +3164,7 @@ function program1(depth0,data) {
         bookmarks: null,
         onEditorToggleChange: null,
         dataVizEl : "squid-api-dataviz-creator-preview",
-        defaultVisulisation : tableViz,
+        
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -3163,6 +3189,8 @@ function program1(depth0,data) {
             } else {
                 console.warn("no analysis model passed to the widget");
             }
+            
+            this.defaultVisulisation = this.barChartViz;
 
             this.listenTo(this.config,"change:bookmark", this.widgetToggle);
             this.listenTo(this.config,"change:dataviz", this.renderCreator);
@@ -3189,6 +3217,7 @@ function program1(depth0,data) {
                     hidden = true;
                     editor.addClass("hidden");
                     applyBtn.addClass("hidden");
+                    this.$el.find("#squid-api-dataviz-template-selector").addClass("hidden");
 
                     // expand preview to 100%
                     preview.removeClass("col-md-6");
@@ -3198,6 +3227,7 @@ function program1(depth0,data) {
                 } else {
                     editor.removeClass("hidden");
                     applyBtn.removeClass("hidden");
+                    this.$el.find("#squid-api-dataviz-template-selector").removeClass("hidden");
 
                     // revert to 50/50
                     preview.removeClass("col-md-12");
@@ -3213,8 +3243,16 @@ function program1(depth0,data) {
                 // update button text
                 button.text(buttonText);
             },
-            'click .save': function() {
-                this.saveViz();
+            'click .save': function(event) {
+                this.saveViz(event);
+            },
+            'change #template-selector': function(event) {
+                var id = event.target[event.target.selectedIndex].id;
+                // update the editor value
+                var entire = this[id].toString();
+                var body = entire.slice(entire.indexOf("{") + 1, entire.lastIndexOf("}"));
+                this.editor.getSession().setValue(body);
+                this.renderPreview();
             }
         },
 
@@ -3227,7 +3265,11 @@ function program1(depth0,data) {
             }
         },
 
-        saveViz: function() {
+        afterSave: function() {
+
+        },
+
+        saveViz: function(e) {
             var me = this;
 
             var bookmarkCollection = this.bookmarks;
@@ -3242,6 +3284,9 @@ function program1(depth0,data) {
                     var bookmarkModelConfig = $.extend(true, {}, bookmarkModel.get("config"));
                     var bookmarkName = bookmarkModel.get("name") + "_" + vizName;
 
+                    // disable button
+                    $(e.currentTarget).attr("disabled", true);
+
                     // store bookmark
                     var arr = [{id : vizName, body: editorBody}];
                     bookmarkModelConfig.dataviz = arr;
@@ -3252,6 +3297,8 @@ function program1(depth0,data) {
                             // overwrite existing dataviz
                             bookmarkModel.save({"config" : bookmarkModelConfig}, {success: function(m) {
                                 me.status.set("message", vizName + " has been updated within bookmark '" + m.get("name") + "'");
+                                // enable button
+                                $(e.currentTarget).attr("disabled", false);
                             }});
                         } else {
                             // create a new bookmark with the new dataviz inside
@@ -3265,7 +3312,12 @@ function program1(depth0,data) {
                             });
                             newBookmarkModel.save({"config" : bookmarkModelConfig}, {success: function(m) {
                                 me.bookmarks.collection.add(m);
+                                // set new bookmark as current one
+                                squid_api.setBookmarkId(m.get("oid"));
+                                
                                 me.status.set("message", bookmarkName + " has been saved as a new bookmark");
+                                // enable button
+                                $(e.currentTarget).attr("disabled", false);
                             }});
                         }
                     } else {
@@ -3273,6 +3325,8 @@ function program1(depth0,data) {
                         bookmarkModel.save({"config" : bookmarkModelConfig}, {success: function(m) {
                             me.bookmarks.collection.add(m);
                             me.status.set("message", vizName + " has been saved to bookmark '" + m.get("name") + "'");
+                            // enable button
+                            $(e.currentTarget).attr("disabled", false);
                         }});
                     }
 
@@ -3294,12 +3348,28 @@ function program1(depth0,data) {
         },
 
         renderBase: function() {
-            this.$el.html(this.template());
+            var data = {
+                    "templates" : [ {
+                        id : "barChartViz",
+                        name : "Bar Chart",
+                        selected : true
+                    }, {
+                        id : "tableViz",
+                        name : "Table",
+                        selected : false
+                    } ]
+            };
+            
+            this.$el.html(this.template(data));
             this.renderCreator();
         },
 
         renderPreview: function() {
             var body = this.editor.getSession().getValue();
+
+            // empty existing dataviz
+            $("#" + this.dataVizEl).empty();
+
             /*jslint evil: true */
             if (this.model.get("results")) {
                 new Function('analysis', 'el', body)(this.model, this.dataVizEl);
@@ -3319,7 +3389,7 @@ function program1(depth0,data) {
             return this;
         },
         
-        tableViz: function(analysis) {
+        tableViz: function(analysis, el) {
             // cleanup the viewport which DOM id is given by the "el" attribute
             d3.select('#'+el).html("");
 
@@ -3363,7 +3433,7 @@ function program1(depth0,data) {
                 });
         },
         
-        barChartViz: function(analysis) {
+        barChartViz: function(analysis, el) {
             // cleanup the viewport which DOM id is given by the "el" attribute
             d3.select('#'+el).html("");
 
@@ -3426,7 +3496,7 @@ function program1(depth0,data) {
                   .attr("width", x.rangeBand())
                   .attr("y", function(d) { return y(d.v[1]); })
                   .attr("height", function(d) { return height - y(d.v[1]); });
-        },
+        }
     });
 
     return View;

@@ -9,7 +9,7 @@
         bookmarks: null,
         onEditorToggleChange: null,
         dataVizEl : "squid-api-dataviz-creator-preview",
-        defaultVisulisation : tableViz,
+        
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -34,6 +34,8 @@
             } else {
                 console.warn("no analysis model passed to the widget");
             }
+            
+            this.defaultVisulisation = this.barChartViz;
 
             this.listenTo(this.config,"change:bookmark", this.widgetToggle);
             this.listenTo(this.config,"change:dataviz", this.renderCreator);
@@ -60,6 +62,7 @@
                     hidden = true;
                     editor.addClass("hidden");
                     applyBtn.addClass("hidden");
+                    this.$el.find("#squid-api-dataviz-template-selector").addClass("hidden");
 
                     // expand preview to 100%
                     preview.removeClass("col-md-6");
@@ -69,6 +72,7 @@
                 } else {
                     editor.removeClass("hidden");
                     applyBtn.removeClass("hidden");
+                    this.$el.find("#squid-api-dataviz-template-selector").removeClass("hidden");
 
                     // revert to 50/50
                     preview.removeClass("col-md-12");
@@ -84,8 +88,16 @@
                 // update button text
                 button.text(buttonText);
             },
-            'click .save': function() {
-                this.saveViz();
+            'click .save': function(event) {
+                this.saveViz(event);
+            },
+            'change #template-selector': function(event) {
+                var id = event.target[event.target.selectedIndex].id;
+                // update the editor value
+                var entire = this[id].toString();
+                var body = entire.slice(entire.indexOf("{") + 1, entire.lastIndexOf("}"));
+                this.editor.getSession().setValue(body);
+                this.renderPreview();
             }
         },
 
@@ -98,7 +110,11 @@
             }
         },
 
-        saveViz: function() {
+        afterSave: function() {
+
+        },
+
+        saveViz: function(e) {
             var me = this;
 
             var bookmarkCollection = this.bookmarks;
@@ -113,6 +129,9 @@
                     var bookmarkModelConfig = $.extend(true, {}, bookmarkModel.get("config"));
                     var bookmarkName = bookmarkModel.get("name") + "_" + vizName;
 
+                    // disable button
+                    $(e.currentTarget).attr("disabled", true);
+
                     // store bookmark
                     var arr = [{id : vizName, body: editorBody}];
                     bookmarkModelConfig.dataviz = arr;
@@ -123,6 +142,8 @@
                             // overwrite existing dataviz
                             bookmarkModel.save({"config" : bookmarkModelConfig}, {success: function(m) {
                                 me.status.set("message", vizName + " has been updated within bookmark '" + m.get("name") + "'");
+                                // enable button
+                                $(e.currentTarget).attr("disabled", false);
                             }});
                         } else {
                             // create a new bookmark with the new dataviz inside
@@ -136,7 +157,12 @@
                             });
                             newBookmarkModel.save({"config" : bookmarkModelConfig}, {success: function(m) {
                                 me.bookmarks.collection.add(m);
+                                // set new bookmark as current one
+                                squid_api.setBookmarkId(m.get("oid"));
+                                
                                 me.status.set("message", bookmarkName + " has been saved as a new bookmark");
+                                // enable button
+                                $(e.currentTarget).attr("disabled", false);
                             }});
                         }
                     } else {
@@ -144,6 +170,8 @@
                         bookmarkModel.save({"config" : bookmarkModelConfig}, {success: function(m) {
                             me.bookmarks.collection.add(m);
                             me.status.set("message", vizName + " has been saved to bookmark '" + m.get("name") + "'");
+                            // enable button
+                            $(e.currentTarget).attr("disabled", false);
                         }});
                     }
 
@@ -165,12 +193,28 @@
         },
 
         renderBase: function() {
-            this.$el.html(this.template());
+            var data = {
+                    "templates" : [ {
+                        id : "barChartViz",
+                        name : "Bar Chart",
+                        selected : true
+                    }, {
+                        id : "tableViz",
+                        name : "Table",
+                        selected : false
+                    } ]
+            };
+            
+            this.$el.html(this.template(data));
             this.renderCreator();
         },
 
         renderPreview: function() {
             var body = this.editor.getSession().getValue();
+
+            // empty existing dataviz
+            $("#" + this.dataVizEl).empty();
+
             /*jslint evil: true */
             if (this.model.get("results")) {
                 new Function('analysis', 'el', body)(this.model, this.dataVizEl);
@@ -190,7 +234,7 @@
             return this;
         },
         
-        tableViz: function(analysis) {
+        tableViz: function(analysis, el) {
             // cleanup the viewport which DOM id is given by the "el" attribute
             d3.select('#'+el).html("");
 
@@ -234,7 +278,7 @@
                 });
         },
         
-        barChartViz: function(analysis) {
+        barChartViz: function(analysis, el) {
             // cleanup the viewport which DOM id is given by the "el" attribute
             d3.select('#'+el).html("");
 
@@ -297,7 +341,7 @@
                   .attr("width", x.rangeBand())
                   .attr("y", function(d) { return y(d.v[1]); })
                   .attr("height", function(d) { return height - y(d.v[1]); });
-        },
+        }
     });
 
     return View;
