@@ -54,6 +54,7 @@
             'click .editor-toggle': function() {
                 // store editor / preview div's
                 var editor = this.$el.find(".editor-container #squid-api-dataviz-creator-editor");
+                var datavizCreator = this.$el.find(".squid-api-dataviz-creator");
                 var applyBtn = this.$el.find(".editor-container .apply");
                 var preview = this.$el.find(".preview-container");
                 var button = $(event.currentTarget).find("button.editor-toggle");
@@ -64,6 +65,7 @@
                 if (! editor.hasClass("hidden")) {
                     hidden = true;
                     editor.addClass("hidden");
+                    datavizCreator.removeClass("bothVisible");
                     applyBtn.addClass("hidden");
                     this.$el.find("#squid-api-dataviz-template-selector").addClass("hidden");
 
@@ -75,6 +77,7 @@
                 } else {
                     editor.removeClass("hidden");
                     applyBtn.removeClass("hidden");
+                    datavizCreator.addClass("bothVisible");
                     this.$el.find("#squid-api-dataviz-template-selector").removeClass("hidden");
 
                     // revert to 50/50

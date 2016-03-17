@@ -668,7 +668,10 @@ div.object-id input[disabled] {
 
 .squid-api-dataviz-creator {
     position: relative;
-    padding-top: 60px;
+    padding-top: 10px;
+}
+.squid-api-dataviz-creator.bothVisible {
+    padding-top: 70px;
 }
 .squid-api-dataviz-creator #squid-api-dataviz-creator-editor {
     height: 60vh;
@@ -677,15 +680,20 @@ div.object-id input[disabled] {
     display: inline-block;
     margin-top: 0px;
     width: 100%;
-    background: #f1eff1;
+    position: relative;
+    left: -30px;
     padding: 10px 0px;
     margin-bottom: 10px;
+}
+.squid-api-dataviz-creator .configuration .apply {
+    position: relative;
+    left: 45px;
 }
 .squid-api-dataviz-creator .editor-container select#template-selector, .squid-api-dataviz-creator .guide  {
     position: absolute;
 }
 .squid-api-dataviz-creator .guide, .squid-api-dataviz-creator select#template-selector{
-    top: -50px;
+    top: -60px;
 }
 .squid-api-dataviz-creator .editor-container select {
     white-space: nowrap;

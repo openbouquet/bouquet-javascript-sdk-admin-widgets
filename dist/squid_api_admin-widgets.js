@@ -533,13 +533,13 @@ function program4(depth0,data) {
   return "selected=selected";
   }
 
-  buffer += "<div class=\"squid-api-dataviz-creator\">\n    <div class=\"row\">\n        <div class=\"col-md-6 editor-container\">\n            <div class=\"col-md-12\">\n                ";
+  buffer += "<div class=\"squid-api-dataviz-creator bothVisible\">\n    <div class=\"row\">\n        <div class=\"col-md-6 editor-container\">\n            <div class=\"col-md-12\">\n                ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.headerText), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n                <div class=\"col-md-2\">\n                    <div id=\"squid-api-dataviz-template-selector\">\n                        <select class=\"form-control\" id=\"template-selector\">\n                            ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.templates), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                        </select>\n                    </div>\n                </div>\n            </div>\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-editor\"></div>\n            <div class=\"configuration\">\n                <div class=\"col-md-8 pull-left\">\n                    <div class=\"col-md-6\">\n                        <button class=\"btn btn-default save\">3. Publish Bookmark</button>\n                    </div>\n                    <div class=\"col-md-6\">\n                        <input class=\"form-control viz-name\" placeholder=\"Name\"/>\n                    </div>\n                </div>\n                <div class=\"col-md-4\">\n                    <button class=\"btn btn-default pull-right apply\"><i class=\"fa fa-arrow-circle-right\"></i> Apply</button>\n                </div>\n            </div>\n        </div>\n        <button class=\"btn btn-default pull-right form-control editor-toggle\">Hide Editor</button>\n        <div class=\"col-md-6 preview-container\">\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-preview\"></div>\n        </div>\n    </div>\n</div>";
+  buffer += "\n                        </select>\n                    </div>\n                </div>\n            </div>\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-editor\">\n                gey\n            </div>\n            <div class=\"configuration\">\n                <div class=\"col-md-8 pull-left\">\n                    <div class=\"col-md-7\">\n                        <button class=\"btn btn-default save\">3. Publish your Bookmark</button>\n                    </div>\n                    <div class=\"col-md-5\">\n                        <input class=\"form-control viz-name\" placeholder=\"Name\"/>\n                    </div>\n                </div>\n                <div class=\"col-md-4\">\n                    <button class=\"btn btn-default pull-right apply\"><i class=\"fa fa-arrow-circle-right\"></i> Apply</button>\n                </div>\n            </div>\n        </div>\n        <button class=\"btn btn-default pull-right form-control editor-toggle\">Hide Editor</button>\n        <div class=\"col-md-6 preview-container\">\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-preview\"></div>\n        </div>\n    </div>\n</div>";
   return buffer;
   });
 
@@ -3223,6 +3223,7 @@ function program1(depth0,data) {
             'click .editor-toggle': function() {
                 // store editor / preview div's
                 var editor = this.$el.find(".editor-container #squid-api-dataviz-creator-editor");
+                var datavizCreator = this.$el.find(".squid-api-dataviz-creator");
                 var applyBtn = this.$el.find(".editor-container .apply");
                 var preview = this.$el.find(".preview-container");
                 var button = $(event.currentTarget).find("button.editor-toggle");
@@ -3233,6 +3234,7 @@ function program1(depth0,data) {
                 if (! editor.hasClass("hidden")) {
                     hidden = true;
                     editor.addClass("hidden");
+                    datavizCreator.removeClass("bothVisible");
                     applyBtn.addClass("hidden");
                     this.$el.find("#squid-api-dataviz-template-selector").addClass("hidden");
 
@@ -3244,6 +3246,7 @@ function program1(depth0,data) {
                 } else {
                     editor.removeClass("hidden");
                     applyBtn.removeClass("hidden");
+                    datavizCreator.addClass("bothVisible");
                     this.$el.find("#squid-api-dataviz-template-selector").removeClass("hidden");
 
                     // revert to 50/50
