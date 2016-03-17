@@ -13,13 +13,22 @@
     margin-top: 0px;
     width: 100%;
     position: relative;
-    left: -30px;
     padding: 10px 0px;
     margin-bottom: 10px;
 }
-.squid-api-dataviz-creator .configuration .apply {
+.squid-api-dataviz-creator .configuration.bothVisible {
+    background: #f1eff1;
+}
+.squid-api-dataviz-creator .configuration .save-wrapper {
     position: relative;
-    left: 45px;
+    right : 30px;
+}
+.squid-api-dataviz-creator .configuration.bothVisible .save-wrapper {
+    top: 55px;
+}
+.squid-api-dataviz-creator .configuration .save, .squid-api-dataviz-creator .editor-toggle {
+    background: #b35f04;
+    color: #fff;
 }
 .squid-api-dataviz-creator .editor-container select#template-selector, .squid-api-dataviz-creator .guide  {
     position: absolute;
@@ -44,9 +53,6 @@
     border: none;
     box-shadow: none;
     text-decoration: underline;
-}
-.squid-api-dataviz-creator .configuration input {
-    margin-top: 3px;
 }
 .squid-api-dataviz-creator .configuration .save-bookmark {
     position: relative;

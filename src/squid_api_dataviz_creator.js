@@ -55,6 +55,7 @@
                 // store editor / preview div's
                 var editor = this.$el.find(".editor-container #squid-api-dataviz-creator-editor");
                 var datavizCreator = this.$el.find(".squid-api-dataviz-creator");
+                var configuration = this.$el.find(".squid-api-dataviz-creator .editor-container .configuration");
                 var applyBtn = this.$el.find(".editor-container .apply");
                 var preview = this.$el.find(".preview-container");
                 var button = $(event.currentTarget).find("button.editor-toggle");
@@ -66,6 +67,7 @@
                     hidden = true;
                     editor.addClass("hidden");
                     datavizCreator.removeClass("bothVisible");
+                    configuration.removeClass("bothVisible");
                     applyBtn.addClass("hidden");
                     this.$el.find("#squid-api-dataviz-template-selector").addClass("hidden");
 
@@ -77,6 +79,7 @@
                 } else {
                     editor.removeClass("hidden");
                     applyBtn.removeClass("hidden");
+                    configuration.addClass("bothVisible");
                     datavizCreator.addClass("bothVisible");
                     this.$el.find("#squid-api-dataviz-template-selector").removeClass("hidden");
 
@@ -203,11 +206,11 @@
                     "templates" : [ {
                         id : "barChartViz",
                         name : "Bar Chart",
-                        selected : true
+                        selected : false
                     }, {
                         id : "tableViz",
                         name : "Table",
-                        selected : false
+                        selected : true
                     } ],
                     "headerText" : this.headerText
             };
@@ -296,7 +299,7 @@
 
             // build a simple barchart - using code from https://bl.ocks.org/mbostock/3885304
             var margin = {top: 20, right: 20, bottom: 30, left: 40},
-                width = 600 - margin.left - margin.right,
+                width = $('#'+el).width() - margin.left - margin.right,
                 height = 500 - margin.top - margin.bottom;
 
             var x = d3.scale.ordinal()
