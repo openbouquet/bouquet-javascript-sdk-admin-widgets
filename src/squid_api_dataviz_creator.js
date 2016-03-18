@@ -150,6 +150,9 @@
                     // disable button
                     $(e.currentTarget).attr("disabled", true);
 
+                    //overwrite config
+                    bookmarkModelConfig = this.config.toJSON();
+
                     // store bookmark
                     var arr = [{id : vizName, body: editorBody}];
                     bookmarkModelConfig.dataviz = arr;
