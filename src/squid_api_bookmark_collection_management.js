@@ -15,6 +15,7 @@
         filteredPaths: null,
         filteredOids: null,
         onChangeHandler : null,
+        descriptionHover : null,
 
         init : function(options) {
             var me = this;
@@ -31,6 +32,9 @@
             }
             if (options.onChangeHandler) {
             	this.onChangeHandler = options.onChangeHandler;
+            }
+            if (options.descriptionHover) {
+                this.descriptionHover = options.descriptionHover;
             }
         },
 
@@ -390,10 +394,12 @@
         },
         templateWidgets: function(collapseState) {
             // hoverover
-            this.$el.find("li").tooltip({
-                placement: "top",
-                trigger: "hover"
-            });
+            if (this.descriptionHover) {
+                this.$el.find("li").tooltip({
+                    placement: "top",
+                    trigger: "hover"
+                });
+            }
             // accordion & events
             this.$el.find(".collapse").on('hidden.bs.collapse', { context: this }, function (event) {
                 var item = $(this).attr("id");

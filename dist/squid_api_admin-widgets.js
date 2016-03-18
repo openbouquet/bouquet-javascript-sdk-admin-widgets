@@ -276,17 +276,17 @@ function program11(depth0,data) {
   if (helper = helpers.oid) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.oid); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\">\n                                                                                                                <span class=\"select\">\n                                                                                                                    <i class=\"fa fa-bookmark-o\"></i> ";
+    + "\">\n                                                            <span class=\"select\">\n                                                                <i class=\"fa fa-bookmark-o\"></i> ";
   if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\n                                                                                                                </span>\n                                                                                                                ";
+    + "\n                                                            </span>\n                                                            ";
   stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(14, program14, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                                                                                                ";
+  buffer += "\n                                                            ";
   stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(16, program16, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                                                                                            </li>\n                                                    ";
+  buffer += "\n                                                        </li>\n                                                    ";
   return buffer;
   }
 function program12(depth0,data) {
@@ -298,13 +298,13 @@ function program12(depth0,data) {
 function program14(depth0,data) {
   
   
-  return "\n                                                                                                                    <span class=\"delete collection-option\">\n                                                                                                                        <i class=\"fa fa-trash-o\" title=\"delete\"></i>\n                                                                                                                    </span>\n                                                                                                                ";
+  return "\n                                                                <span class=\"delete collection-option\">\n                                                                    <i class=\"fa fa-trash-o\" title=\"delete\"></i>\n                                                                </span>\n                                                            ";
   }
 
 function program16(depth0,data) {
   
   
-  return "\n                                                                                                                    <span class=\"edit collection-option\">\n                                                                                                                        <i class=\"fa fa-pencil-square-o\" title=\"edit\"></i>\n                                                                                                                    </span>\n                                                                                                                ";
+  return "\n                                                                <span class=\"edit collection-option\">\n                                                                    <i class=\"fa fa-pencil-square-o\" title=\"edit\"></i>\n                                                                </span>\n                                                            ";
   }
 
 function program18(depth0,data) {
@@ -502,7 +502,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n                    <div class=\"col-md-10\">\n                        <label class=\"guide\">";
+  buffer += "\n                    <div class=\"col-md-8\">\n                        <label class=\"guide\">";
   if (helper = helpers.headerText) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.headerText); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -513,33 +513,25 @@ function program1(depth0,data) {
 function program3(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n                            <option id=\"";
+  buffer += "\n                                <option value=\"";
   if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">";
+    + "\">";
   if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "</option>\n                            ";
   return buffer;
   }
-function program4(depth0,data) {
-  
-  
-  return "selected=selected";
-  }
 
   buffer += "<div class=\"squid-api-dataviz-creator bothVisible\">\n    <div class=\"row\">\n        <div class=\"col-md-6 editor-container\">\n            <div class=\"col-md-12\">\n                ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.headerText), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                <div class=\"col-md-2\">\n                    <div id=\"squid-api-dataviz-template-selector\">\n                        <select class=\"form-control\" id=\"template-selector\">\n                            ";
+  buffer += "\n                <div class=\"col-md-4\">\n                    <div id=\"squid-api-dataviz-template-selector\">\n                        <select class=\"form-control\" id=\"template-selector\">\n                            <option selected=selected value=\"none-selected\">Choose Template</option>\n                            ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.templates), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                        </select>\n                    </div>\n                </div>\n            </div>\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-editor\">\n                gey\n            </div>\n            <div class=\"configuration\">\n                <div class=\"col-md-8 pull-left\">\n                    <div class=\"col-md-7\">\n                        <button class=\"btn btn-default save\">3. Publish your Bookmark</button>\n                    </div>\n                    <div class=\"col-md-5\">\n                        <input class=\"form-control viz-name\" placeholder=\"Name\"/>\n                    </div>\n                </div>\n                <div class=\"col-md-4\">\n                    <button class=\"btn btn-default pull-right apply\"><i class=\"fa fa-arrow-circle-right\"></i> Apply</button>\n                </div>\n            </div>\n        </div>\n        <button class=\"btn btn-default pull-right form-control editor-toggle\">Hide Editor</button>\n        <div class=\"col-md-6 preview-container\">\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-preview\"></div>\n        </div>\n    </div>\n</div>";
+  buffer += "\n                        </select>\n                    </div>\n                </div>\n            </div>\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-editor\">\n\n            </div>\n            <div class=\"configuration bothVisible\">\n                <div class=\"col-md-8 save-wrapper pull-left\">\n                    <div class=\"col-md-7\">\n                        <button class=\"btn btn-default save\">3. Publish your Bookmark</button>\n                    </div>\n                    <div class=\"col-md-5\">\n                        <input class=\"form-control viz-name\" placeholder=\"Name\"/>\n                    </div>\n                </div>\n                <div class=\"col-md-4\">\n                    <div class=\"apply-wrapper\">\n                        <button class=\"btn btn-default pull-right apply\"><i class=\"fa fa-arrow-circle-right\"></i> Apply</button>\n                    </div>\n                </div>\n            </div>\n        </div>\n        <button class=\"btn btn-default pull-right form-control editor-toggle\">Hide Editor</button>\n        <div class=\"col-md-6 preview-container\">\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-preview\"></div>\n        </div>\n    </div>\n</div>";
   return buffer;
   });
 
@@ -1546,6 +1538,7 @@ function program1(depth0,data) {
         filteredPaths: null,
         filteredOids: null,
         onChangeHandler : null,
+        descriptionHover : null,
 
         init : function(options) {
             var me = this;
@@ -1562,6 +1555,9 @@ function program1(depth0,data) {
             }
             if (options.onChangeHandler) {
             	this.onChangeHandler = options.onChangeHandler;
+            }
+            if (options.descriptionHover) {
+                this.descriptionHover = options.descriptionHover;
             }
         },
 
@@ -1921,10 +1917,12 @@ function program1(depth0,data) {
         },
         templateWidgets: function(collapseState) {
             // hoverover
-            this.$el.find("li").tooltip({
-                placement: "top",
-                trigger: "hover"
-            });
+            if (this.descriptionHover) {
+                this.$el.find("li").tooltip({
+                    placement: "top",
+                    trigger: "hover"
+                });
+            }
             // accordion & events
             this.$el.find(".collapse").on('hidden.bs.collapse', { context: this }, function (event) {
                 var item = $(this).attr("id");
@@ -3195,6 +3193,9 @@ function program1(depth0,data) {
 
                 });
             }
+
+            this.defaultVisulisation = this.barChartViz;
+
             if (options.onEditorToggleChange) {
                 this.onEditorToggleChange = options.onEditorToggleChange;
             }
@@ -3206,8 +3207,6 @@ function program1(depth0,data) {
             } else {
                 console.warn("no analysis model passed to the widget");
             }
-            
-            this.defaultVisulisation = this.barChartViz;
 
             this.listenTo(this.config,"change:bookmark", this.widgetToggle);
             this.listenTo(this.config,"change:dataviz", this.renderCreator);
@@ -3220,13 +3219,14 @@ function program1(depth0,data) {
             'click .apply': function(event) {
                 this.renderPreview();
             },
-            'click .editor-toggle': function() {
+            'click .editor-toggle': function(event) {
                 // store editor / preview div's
                 var editor = this.$el.find(".editor-container #squid-api-dataviz-creator-editor");
                 var datavizCreator = this.$el.find(".squid-api-dataviz-creator");
+                var configuration = this.$el.find(".squid-api-dataviz-creator .editor-container .configuration");
                 var applyBtn = this.$el.find(".editor-container .apply");
                 var preview = this.$el.find(".preview-container");
-                var button = $(event.currentTarget).find("button.editor-toggle");
+                var button = $(event.currentTarget);
                 var buttonText;
                 var hidden = false;
 
@@ -3235,6 +3235,7 @@ function program1(depth0,data) {
                     hidden = true;
                     editor.addClass("hidden");
                     datavizCreator.removeClass("bothVisible");
+                    configuration.removeClass("bothVisible");
                     applyBtn.addClass("hidden");
                     this.$el.find("#squid-api-dataviz-template-selector").addClass("hidden");
 
@@ -3246,6 +3247,7 @@ function program1(depth0,data) {
                 } else {
                     editor.removeClass("hidden");
                     applyBtn.removeClass("hidden");
+                    configuration.addClass("bothVisible");
                     datavizCreator.addClass("bothVisible");
                     this.$el.find("#squid-api-dataviz-template-selector").removeClass("hidden");
 
@@ -3262,17 +3264,22 @@ function program1(depth0,data) {
 
                 // update button text
                 button.text(buttonText);
+
+                // trigger an apply
+                this.renderPreview();
             },
             'click .save': function(event) {
                 this.saveViz(event);
             },
             'change #template-selector': function(event) {
-                var id = event.target[event.target.selectedIndex].id;
+                var val = $(event.currentTarget).val();
                 // update the editor value
-                var entire = this[id].toString();
-                var body = entire.slice(entire.indexOf("{") + 1, entire.lastIndexOf("}"));
-                this.editor.getSession().setValue(body);
-                this.renderPreview();
+                if (this[val]) {
+                    var entire = this[val].toString();
+                    var body = entire.slice(entire.indexOf("{") + 1, entire.lastIndexOf("}"));
+                    this.editor.getSession().setValue(body);
+                    this.renderPreview();
+                }
             }
         },
 
@@ -3283,6 +3290,9 @@ function program1(depth0,data) {
             } else {
                 this.$el.find(".squid-api-dataviz-creator").append("<div class='overlay'></div>'");
             }
+
+            // reset selector
+            this.$el.find("#template-selector").val("none-selected");
         },
 
         afterSave: function() {
@@ -3306,6 +3316,9 @@ function program1(depth0,data) {
 
                     // disable button
                     $(e.currentTarget).attr("disabled", true);
+
+                    //overwrite config
+                    bookmarkModelConfig = this.config.toJSON();
 
                     // store bookmark
                     var arr = [{id : vizName, body: editorBody}];
@@ -3371,12 +3384,13 @@ function program1(depth0,data) {
             var data = {
                     "templates" : [ {
                         id : "barChartViz",
-                        name : "Bar Chart",
-                        selected : true
+                        name : "Bar Chart"
                     }, {
                         id : "tableViz",
-                        name : "Table",
-                        selected : false
+                        name : "Table"
+                    }, {
+                        id : "pieChartViz",
+                        name : "Pie Chart"
                     } ],
                     "headerText" : this.headerText
             };
@@ -3409,114 +3423,177 @@ function program1(depth0,data) {
 
             return this;
         },
-        
-        tableViz: function(analysis, el) {
-            // cleanup the viewport which DOM id is given by the "el" attribute
-            d3.select('#'+el).html("");
 
-            // specify the rendering div
-            var container = d3.select('#'+el);
+        /**
+         * pie-chart datatviz sample code.
+         * Note : indentation was reduced on purpose
+         */
+        pieChartViz: function(analysis, el) {
+var data = analysis.get("results").rows.slice(0, 5);
 
-            // create table & append table headers
-            container.append('table')
-                .append('thead')
-                .append('tr');
+var width = d3.select("#" + el).node().getBoundingClientRect().width,
+    height = 650,
+    radius = Math.min(width, height) / 2;
 
-            // store our created table
-            var table = container.select('table');
+var color = d3.scale.ordinal()
+    .range(["#FF8802", "#BF7C31", "#A65801", "#FFA541", "#FFBD74"]);
 
-            // insert table header data
-            table.select("thead tr")
-                .selectAll("th")
-                .data(analysis.get("results").cols)
-                .enter()
-                .append("th")
-                .text(function(d) {
-                    return d.name;
-                });
+var arc = d3.svg.arc()
+    .outerRadius(radius - 10)
+    .innerRadius(0);
 
-            // insert table body
-            table.append('tbody');
+var labelArc = d3.svg.arc()
+    .outerRadius(radius - 40)
+    .innerRadius(radius - 40);
 
-            // insert table body data
-            table.select("tbody")
-                .selectAll("tr")
-                .data(analysis.get("results").rows)
-                .enter()
-                .append("tr").selectAll("td")
-                .data(function(d) {
-                    return d.v;
-                })
-                .enter()
-                .append("td")
-                .text(function(d) {
-                    return d;
-                });
+var pie = d3.layout.pie()
+    .sort(null)
+    .value(function(d) {
+        return d.v[1];
+    });
+
+var svg = d3.select("#" + el).append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("y", 550)
+    .append("g")
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+
+var g = svg.selectAll(".arc")
+    .data(pie(data))
+    .enter().append("g")
+    .attr("class", "arc");
+
+g.append("path")
+    .attr("d", arc)
+    .style("fill", function(d) {
+        return color(d.value);
+    });
+
+g.append("text")
+    .attr("transform", function(d) { return "translate(" + labelArc.centroid(d) + ")"; })
+    .attr("dy", ".35em")
+    .text(function(d) {
+        return d.data.v[0];
+    });
         },
         
+        /**
+         * table datatviz sample code.
+         * Note : indentation was reduced on purpose
+         */ 
+        tableViz: function(analysis, el) {
+// cleanup the viewport which DOM id is given by the "el" attribute
+d3.select('#'+el).html("");
+
+// specify the rendering div
+var container = d3.select('#'+el);
+
+// create table & append table headers
+container.append('table')
+    .append('thead')
+    .append('tr');
+
+// store our created table
+var table = container.select('table');
+
+// insert table header data
+table.select("thead tr")
+    .selectAll("th")
+    .data(analysis.get("results").cols)
+    .enter()
+    .append("th")
+    .text(function(d) {
+        return d.name;
+    });
+
+// insert table body
+table.append('tbody');
+
+// insert table body data
+table.select("tbody")
+    .selectAll("tr")
+    .data(analysis.get("results").rows)
+    .enter()
+    .append("tr").selectAll("td")
+    .data(function(d) {
+        return d.v;
+    })
+    .enter()
+    .append("td")
+    .text(function(d) {
+        return d;
+    });
+        },
+        
+        /**
+         * table datatviz sample code.
+         * Note : indentation was reduced on purpose
+         */ 
         barChartViz: function(analysis, el) {
-            // cleanup the viewport which DOM id is given by the "el" attribute
-            d3.select('#'+el).html("");
+// cleanup the viewport which DOM id is given by the "el" attribute
+d3.select('#'+el).html("");
 
-            // get the data for Bouquet's analysisJob object passed as "analyisis" attribute
-            var data = analysis.get("results").rows;
-            // just take the first n rows
-            data = data.splice(0,20);
+// get the data for Bouquet's analysisJob object passed as "analyisis" attribute
+var data = analysis.get("results").rows;
+// just take the first n rows
+data = data.slice(0,20);
 
-            // build a simple barchart - using code from https://bl.ocks.org/mbostock/3885304
-            var margin = {top: 20, right: 20, bottom: 30, left: 40},
-                width = 600 - margin.left - margin.right,
-                height = 500 - margin.top - margin.bottom;
+// build a simple barchart - using code from https://bl.ocks.org/mbostock/3885304
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = $('#'+el).width() - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
 
-            var x = d3.scale.ordinal()
-                .rangeRoundBands([0, width], 0.2);
+var x = d3.scale.ordinal()
+    .rangeRoundBands([0, width], 0.2);
 
-            var y = d3.scale.linear()
-                .range([height, 0]);
+var y = d3.scale.linear()
+    .range([height, 0]);
 
-            var xAxis = d3.svg.axis()
-                .scale(x)
-                .orient("bottom");
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
 
-            var yAxis = d3.svg.axis()
-                .scale(y)
-                .orient("left");
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left");
 
-            var svg = d3.select("#"+el).append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-              .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+var svg = d3.select("#"+el).append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-              // x axis values are in the first column (0) of the results array
-              x.domain(data.map(function(d) { return d.v[0]; }));
+  // x axis values are in the first column (0) of the results array
+  x.domain(data.map(function(d) { return d.v[0]; }));
 
-              // y axis values are in the second column (1) of the results array
-              y.domain([0, d3.max(data, function(d) { return d.v[1]; })]);
+  // y axis values are in the second column (1) of the results array
+  y.domain([0, d3.max(data, function(d) { return d.v[1]; })]);
 
-              svg.append("g")
-                  .attr("class", "x axis")
-                  .attr("transform", "translate(0," + height + ")")
-                  .call(xAxis);
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
 
-              svg.append("g")
-                  .attr("class", "y axis")
-                  .call(yAxis)
-                .append("text")
-                  .attr("transform", "rotate(-90)")
-                  .attr("y", 6)
-                  .attr("dy", ".71em")
-                  .style("text-anchor", "end")
-                  .text("Y Axis");
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Y Axis");
 
-              svg.selectAll(".bar")
-                  .data(data)
-                .enter().append("rect")
-                  .attr("style", "fill: steelblue;")
-                  .attr("x", function(d) { return x(d.v[0]); })
-                  .attr("width", x.rangeBand())
-                  .attr("y", function(d) { return y(d.v[1]); })
-                  .attr("height", function(d) { return height - y(d.v[1]); });
+  svg.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("style", "fill: steelblue;")
+      .attr("x", function(d) { return x(d.v[0]); })
+      .attr("width", x.rangeBand())
+      .attr("y", function(d) { return y(d.v[1]); })
+      .attr("height", function(d) { return height - y(d.v[1]); });
         }
     });
 
