@@ -3213,7 +3213,7 @@ function program1(depth0,data) {
             'click .apply': function(event) {
                 this.renderPreview();
             },
-            'click .editor-toggle': function() {
+            'click .editor-toggle': function(event) {
                 // store editor / preview div's
                 var editor = this.$el.find(".editor-container #squid-api-dataviz-creator-editor");
                 var datavizCreator = this.$el.find(".squid-api-dataviz-creator");
