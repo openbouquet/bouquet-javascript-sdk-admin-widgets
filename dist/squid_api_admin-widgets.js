@@ -3389,113 +3389,121 @@ function program1(depth0,data) {
             return this;
         },
         
+        /**
+         * table datatviz sample code.
+         * Note : indentation was reduced on purpose
+         */ 
         tableViz: function(analysis, el) {
-            // cleanup the viewport which DOM id is given by the "el" attribute
-            d3.select('#'+el).html("");
+// cleanup the viewport which DOM id is given by the "el" attribute
+d3.select('#'+el).html("");
 
-            // specify the rendering div
-            var container = d3.select('#'+el);
+// specify the rendering div
+var container = d3.select('#'+el);
 
-            // create table & append table headers
-            container.append('table')
-                .append('thead')
-                .append('tr');
+// create table & append table headers
+container.append('table')
+    .append('thead')
+    .append('tr');
 
-            // store our created table
-            var table = container.select('table');
+// store our created table
+var table = container.select('table');
 
-            // insert table header data
-            table.select("thead tr")
-                .selectAll("th")
-                .data(analysis.get("results").cols)
-                .enter()
-                .append("th")
-                .text(function(d) {
-                    return d.name;
-                });
+// insert table header data
+table.select("thead tr")
+    .selectAll("th")
+    .data(analysis.get("results").cols)
+    .enter()
+    .append("th")
+    .text(function(d) {
+        return d.name;
+    });
 
-            // insert table body
-            table.append('tbody');
+// insert table body
+table.append('tbody');
 
-            // insert table body data
-            table.select("tbody")
-                .selectAll("tr")
-                .data(analysis.get("results").rows)
-                .enter()
-                .append("tr").selectAll("td")
-                .data(function(d) {
-                    return d.v;
-                })
-                .enter()
-                .append("td")
-                .text(function(d) {
-                    return d;
-                });
+// insert table body data
+table.select("tbody")
+    .selectAll("tr")
+    .data(analysis.get("results").rows)
+    .enter()
+    .append("tr").selectAll("td")
+    .data(function(d) {
+        return d.v;
+    })
+    .enter()
+    .append("td")
+    .text(function(d) {
+        return d;
+    });
         },
         
+        /**
+         * table datatviz sample code.
+         * Note : indentation was reduced on purpose
+         */ 
         barChartViz: function(analysis, el) {
-            // cleanup the viewport which DOM id is given by the "el" attribute
-            d3.select('#'+el).html("");
+// cleanup the viewport which DOM id is given by the "el" attribute
+d3.select('#'+el).html("");
 
-            // get the data for Bouquet's analysisJob object passed as "analyisis" attribute
-            var data = analysis.get("results").rows;
-            // just take the first n rows
-            data = data.splice(0,20);
+// get the data for Bouquet's analysisJob object passed as "analyisis" attribute
+var data = analysis.get("results").rows;
+// just take the first n rows
+data = data.splice(0,20);
 
-            // build a simple barchart - using code from https://bl.ocks.org/mbostock/3885304
-            var margin = {top: 20, right: 20, bottom: 30, left: 40},
-                width = 600 - margin.left - margin.right,
-                height = 500 - margin.top - margin.bottom;
+// build a simple barchart - using code from https://bl.ocks.org/mbostock/3885304
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = 600 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
 
-            var x = d3.scale.ordinal()
-                .rangeRoundBands([0, width], 0.2);
+var x = d3.scale.ordinal()
+    .rangeRoundBands([0, width], 0.2);
 
-            var y = d3.scale.linear()
-                .range([height, 0]);
+var y = d3.scale.linear()
+    .range([height, 0]);
 
-            var xAxis = d3.svg.axis()
-                .scale(x)
-                .orient("bottom");
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
 
-            var yAxis = d3.svg.axis()
-                .scale(y)
-                .orient("left");
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left");
 
-            var svg = d3.select("#"+el).append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-              .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+var svg = d3.select("#"+el).append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-              // x axis values are in the first column (0) of the results array
-              x.domain(data.map(function(d) { return d.v[0]; }));
+  // x axis values are in the first column (0) of the results array
+  x.domain(data.map(function(d) { return d.v[0]; }));
 
-              // y axis values are in the second column (1) of the results array
-              y.domain([0, d3.max(data, function(d) { return d.v[1]; })]);
+  // y axis values are in the second column (1) of the results array
+  y.domain([0, d3.max(data, function(d) { return d.v[1]; })]);
 
-              svg.append("g")
-                  .attr("class", "x axis")
-                  .attr("transform", "translate(0," + height + ")")
-                  .call(xAxis);
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
 
-              svg.append("g")
-                  .attr("class", "y axis")
-                  .call(yAxis)
-                .append("text")
-                  .attr("transform", "rotate(-90)")
-                  .attr("y", 6)
-                  .attr("dy", ".71em")
-                  .style("text-anchor", "end")
-                  .text("Y Axis");
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Y Axis");
 
-              svg.selectAll(".bar")
-                  .data(data)
-                .enter().append("rect")
-                  .attr("style", "fill: steelblue;")
-                  .attr("x", function(d) { return x(d.v[0]); })
-                  .attr("width", x.rangeBand())
-                  .attr("y", function(d) { return y(d.v[1]); })
-                  .attr("height", function(d) { return height - y(d.v[1]); });
+  svg.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("style", "fill: steelblue;")
+      .attr("x", function(d) { return x(d.v[0]); })
+      .attr("width", x.rangeBand())
+      .attr("y", function(d) { return y(d.v[1]); })
+      .attr("height", function(d) { return height - y(d.v[1]); });
         }
     });
 
