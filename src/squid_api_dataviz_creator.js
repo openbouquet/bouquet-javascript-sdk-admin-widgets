@@ -224,6 +224,9 @@
                     }, {
                         id : "pieChartViz",
                         name : "Pie Chart"
+                    }, {
+                        id : "jsonView",
+                        name : "JSON View"
                     } ],
                     "headerText" : this.headerText
             };
@@ -310,6 +313,10 @@ g.append("text")
     .text(function(d) {
         return d.data.v[0];
     });
+        },
+
+        jsonView: function(analysis, el) {
+d3.select("#" + el).append('pre').text(JSON.stringify(analysis.toJSON(), null, 4));
         },
         
         /**
