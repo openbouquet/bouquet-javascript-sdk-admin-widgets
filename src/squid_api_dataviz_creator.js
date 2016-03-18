@@ -254,6 +254,10 @@
             return this;
         },
         
+        /**
+         * table datatviz sample code.
+         * Note : indentation was reduced on purpose
+         */ 
         tableViz: function(analysis, el) {
 // cleanup the viewport which DOM id is given by the "el" attribute
 d3.select('#'+el).html("");
@@ -298,6 +302,10 @@ table.select("tbody")
     });
         },
         
+        /**
+         * table datatviz sample code.
+         * Note : indentation was reduced on purpose
+         */ 
         barChartViz: function(analysis, el) {
 // cleanup the viewport which DOM id is given by the "el" attribute
 d3.select('#'+el).html("");
