@@ -313,7 +313,7 @@ d3.select('#'+el).html("");
 // get the data for Bouquet's analysisJob object passed as "analyisis" attribute
 var data = analysis.get("results").rows;
 // just take the first n rows
-data = data.splice(0,20);
+data = data.slice(0,20);
 
 // build a simple barchart - using code from https://bl.ocks.org/mbostock/3885304
 var margin = {top: 20, right: 20, bottom: 30, left: 40},
