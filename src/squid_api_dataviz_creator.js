@@ -262,15 +262,14 @@
          * Note : indentation was reduced on purpose
          */
         pieChartViz: function(analysis, el) {
-var elementWidth = d3.select("#" + el).node().getBoundingClientRect().width;
 var data = analysis.get("results").rows.slice(0, 5);
 
-var width = elementWidth,
-    height = 500,
+var width = d3.select("#" + el).node().getBoundingClientRect().width,
+    height = 650,
     radius = Math.min(width, height) / 2;
 
 var color = d3.scale.ordinal()
-    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+    .range(["#FF8802", "#BF7C31", "#A65801", "#FFA541", "#FFBD74"]);
 
 var arc = d3.svg.arc()
     .outerRadius(radius - 10)
@@ -289,6 +288,7 @@ var pie = d3.layout.pie()
 var svg = d3.select("#" + el).append("svg")
     .attr("width", width)
     .attr("height", height)
+    .attr("y", 550)
     .append("g")
     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
