@@ -9,7 +9,7 @@
         bookmarks: null,
         onEditorToggleChange: null,
         dataVizEl : "squid-api-dataviz-creator-preview",
-        
+        headerText: null,
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -26,16 +26,20 @@
 
                 });
             }
+
+            this.defaultVisulisation = this.barChartViz;
+
             if (options.onEditorToggleChange) {
                 this.onEditorToggleChange = options.onEditorToggleChange;
+            }
+            if (options.headerText) {
+                this.headerText = options.headerText;
             }
             if (options.model) {
                 this.model = options.model;
             } else {
                 console.warn("no analysis model passed to the widget");
             }
-            
-            this.defaultVisulisation = this.barChartViz;
 
             this.listenTo(this.config,"change:bookmark", this.widgetToggle);
             this.listenTo(this.config,"change:dataviz", this.renderCreator);
@@ -51,6 +55,8 @@
             'click .editor-toggle': function() {
                 // store editor / preview div's
                 var editor = this.$el.find(".editor-container #squid-api-dataviz-creator-editor");
+                var datavizCreator = this.$el.find(".squid-api-dataviz-creator");
+                var configuration = this.$el.find(".squid-api-dataviz-creator .editor-container .configuration");
                 var applyBtn = this.$el.find(".editor-container .apply");
                 var preview = this.$el.find(".preview-container");
                 var button = $(event.currentTarget).find("button.editor-toggle");
@@ -61,6 +67,8 @@
                 if (! editor.hasClass("hidden")) {
                     hidden = true;
                     editor.addClass("hidden");
+                    datavizCreator.removeClass("bothVisible");
+                    configuration.removeClass("bothVisible");
                     applyBtn.addClass("hidden");
                     this.$el.find("#squid-api-dataviz-template-selector").addClass("hidden");
 
@@ -72,6 +80,8 @@
                 } else {
                     editor.removeClass("hidden");
                     applyBtn.removeClass("hidden");
+                    configuration.addClass("bothVisible");
+                    datavizCreator.addClass("bothVisible");
                     this.$el.find("#squid-api-dataviz-template-selector").removeClass("hidden");
 
                     // revert to 50/50
@@ -87,17 +97,22 @@
 
                 // update button text
                 button.text(buttonText);
+
+                // trigger an apply
+                this.renderPreview();
             },
             'click .save': function(event) {
                 this.saveViz(event);
             },
             'change #template-selector': function(event) {
-                var id = event.target[event.target.selectedIndex].id;
+                var val = $(event.currentTarget).val();
                 // update the editor value
-                var entire = this[id].toString();
-                var body = entire.slice(entire.indexOf("{") + 1, entire.lastIndexOf("}"));
-                this.editor.getSession().setValue(body);
-                this.renderPreview();
+                if (this[val]) {
+                    var entire = this[val].toString();
+                    var body = entire.slice(entire.indexOf("{") + 1, entire.lastIndexOf("}"));
+                    this.editor.getSession().setValue(body);
+                    this.renderPreview();
+                }
             }
         },
 
@@ -108,6 +123,9 @@
             } else {
                 this.$el.find(".squid-api-dataviz-creator").append("<div class='overlay'></div>'");
             }
+
+            // reset selector
+            this.$el.find("#template-selector").val("none-selected");
         },
 
         afterSave: function() {
@@ -196,13 +214,12 @@
             var data = {
                     "templates" : [ {
                         id : "barChartViz",
-                        name : "Bar Chart",
-                        selected : true
+                        name : "Bar Chart"
                     }, {
                         id : "tableViz",
-                        name : "Table",
-                        selected : false
-                    } ]
+                        name : "Table"
+                    } ],
+                    "headerText" : this.headerText
             };
             
             this.$el.html(this.template(data));
@@ -297,7 +314,7 @@ data = data.splice(0,20);
 
 // build a simple barchart - using code from https://bl.ocks.org/mbostock/3885304
 var margin = {top: 20, right: 20, bottom: 30, left: 40},
-    width = 600 - margin.left - margin.right,
+    width = $('#'+el).width() - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
 var x = d3.scale.ordinal()

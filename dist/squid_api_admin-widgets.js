@@ -502,30 +502,36 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n        			<option id=\"";
+  buffer += "\n                    <div class=\"col-md-8\">\n                        <label class=\"guide\">";
+  if (helper = helpers.headerText) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.headerText); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</label>\n                    </div>\n                ";
+  return buffer;
+  }
+
+function program3(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n                                <option value=\"";
   if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">";
+    + "\">";
   if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</option>\n        			";
+    + "</option>\n                            ";
   return buffer;
   }
-function program2(depth0,data) {
-  
-  
-  return "selected=selected";
-  }
 
-  buffer += "<div class=\"squid-api-dataviz-creator\">\n    <div class=\"row\">\n        <div class=\"col-md-6 editor-container\">\n        	<div id=\"squid-api-dataviz-template-selector\">\n        		Sample templates \n        		<select id=\"template-selector\">\n        			";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.templates), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  buffer += "<div class=\"squid-api-dataviz-creator bothVisible\">\n    <div class=\"row\">\n        <div class=\"col-md-6 editor-container\">\n            <div class=\"col-md-12\">\n                ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.headerText), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n        		</select>\n        	</div>\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-editor\"></div>\n            <div class=\"configuration\">\n                <div class=\"col-md-8 pull-left\">\n                    <div class=\"col-md-6\">\n                        <button class=\"btn btn-default save\"><i class=\"fa fa-floppy-o\"></i> Publish Bookmark</button>\n                    </div>\n                    <div class=\"col-md-6\">\n                        <input class=\"form-control viz-name\" placeholder=\"Name\"/>\n                    </div>\n                </div>\n                <div class=\"col-md-4\">\n                    <button class=\"btn btn-default pull-right apply\"><i class=\"fa fa-arrow-circle-right\"></i> Apply</button>\n                </div>\n            </div>\n        </div>\n        <button class=\"btn btn-default pull-right form-control editor-toggle\">Hide Editor</button>\n        <div class=\"col-md-6 preview-container\">\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-preview\"></div>\n        </div>\n    </div>\n</div>";
+  buffer += "\n                <div class=\"col-md-4\">\n                    <div id=\"squid-api-dataviz-template-selector\">\n                        <select class=\"form-control\" id=\"template-selector\">\n                            <option selected=selected value=\"none-selected\">Choose Template</option>\n                            ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.templates), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                        </select>\n                    </div>\n                </div>\n            </div>\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-editor\">\n\n            </div>\n            <div class=\"configuration bothVisible\">\n                <div class=\"col-md-8 save-wrapper pull-left\">\n                    <div class=\"col-md-7\">\n                        <button class=\"btn btn-default save\">3. Publish your Bookmark</button>\n                    </div>\n                    <div class=\"col-md-5\">\n                        <input class=\"form-control viz-name\" placeholder=\"Name\"/>\n                    </div>\n                </div>\n                <div class=\"col-md-4\">\n                    <div class=\"apply-wrapper\">\n                        <button class=\"btn btn-default pull-right apply\"><i class=\"fa fa-arrow-circle-right\"></i> Apply</button>\n                    </div>\n                </div>\n            </div>\n        </div>\n        <button class=\"btn btn-default pull-right form-control editor-toggle\">Hide Editor</button>\n        <div class=\"col-md-6 preview-container\">\n            <div class=\"col-md-12\" id=\"squid-api-dataviz-creator-preview\"></div>\n        </div>\n    </div>\n</div>";
   return buffer;
   });
 
@@ -3164,7 +3170,7 @@ function program1(depth0,data) {
         bookmarks: null,
         onEditorToggleChange: null,
         dataVizEl : "squid-api-dataviz-creator-preview",
-        
+        headerText: null,
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -3181,16 +3187,20 @@ function program1(depth0,data) {
 
                 });
             }
+
+            this.defaultVisulisation = this.barChartViz;
+
             if (options.onEditorToggleChange) {
                 this.onEditorToggleChange = options.onEditorToggleChange;
+            }
+            if (options.headerText) {
+                this.headerText = options.headerText;
             }
             if (options.model) {
                 this.model = options.model;
             } else {
                 console.warn("no analysis model passed to the widget");
             }
-            
-            this.defaultVisulisation = this.barChartViz;
 
             this.listenTo(this.config,"change:bookmark", this.widgetToggle);
             this.listenTo(this.config,"change:dataviz", this.renderCreator);
@@ -3206,6 +3216,8 @@ function program1(depth0,data) {
             'click .editor-toggle': function() {
                 // store editor / preview div's
                 var editor = this.$el.find(".editor-container #squid-api-dataviz-creator-editor");
+                var datavizCreator = this.$el.find(".squid-api-dataviz-creator");
+                var configuration = this.$el.find(".squid-api-dataviz-creator .editor-container .configuration");
                 var applyBtn = this.$el.find(".editor-container .apply");
                 var preview = this.$el.find(".preview-container");
                 var button = $(event.currentTarget).find("button.editor-toggle");
@@ -3216,6 +3228,8 @@ function program1(depth0,data) {
                 if (! editor.hasClass("hidden")) {
                     hidden = true;
                     editor.addClass("hidden");
+                    datavizCreator.removeClass("bothVisible");
+                    configuration.removeClass("bothVisible");
                     applyBtn.addClass("hidden");
                     this.$el.find("#squid-api-dataviz-template-selector").addClass("hidden");
 
@@ -3227,6 +3241,8 @@ function program1(depth0,data) {
                 } else {
                     editor.removeClass("hidden");
                     applyBtn.removeClass("hidden");
+                    configuration.addClass("bothVisible");
+                    datavizCreator.addClass("bothVisible");
                     this.$el.find("#squid-api-dataviz-template-selector").removeClass("hidden");
 
                     // revert to 50/50
@@ -3242,17 +3258,22 @@ function program1(depth0,data) {
 
                 // update button text
                 button.text(buttonText);
+
+                // trigger an apply
+                this.renderPreview();
             },
             'click .save': function(event) {
                 this.saveViz(event);
             },
             'change #template-selector': function(event) {
-                var id = event.target[event.target.selectedIndex].id;
+                var val = $(event.currentTarget).val();
                 // update the editor value
-                var entire = this[id].toString();
-                var body = entire.slice(entire.indexOf("{") + 1, entire.lastIndexOf("}"));
-                this.editor.getSession().setValue(body);
-                this.renderPreview();
+                if (this[val]) {
+                    var entire = this[val].toString();
+                    var body = entire.slice(entire.indexOf("{") + 1, entire.lastIndexOf("}"));
+                    this.editor.getSession().setValue(body);
+                    this.renderPreview();
+                }
             }
         },
 
@@ -3263,6 +3284,9 @@ function program1(depth0,data) {
             } else {
                 this.$el.find(".squid-api-dataviz-creator").append("<div class='overlay'></div>'");
             }
+
+            // reset selector
+            this.$el.find("#template-selector").val("none-selected");
         },
 
         afterSave: function() {
@@ -3351,13 +3375,12 @@ function program1(depth0,data) {
             var data = {
                     "templates" : [ {
                         id : "barChartViz",
-                        name : "Bar Chart",
-                        selected : true
+                        name : "Bar Chart"
                     }, {
                         id : "tableViz",
-                        name : "Table",
-                        selected : false
-                    } ]
+                        name : "Table"
+                    } ],
+                    "headerText" : this.headerText
             };
             
             this.$el.html(this.template(data));
@@ -3452,7 +3475,7 @@ data = data.splice(0,20);
 
 // build a simple barchart - using code from https://bl.ocks.org/mbostock/3885304
 var margin = {top: 20, right: 20, bottom: 30, left: 40},
-    width = 600 - margin.left - margin.right,
+    width = $('#'+el).width() - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
 var x = d3.scale.ordinal()

@@ -1,26 +1,39 @@
-<div class="squid-api-dataviz-creator">
+<div class="squid-api-dataviz-creator bothVisible">
     <div class="row">
         <div class="col-md-6 editor-container">
-        	<div id="squid-api-dataviz-template-selector">
-        		Sample templates 
-        		<select id="template-selector">
-        			{{#each templates}}
-        			<option id="{{id}}" {{#if selected}}selected=selected{{/if}}>{{name}}</option>
-        			{{/each}}
-        		</select>
-        	</div>
-            <div class="col-md-12" id="squid-api-dataviz-creator-editor"></div>
-            <div class="configuration">
-                <div class="col-md-8 pull-left">
-                    <div class="col-md-6">
-                        <button class="btn btn-default save"><i class="fa fa-floppy-o"></i> Publish Bookmark</button>
+            <div class="col-md-12">
+                {{#if headerText}}
+                    <div class="col-md-8">
+                        <label class="guide">{{headerText}}</label>
                     </div>
-                    <div class="col-md-6">
+                {{/if}}
+                <div class="col-md-4">
+                    <div id="squid-api-dataviz-template-selector">
+                        <select class="form-control" id="template-selector">
+                            <option selected=selected value="none-selected">Choose Template</option>
+                            {{#each templates}}
+                                <option value="{{id}}">{{name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12" id="squid-api-dataviz-creator-editor">
+
+            </div>
+            <div class="configuration bothVisible">
+                <div class="col-md-8 save-wrapper pull-left">
+                    <div class="col-md-7">
+                        <button class="btn btn-default save">3. Publish your Bookmark</button>
+                    </div>
+                    <div class="col-md-5">
                         <input class="form-control viz-name" placeholder="Name"/>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <button class="btn btn-default pull-right apply"><i class="fa fa-arrow-circle-right"></i> Apply</button>
+                    <div class="apply-wrapper">
+                        <button class="btn btn-default pull-right apply"><i class="fa fa-arrow-circle-right"></i> Apply</button>
+                    </div>
                 </div>
             </div>
         </div>
