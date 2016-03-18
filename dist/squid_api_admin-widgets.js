@@ -276,17 +276,17 @@ function program11(depth0,data) {
   if (helper = helpers.oid) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.oid); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\">\n                                                                                                                <span class=\"select\">\n                                                                                                                    <i class=\"fa fa-bookmark-o\"></i> ";
+    + "\">\n                                                            <span class=\"select\">\n                                                                <i class=\"fa fa-bookmark-o\"></i> ";
   if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\n                                                                                                                </span>\n                                                                                                                ";
+    + "\n                                                            </span>\n                                                            ";
   stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(14, program14, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                                                                                                ";
+  buffer += "\n                                                            ";
   stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(16, program16, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                                                                                            </li>\n                                                    ";
+  buffer += "\n                                                        </li>\n                                                    ";
   return buffer;
   }
 function program12(depth0,data) {
@@ -298,13 +298,13 @@ function program12(depth0,data) {
 function program14(depth0,data) {
   
   
-  return "\n                                                                                                                    <span class=\"delete collection-option\">\n                                                                                                                        <i class=\"fa fa-trash-o\" title=\"delete\"></i>\n                                                                                                                    </span>\n                                                                                                                ";
+  return "\n                                                                <span class=\"delete collection-option\">\n                                                                    <i class=\"fa fa-trash-o\" title=\"delete\"></i>\n                                                                </span>\n                                                            ";
   }
 
 function program16(depth0,data) {
   
   
-  return "\n                                                                                                                    <span class=\"edit collection-option\">\n                                                                                                                        <i class=\"fa fa-pencil-square-o\" title=\"edit\"></i>\n                                                                                                                    </span>\n                                                                                                                ";
+  return "\n                                                                <span class=\"edit collection-option\">\n                                                                    <i class=\"fa fa-pencil-square-o\" title=\"edit\"></i>\n                                                                </span>\n                                                            ";
   }
 
 function program18(depth0,data) {
@@ -1538,6 +1538,7 @@ function program1(depth0,data) {
         filteredPaths: null,
         filteredOids: null,
         onChangeHandler : null,
+        descriptionHover : null,
 
         init : function(options) {
             var me = this;
@@ -1554,6 +1555,9 @@ function program1(depth0,data) {
             }
             if (options.onChangeHandler) {
             	this.onChangeHandler = options.onChangeHandler;
+            }
+            if (options.descriptionHover) {
+                this.descriptionHover = options.descriptionHover;
             }
         },
 
@@ -1913,10 +1917,12 @@ function program1(depth0,data) {
         },
         templateWidgets: function(collapseState) {
             // hoverover
-            this.$el.find("li").tooltip({
-                placement: "top",
-                trigger: "hover"
-            });
+            if (this.descriptionHover) {
+                this.$el.find("li").tooltip({
+                    placement: "top",
+                    trigger: "hover"
+                });
+            }
             // accordion & events
             this.$el.find(".collapse").on('hidden.bs.collapse', { context: this }, function (event) {
                 var item = $(this).attr("id");

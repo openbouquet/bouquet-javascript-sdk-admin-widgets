@@ -35,20 +35,20 @@
                                                 {{#each bookmarks}}
                                                     {{#if visible}}
                                                         <li data-toggle="tooltip" title="{{description}}" {{#if selected}} class="selected" {{/if}} data-attr="{{oid}}">
-                                                                                                                <span class="select">
-                                                                                                                    <i class="fa fa-bookmark-o"></i> {{name}}
-                                                                                                                </span>
-                                                                                                                {{#if roles.delete}}
-                                                                                                                    <span class="delete collection-option">
-                                                                                                                        <i class="fa fa-trash-o" title="delete"></i>
-                                                                                                                    </span>
-                                                                                                                {{/if}}
-                                                                                                                {{#if roles.edit}}
-                                                                                                                    <span class="edit collection-option">
-                                                                                                                        <i class="fa fa-pencil-square-o" title="edit"></i>
-                                                                                                                    </span>
-                                                                                                                {{/if}}
-                                                                                                            </li>
+                                                            <span class="select">
+                                                                <i class="fa fa-bookmark-o"></i> {{name}}
+                                                            </span>
+                                                            {{#if roles.delete}}
+                                                                <span class="delete collection-option">
+                                                                    <i class="fa fa-trash-o" title="delete"></i>
+                                                                </span>
+                                                            {{/if}}
+                                                            {{#if roles.edit}}
+                                                                <span class="edit collection-option">
+                                                                    <i class="fa fa-pencil-square-o" title="edit"></i>
+                                                                </span>
+                                                            {{/if}}
+                                                        </li>
                                                     {{/if}}
 
                                                 {{/each}}
