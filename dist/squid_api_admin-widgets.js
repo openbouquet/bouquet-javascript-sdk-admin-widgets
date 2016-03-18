@@ -3334,33 +3334,10 @@ function program1(depth0,data) {
                                 $(e.currentTarget).attr("disabled", false);
                             }});
                         } else {
-                            // create a new bookmark with the new dataviz inside
-                            var newBookmarkModel = new squid_api.model.BookmarkModel();
-                            newBookmarkModel.set({
-                                "id" : {
-                                    projectId: this.config.get("project")
-                                },
-                                "name" : bookmarkName,
-                                "config" : bookmarkModelConfig
-                            });
-                            newBookmarkModel.save({"config" : bookmarkModelConfig}, {success: function(m) {
-                                me.bookmarks.collection.add(m);
-                                // set new bookmark as current one
-                                squid_api.setBookmarkId(m.get("oid"));
-                                
-                                me.status.set("message", bookmarkName + " has been saved as a new bookmark");
-                                // enable button
-                                $(e.currentTarget).attr("disabled", false);
-                            }});
+                            this.createNewBookmark(e, bookmarkName, bookmarkModelConfig);
                         }
                     } else {
-                        // save in current bookmark
-                        bookmarkModel.save({"config" : bookmarkModelConfig}, {success: function(m) {
-                            me.bookmarks.collection.add(m);
-                            me.status.set("message", vizName + " has been saved to bookmark '" + m.get("name") + "'");
-                            // enable button
-                            $(e.currentTarget).attr("disabled", false);
-                        }});
+                        this.createNewBookmark(e, bookmarkName, bookmarkModelConfig);
                     }
 
                     // set config
@@ -3369,6 +3346,29 @@ function program1(depth0,data) {
             } else {
                 this.status.set("message", "please specify a name for your visulisation");
             }
+        },
+
+        createNewBookmark: function(e, bookmarkName, bookmarkModelConfig) {
+            var me = this;
+
+            // create a new bookmark with the new dataviz inside
+            var newBookmarkModel = new squid_api.model.BookmarkModel();
+            newBookmarkModel.set({
+                "id" : {
+                    projectId: this.config.get("project")
+                },
+                "name" : bookmarkName,
+                "config" : bookmarkModelConfig
+            });
+            newBookmarkModel.save({"config" : bookmarkModelConfig}, {success: function(m) {
+                me.bookmarks.collection.add(m);
+                // set new bookmark as current one
+                squid_api.setBookmarkId(m.get("oid"));
+
+                me.status.set("message", bookmarkName + " has been saved as a new bookmark");
+                // enable button
+                $(e.currentTarget).attr("disabled", false);
+            }});
         },
 
         editorContents: function(dataviz) {
