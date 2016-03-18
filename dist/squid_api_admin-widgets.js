@@ -3226,7 +3226,7 @@ function program1(depth0,data) {
                 var configuration = this.$el.find(".squid-api-dataviz-creator .editor-container .configuration");
                 var applyBtn = this.$el.find(".editor-container .apply");
                 var preview = this.$el.find(".preview-container");
-                var button = $(event.currentTarget).find("button.editor-toggle");
+                var button = $(event.currentTarget);
                 var buttonText;
                 var hidden = false;
 
