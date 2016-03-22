@@ -43,6 +43,9 @@
                 if (options.afterRender) {
                     this.afterRender = options.afterRender;
                 }
+                if (options.template) {
+                    this.template = options.template;
+                }
             }
 
             this.init(options);

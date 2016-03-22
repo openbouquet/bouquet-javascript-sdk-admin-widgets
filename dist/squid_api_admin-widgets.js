@@ -935,6 +935,9 @@ function program1(depth0,data) {
                 if (options.afterRender) {
                     this.afterRender = options.afterRender;
                 }
+                if (options.template) {
+                    this.template = options.template;
+                }
             }
 
             this.init(options);
