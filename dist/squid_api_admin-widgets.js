@@ -1542,6 +1542,7 @@ function program1(depth0,data) {
         filteredOids: null,
         onChangeHandler : null,
         descriptionHover : null,
+        hierarchialList: null,
 
         init : function(options) {
             var me = this;
@@ -1561,6 +1562,9 @@ function program1(depth0,data) {
             }
             if (options.descriptionHover) {
                 this.descriptionHover = options.descriptionHover;
+            }
+            if (options.hierarchialList) {
+                this.hierarchialList = options.hierarchialList;
             }
         },
 
@@ -1773,6 +1777,7 @@ function program1(depth0,data) {
                 createRole : null,
                 typeLabel : this.typeLabel,
                 typeLabelPlural : this.typeLabelPlural,
+                hierarchialList : this.hierarchialList,
                 modalHtml : true,
                 type : this.type
             };
