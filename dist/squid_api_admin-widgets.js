@@ -1588,6 +1588,9 @@ function program1(depth0,data) {
 
         eventSelect : function(event) {
             var value = $(event.target).parents("li").attr("data-attr");
+            if (! value) {
+                value = $(event.target).attr("data-attr");
+            }
             //Callback to keep filters selection on Counter apps for ex
             if (this.onChangeHandler) {
             	this.onChangeHandler(value ,this.collection);
