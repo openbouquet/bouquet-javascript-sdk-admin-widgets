@@ -9,11 +9,13 @@
         displayPath: false,
 
         init : function(options) {
-            if (options.displayName) {
-                this.displayName = options.displayName;
-            }
-            if (options.displayPath) {
-                this.displayPath = options.displayPath;
+            if (options) {
+                if (options.displayName) {
+                    this.displayName = options.displayName;
+                }
+                if (options.displayPath) {
+                    this.displayPath = options.displayPath;
+                }
             }
             var me = this;
             this.listenTo(this.config,"change", this.renderButtonState);
@@ -33,7 +35,7 @@
                 jsonData.usable = true;
             }
 
-            this.$el.html(template(jsonData));
+            this.$el.html(this.template(jsonData));
 
             this.renderButtonState();
 
