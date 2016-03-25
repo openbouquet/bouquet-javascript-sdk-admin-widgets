@@ -2141,7 +2141,7 @@ function program1(depth0,data) {
                     }
                 }
                 if (this.displayName) {
-                    this.$el.find("button").text(this.selectedModel.get("name"));
+                    this.$el.find(".squid-api-button-view").text(this.selectedModel.get("name"));
                 }
                 if (this.displayPath) {
                     var path = this.selectedModel.get("path").split("/");
