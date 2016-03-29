@@ -3412,6 +3412,11 @@ function program1(depth0,data) {
             var me = this;
 
             var jsonData = {"selAvailable" : true, "options" : [], "multiple" : isMultiple};
+            
+            if (this.singleSelect) {
+                // add an empty (none selected) option
+                jsonData.options.push({"label" : "-"});
+            }
 
             // iterate through all filter facets
             var selection = this.filters.get("selection");
@@ -3536,7 +3541,11 @@ function program1(depth0,data) {
                 
                 if (this.singleSelect) {
                     chosenNew = _.clone(chosen);
-                    chosenNew[this.singleSelectIndex] = oid.val();
+                    if (oid.val()) {
+                        chosenNew[this.singleSelectIndex] = oid.val();
+                    } else {
+                        chosenNew[this.singleSelectIndex] = null;
+                    }
                 } else {
                     var selected = [];
 
