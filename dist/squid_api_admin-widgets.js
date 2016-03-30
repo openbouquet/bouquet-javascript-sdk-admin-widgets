@@ -3795,6 +3795,7 @@ function program1(depth0,data) {
 
     var View = squid_api.view.MetricCollectionWidget.extend({
         template : null,
+        available : null,
         chosen : "chosenMetrics",
         selected : "selectedMetrics",
         configurationEnabled : null,
@@ -3813,6 +3814,12 @@ function program1(depth0,data) {
                 }
                 if (options.metricIdList) {
                     this.metricIdList = options.metricIdList;
+                }
+                if (options.chosen) {
+                    this.chosen = options.chosen;
+                }
+                if (options.available) {
+                    this.available = options.available;
                 }
                 if (options.metricIndex !== null) {
                     this.metricIndex = options.metricIndex;
@@ -3840,7 +3847,7 @@ function program1(depth0,data) {
 
             this.collectionManagementView = new squid_api.view.MetricColumnsManagementWidget();
             
-            this.listenTo(this.config,"change:chosenMetrics", this.updateView);
+            this.listenTo(this.config,"change:"+this.chosen, this.updateView);
 
             // listen for global status change
             this.listenTo(this.status,"change:status", this.enable);
@@ -3869,27 +3876,38 @@ function program1(depth0,data) {
                 for (var idx=0; idx<items.models.length; idx++) {
                     var item = items.models[idx];
 
-                    // check if selected
-                    var selected = me.isChosen(item);
-                    if (selected === true) {
-                        noneSelected = false;
-                    }
-                    
-                    var option = {
-                            "label" : item.get("name"), 
-                            "value" : item.get("oid"), 
-                            "selected" : selected
-                    };
-                    
                     // check dynamic rules
+                    var add = false;
                     if ((domain.get("dynamic") === true) || (item.get("dynamic") === false)) {
                         if (this.filterBy) {
                             if (_.contains(this.filterBy, item.get("oid"))) {
-                                jsonData.options.push(option);
+                                add = true;
                             }
                         } else {
-                            jsonData.options.push(option);
+                            add = true;
                         }
+                    }
+                    
+                    if ((add === true) && this.available) {
+                        // check this metric is available
+                        var availableArray = this.config.get(this.available);
+                        if (availableArray && availableArray.indexOf(item.get("oid")) < 0) {
+                            add = false;
+                        }
+                    }
+                    
+                    if (add === true) {
+                        // check if selected
+                        var selected = me.isChosen(item);
+                        if (selected === true) {
+                            noneSelected = false;
+                        }
+                        var option = {
+                                "label" : item.get("name"), 
+                                "value" : item.get("oid"), 
+                                "selected" : selected
+                        };
+                        jsonData.options.push(option);
                     }
                 }
 
