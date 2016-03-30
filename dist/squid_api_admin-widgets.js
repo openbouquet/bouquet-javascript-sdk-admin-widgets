@@ -3311,6 +3311,7 @@ function program1(depth0,data) {
     var View = Backbone.View.extend({
         template : null,
         filters: null,
+        available : null,
         chosen : "chosenDimensions",
         selected : "selectedDimensions",
         afterRender : null,
@@ -3330,28 +3331,22 @@ function program1(depth0,data) {
                 } else {
                     this.template = template;
                 }
-    
                 if (options.filters) {
                     this.filters = options.filters;
                 } else {
                     this.filters = squid_api.model.filters;
                 }
-    
+                if (options.chosen) {
+                    this.chosen = options.chosen;
+                }
+                if (options.available) {
+                    this.available = options.available;
+                }
                 if (options.dimensionIdList) {
                     this.dimensionIdList = options.dimensionIdList;
                 }
                 if (options.dimensionIndex !== null) {
                     this.dimensionIndex = options.dimensionIndex;
-                }
-                if (this.config) {
-                    this.config = options.model;
-                } else {
-                	this.config = squid_api.model.config;
-                }
-                if (this.status) {
-                	this.status = options.status;
-                } else {
-                	this.status = squid_api.model.status;
                 }
                 if (options.afterRender) {
                     this.afterRender = options.afterRender;
@@ -3370,8 +3365,24 @@ function program1(depth0,data) {
                 }
             }
             
+            if (this.config) {
+                this.config = options.model;
+            } else {
+                this.config = squid_api.model.config;
+            }
+            if (this.status) {
+                this.status = options.status;
+            } else {
+                this.status = squid_api.model.status;
+            }
+            
             // listen for selection change as we use it to get dimensions
             this.listenTo(this.filters,"change:selection", this.render);
+            
+            if (this.available) {
+                // listen config change as we use it to get available dimensions
+                this.listenTo(this.config,"change:"+this.available, this.render);
+            }
 
             if (this.configurationEnabled === true) {
                 // initialize dimension collection for management view
@@ -3426,7 +3437,7 @@ function program1(depth0,data) {
             if (selection) {
                 var facets = selection.facets;
                 if (facets) {
-                    this.dimensions = [];
+                    var facetList = [];
                     for (var i=0; i<facets.length; i++){
                         var facet = facets[i];
                         var isBoolean = false;
@@ -3444,22 +3455,29 @@ function program1(depth0,data) {
                                 // insert and sort
                                 var idx = this.dimensionIdList.indexOf(facet.dimension.oid);
                                 if (idx >= 0) {
-                                    this.dimensions[idx] = facet;
+                                    facetList[idx] = facet;
+                                }
+                            } else if (this.available) {
+                                // check this facet is available
+                                var availableArray = this.config.get(this.available);
+                                if (availableArray && availableArray.indexOf(facet.id) > -1) {
+                                    facetList.push(facet);
                                 }
                             } else {
                                 // default unordered behavior
-                                this.dimensions.push(facet);
+                                facetList.push(facet);
                             }
                         }
+                        
                         // avoid holes
-                        if (!this.dimensions[i]) {
-                            this.dimensions[i] = null;
+                        if (!facetList[i]) {
+                            facetList[i] = null;
                         }
                     }
                     var noneSelected = true;
                     var dimIdx;
-                    for (dimIdx=0; dimIdx<this.dimensions.length; dimIdx++) {
-                        var facet1 = this.dimensions[dimIdx];
+                    for (dimIdx=0; dimIdx<facetList.length; dimIdx++) {
+                        var facet1 = facetList[dimIdx];
                         if (facet1) {
                             // check if selected
                             var selected = this.isChosen(facet1);
@@ -3473,7 +3491,7 @@ function program1(depth0,data) {
                             } else {
                                 name = facet1.dimension.name;
                             }
-                            var option = {"label" : name, "value" : facet1.id, "selected" : selected, "error" : this.dimensions[dimIdx].error};
+                            var option = {"label" : name, "value" : facet1.id, "selected" : selected, "error" : facetList[dimIdx].error};
                             jsonData.options.push(option);
                         }
                     }
@@ -3577,7 +3595,7 @@ function program1(depth0,data) {
 
         isChosen : function(facet) {
             var selected = false;
-            var dimensions = this.config.get("chosenDimensions");
+            var dimensions = this.config.get(this.chosen);
             if (this.singleSelect === true) {
                 if (dimensions[this.singleSelectIndex] === facet.id) {
                     selected = true;
