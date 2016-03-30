@@ -70,7 +70,7 @@
             	this.onChangeHandler(value ,this.collection);
             }
             else {
-            	squid_api.setBookmarkId(value);           
+            	squid_api.setBookmarkId(value);
             	if (this.onSelect) {
             		this.onSelect.call();
             	}
@@ -171,7 +171,7 @@
             // anyone can create a bookmark
             return true;
         },
-        
+
         getPathLabel : function(model) {
             var path = model.get("path");
             if (path) {
@@ -205,7 +205,7 @@
             }
             return path;
         },
-        
+
         getModelLabel : function(model) {
             var name = model.get("name");
             var path = getPathLabel(model);
@@ -238,7 +238,7 @@
             // open folder if stored in config
             if (bookmarkFolderState) {
                 if (bookmarkFolderState[project]) {
-                    this.$el.find("#" + bookmarkFolderState[project]).addClass('in');
+                    this.$el.find("#" + bookmarkFolderState[project]).collapse('toggle');
                 }
             }
         },
@@ -280,7 +280,7 @@
                     	for (j=0; j<this.filteredPaths.length; j++) {
                             if (this.filteredPaths[j] === item.get("path")) {
                             	validPath = true;
-                            }                    		
+                            }
                     	}
                     }
                     var validOid = false;
@@ -290,7 +290,7 @@
                     	for (j=0; j<this.filteredOids.length; j++) {
                             if (this.filteredOids[j] === item.get("oid")) {
                             	 validOid = true;
-                            }                    		
+                            }
                     	}
                     }
                     if (validOid && validPath) {
@@ -298,7 +298,7 @@
 	                        label : item.get("name"),
 	                        description : item.get("description")
 	                    };
-	
+
 	                    //var existingPath = this.getModelLabel(item);
 	                    var path =  this.getPathLabel(item);
                         if (path) {
@@ -422,7 +422,7 @@
                 var folders = this.$el.find(".collapse");
                 for (i=0; i<folders.length; i++) {
                     if ($(folders[i]).find("li").length > 0) {
-                        $(folders[i]).addClass('in');
+                        $(folders[i]).collapse('toggle');
                     }
                 }
             }
