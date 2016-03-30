@@ -2103,6 +2103,9 @@ function program1(depth0,data) {
                     this.displayPath = options.displayPath;
                 }
             }
+            if (! options.template) {
+                this.template = template;
+            }
             var me = this;
             this.listenTo(this.config,"change", this.renderButtonState);
         },
