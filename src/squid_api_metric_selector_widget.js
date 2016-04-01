@@ -12,6 +12,7 @@
         onChangeHandler : null,
         filterBy : null,
         buttonText : null,
+        customView : null,
 
         init: function(options) {
 
@@ -39,6 +40,9 @@
                 }
                 if (options.filterBy) {
                     this.filterBy = options.filterBy;
+                }
+                if (options.customView) {
+                    this.customView = options.customView;
                 }
                 if (options.buttonText) {
                     this.buttonText = options.buttonText;
@@ -137,17 +141,21 @@
                     jsonData.empty = true;
                 }
 
-                // update dropdown content
-                this.$el.find("select").multiselect("dataprovider", jsonData.options);
-                if (this.configurationEnabled) {
-                    this.showConfiguration();
+                if (this.customView) {
+                    this.renderBase(jsonData.options);
+                } else {
+                    // update dropdown content
+                    this.$el.find("select").multiselect("dataprovider", jsonData.options);
+                    if (this.configurationEnabled) {
+                        this.showConfiguration();
+                    }
                 }
             }
             return this;
         },
 
-        renderBase: function() {
-            var html = this.template();
+        renderBase: function(data) {
+            var html = this.template({options : data});
             this.$el.html(html);
         },
 
@@ -155,29 +163,31 @@
             var me = this;
 
             // Initialize plugin
-            this.$el.find("select").multiselect({
-                "buttonContainer": '<div class="squid-api-data-widgets-metric-selector-open" />',
-                "buttonText": function() {
-                    var label = "Metrics";
-                    if (me.buttonText) {
-                        label = me.buttonText;
+            if (! this.customView) {
+                this.$el.find("select").multiselect({
+                    "buttonContainer": '<div class="squid-api-data-widgets-metric-selector-open" />',
+                    "buttonText": function() {
+                        var label = "Metrics";
+                        if (me.buttonText) {
+                            label = me.buttonText;
+                        }
+                        return label;
+                    },
+                    enableHTML: true,
+                    "onDropdownShown": function() {
+                        if (me.configurationEnabled) {
+                            me.showConfiguration();
+                        }
                     }
-                    return label;
-                },
-                enableHTML: true,
-                "onDropdownShown": function() {
-                    if (me.configurationEnabled) {
-                        me.showConfiguration();
-                    }
-                }
-            });
+                });
+
+                // Remove Button Title Tag
+                this.$el.find("button").removeAttr('title');
+            }
 
             if (this.afterRender) {
                 this.afterRender.call(this);
             }
-
-            // Remove Button Title Tag
-            this.$el.find("button").removeAttr('title');
 
             // update view data if render is called after the metric change event
             this.updateView();
