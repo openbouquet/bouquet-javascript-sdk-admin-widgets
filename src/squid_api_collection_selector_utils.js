@@ -49,8 +49,11 @@
 
                 // build the selection array
                 for (i = 0; i < oid.length; i++) {
-                    var selectedOid = $(oid[i]).val();
-                    selected.push(selectedOid);
+                    var val = $(oid[i]).val();
+                    if (val.length > 0) {
+                        var selectedOid = $(oid[i]).val();
+                        selected.push(selectedOid);
+                    }
                 }
 
                 // check for additions
