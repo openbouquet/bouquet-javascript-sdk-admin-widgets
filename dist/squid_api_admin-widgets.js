@@ -2238,9 +2238,19 @@ function program1(depth0,data) {
             }
         },
 
+        eventChange: function(selectedOids) {
+
+        },
+
         events: {
             "change": function() {
-                var oid = this.$el.find("select option:selected");
+                var oid;
+                if (this.$el.find("select").length > 0) {
+                    oid = this.$el.find("select option:selected");
+                } else if (this.$el.find("input").length > 0) {
+                    oid = this.$el.find("input:checked");
+                }
+
                 // Remove Button Title Tag
                 this.$el.find("button").removeAttr('title');
 
@@ -2312,7 +2322,7 @@ function program1(depth0,data) {
             }
             return selected;
         },
-        
+
         renderButton: function() {
             var label = this.typeLabelPlural;
             var jsonData = {
@@ -2324,7 +2334,7 @@ function program1(depth0,data) {
             };
             if (this.collection || this.collectionLoading) {
                 jsonData.usable = true;
-                if (this.selectedModel) {  
+                if (this.selectedModel) {
                     if (this.selectedModel.get("oid")) {
                         jsonData.label = this.selectedModel.get("name");
                         jsonData.selectedModel = true;
@@ -3319,7 +3329,7 @@ function program1(depth0,data) {
         singleSelectIndex : 0,
         configurationEnabled : false,
         updateMultiQuantity : null,
-        
+
 
         initialize: function(options) {
             var me = this;
@@ -3364,7 +3374,7 @@ function program1(depth0,data) {
                     this.configurationEnabled = options.configurationEnabled;
                 }
             }
-            
+
             if (this.config) {
                 this.config = options.model;
             } else {
@@ -3375,10 +3385,10 @@ function program1(depth0,data) {
             } else {
                 this.status = squid_api.model.status;
             }
-            
+
             // listen for selection change as we use it to get dimensions
             this.listenTo(this.filters,"change:selection", this.render);
-            
+
             if (this.available) {
                 // listen config change as we use it to get available dimensions
                 this.listenTo(this.config,"change:"+this.available, this.render);
@@ -3387,8 +3397,9 @@ function program1(depth0,data) {
             if (this.configurationEnabled === true) {
                 // initialize dimension collection for management view
                 this.collectionManagementView = new squid_api.view.DimensionColumnsManagementWidget();
-                this.events = squid_api.view.CollectionSelectorUtils.events;
             }
+
+            this.events = squid_api.view.CollectionSelectorUtils.events;
 
             // listen for global status change
             this.listenTo(this.status,"change:status", this.enable);
@@ -3426,7 +3437,7 @@ function program1(depth0,data) {
             var me = this;
 
             var jsonData = {"selAvailable" : true, "options" : [], "multiple" : isMultiple};
-            
+
             if (this.singleSelect) {
                 // add an empty (none selected) option
                 jsonData.options.push({"label" : "-"});
@@ -3468,7 +3479,7 @@ function program1(depth0,data) {
                                 facetList.push(facet);
                             }
                         }
-                        
+
                         // avoid holes
                         if (!facetList[i]) {
                             facetList[i] = null;
@@ -3552,14 +3563,14 @@ function program1(depth0,data) {
 
             return this;
         },
-        
+
         events: {
             "change": function() {
                 var oid = this.$el.find("select option:selected");
 
                 var chosen = this.config.get(this.chosen);
                 var chosenNew;
-                
+
                 if (this.singleSelect) {
                     chosenNew = _.clone(chosen);
                     if (oid.val()) {

@@ -14,7 +14,7 @@
         singleSelectIndex : 0,
         configurationEnabled : false,
         updateMultiQuantity : null,
-        
+
 
         initialize: function(options) {
             var me = this;
@@ -59,7 +59,7 @@
                     this.configurationEnabled = options.configurationEnabled;
                 }
             }
-            
+
             if (this.config) {
                 this.config = options.model;
             } else {
@@ -70,10 +70,10 @@
             } else {
                 this.status = squid_api.model.status;
             }
-            
+
             // listen for selection change as we use it to get dimensions
             this.listenTo(this.filters,"change:selection", this.render);
-            
+
             if (this.available) {
                 // listen config change as we use it to get available dimensions
                 this.listenTo(this.config,"change:"+this.available, this.render);
@@ -82,8 +82,9 @@
             if (this.configurationEnabled === true) {
                 // initialize dimension collection for management view
                 this.collectionManagementView = new squid_api.view.DimensionColumnsManagementWidget();
-                this.events = squid_api.view.CollectionSelectorUtils.events;
             }
+
+            this.events = squid_api.view.CollectionSelectorUtils.events;
 
             // listen for global status change
             this.listenTo(this.status,"change:status", this.enable);
@@ -121,7 +122,7 @@
             var me = this;
 
             var jsonData = {"selAvailable" : true, "options" : [], "multiple" : isMultiple};
-            
+
             if (this.singleSelect) {
                 // add an empty (none selected) option
                 jsonData.options.push({"label" : "-"});
@@ -163,7 +164,7 @@
                                 facetList.push(facet);
                             }
                         }
-                        
+
                         // avoid holes
                         if (!facetList[i]) {
                             facetList[i] = null;
@@ -247,14 +248,14 @@
 
             return this;
         },
-        
+
         events: {
             "change": function() {
                 var oid = this.$el.find("select option:selected");
 
                 var chosen = this.config.get(this.chosen);
                 var chosenNew;
-                
+
                 if (this.singleSelect) {
                     chosenNew = _.clone(chosen);
                     if (oid.val()) {
