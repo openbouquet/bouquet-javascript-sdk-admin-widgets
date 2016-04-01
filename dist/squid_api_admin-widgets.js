@@ -3397,8 +3397,9 @@ function program1(depth0,data) {
                 // initialize dimension collection for management view
                 this.collectionManagementView = new squid_api.view.DimensionColumnsManagementWidget();
             }
-
-            this.events = squid_api.view.CollectionSelectorUtils.events;
+            if (! this.singleSelect) {
+                this.events = squid_api.view.CollectionSelectorUtils.events;
+            }
 
             // listen for global status change
             this.listenTo(this.status,"change:status", this.enable);
