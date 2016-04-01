@@ -3846,13 +3846,21 @@ function program1(depth0,data) {
             }
 
             this.collectionManagementView = new squid_api.view.MetricColumnsManagementWidget();
-            
+
             this.listenTo(this.config,"change:"+this.chosen, this.updateView);
 
             // listen for global status change
             this.listenTo(this.status,"change:status", this.enable);
 
             this.renderBase();
+        },
+
+        activateUserAttention: function() {
+            this.$el.find("button").addClass("user-attention");
+        },
+
+        removeUserAttention: function() {
+            this.$el.find("button").removeClass("user-attention");
         },
 
         enable: function() {
@@ -3862,7 +3870,7 @@ function program1(depth0,data) {
                 this.$el.find("button").prop("disabled", false);
             }
         },
-        
+
         updateView: function() {
             var me = this, isMultiple = true;
             var jsonData = {"selAvailable" : true, "options" : [], "multiple" : isMultiple};
@@ -3887,7 +3895,7 @@ function program1(depth0,data) {
                             add = true;
                         }
                     }
-                    
+
                     if ((add === true) && this.available) {
                         // check this metric is available
                         var availableArray = this.config.get(this.available);
@@ -3895,7 +3903,7 @@ function program1(depth0,data) {
                             add = false;
                         }
                     }
-                    
+
                     if (add === true) {
                         // check if selected
                         var selected = me.isChosen(item);
@@ -3903,8 +3911,8 @@ function program1(depth0,data) {
                             noneSelected = false;
                         }
                         var option = {
-                                "label" : item.get("name"), 
-                                "value" : item.get("oid"), 
+                                "label" : item.get("name"),
+                                "value" : item.get("oid"),
                                 "selected" : selected
                         };
                         jsonData.options.push(option);
