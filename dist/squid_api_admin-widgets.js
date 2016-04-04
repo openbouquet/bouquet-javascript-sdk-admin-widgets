@@ -3577,7 +3577,7 @@ function program1(depth0,data) {
                     if (oid.val()) {
                         chosenNew[this.singleSelectIndex] = oid.val();
                     } else {
-                        chosenNew[this.singleSelectIndex] = null;
+                        chosenNew.splice(this.singleSelectIndex, 1);
                     }
                 } else {
                     var selected = [];
