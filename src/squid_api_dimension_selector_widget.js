@@ -78,6 +78,9 @@
                 // listen config change as we use it to get available dimensions
                 this.listenTo(this.config,"change:"+this.available, this.render);
             }
+            
+            // listen config change as we use it to get chosen dimensions
+            this.listenTo(this.config,"change:"+this.chosen, this.render);
 
             if (this.configurationEnabled === true) {
                 // initialize dimension collection for management view
