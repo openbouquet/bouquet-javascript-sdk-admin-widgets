@@ -6,62 +6,89 @@
     var View = Backbone.View.extend({
         template : null,
         filters: null,
+        available : null,
         chosen : "chosenDimensions",
         selected : "selectedDimensions",
         afterRender : null,
         singleSelect : false,
-        configurationEnabled : null,
+        singleSelectIndex : 0,
+        configurationEnabled : false,
         updateMultiQuantity : null,
+
 
         initialize: function(options) {
             var me = this;
 
             // setup options
-            if (options.template) {
-                this.template = options.template;
-            } else {
-                this.template = template;
+            if (options) {
+                if (options.template) {
+                    this.template = options.template;
+                } else {
+                    this.template = template;
+                }
+                if (options.filters) {
+                    this.filters = options.filters;
+                } else {
+                    this.filters = squid_api.model.filters;
+                }
+                if (options.chosen) {
+                    this.chosen = options.chosen;
+                }
+                if (options.available) {
+                    this.available = options.available;
+                }
+                if (options.dimensionIdList) {
+                    this.dimensionIdList = options.dimensionIdList;
+                }
+                if (options.dimensionIndex !== null) {
+                    this.dimensionIndex = options.dimensionIndex;
+                }
+                if (options.afterRender) {
+                    this.afterRender = options.afterRender;
+                }
+                if (options.singleSelect) {
+                    this.singleSelect = options.singleSelect;
+                }
+                if (options.singleSelectIndex) {
+                    this.singleSelectIndex = options.singleSelectIndex;
+                }
+                if (options.updateMultiQuantity) {
+                    this.updateMultiQuantity = options.updateMultiQuantity;
+                }
+                if (options.configurationEnabled) {
+                    this.configurationEnabled = options.configurationEnabled;
+                }
             }
 
-            if (options.filters) {
-                this.filters = options.filters;
-            } else {
-                this.filters = squid_api.model.filters;
-            }
-
-            if (options.dimensionIdList) {
-                this.dimensionIdList = options.dimensionIdList;
-            }
-            if (options.dimensionIndex !== null) {
-                this.dimensionIndex = options.dimensionIndex;
-            }
             if (this.config) {
                 this.config = options.model;
             } else {
-            	this.config = squid_api.model.config;
+                this.config = squid_api.model.config;
             }
             if (this.status) {
-            	this.status = options.status;
+                this.status = options.status;
             } else {
-            	this.status = squid_api.model.status;
+                this.status = squid_api.model.status;
             }
-            if (options.afterRender) {
-                this.afterRender = options.afterRender;
-            }
-            if (options.singleSelect) {
-                this.singleSelect = options.singleSelect;
-            }
-            if (options.updateMultiQuantity) {
-                this.updateMultiQuantity = options.updateMultiQuantity;
-            }
-            if (options.configurationEnabled) {
-                this.configurationEnabled = options.configurationEnabled;
-            }
+
             // listen for selection change as we use it to get dimensions
             this.listenTo(this.filters,"change:selection", this.render);
 
-            // initilize dimension collection for management view
-            this.collectionManagementView = new squid_api.view.DimensionColumnsManagementWidget();
+            if (this.available) {
+                // listen config change as we use it to get available dimensions
+                this.listenTo(this.config,"change:"+this.available, this.render);
+            }
+            
+            // listen config change as we use it to get chosen dimensions
+            this.listenTo(this.config,"change:"+this.chosen, this.render);
+
+            if (this.configurationEnabled === true) {
+                // initialize dimension collection for management view
+                this.collectionManagementView = new squid_api.view.DimensionColumnsManagementWidget();
+            }
+            if (! this.singleSelect) {
+                this.events = squid_api.view.CollectionSelectorUtils.events;
+            }
 
             // listen for global status change
             this.listenTo(this.status,"change:status", this.enable);
@@ -100,12 +127,17 @@
 
             var jsonData = {"selAvailable" : true, "options" : [], "multiple" : isMultiple};
 
+            if (this.singleSelect) {
+                // add an empty (none selected) option
+                jsonData.options.push({"label" : "-"});
+            }
+
             // iterate through all filter facets
             var selection = this.filters.get("selection");
             if (selection) {
                 var facets = selection.facets;
                 if (facets) {
-                    this.dimensions = [];
+                    var facetList = [];
                     for (var i=0; i<facets.length; i++){
                         var facet = facets[i];
                         var isBoolean = false;
@@ -123,22 +155,30 @@
                                 // insert and sort
                                 var idx = this.dimensionIdList.indexOf(facet.dimension.oid);
                                 if (idx >= 0) {
-                                    this.dimensions[idx] = facet;
+                                    facetList[idx] = facet;
+                                }
+                            } else if (this.available) {
+                                // check this facet is available (or chosen)
+                                var availableArray = this.config.get(this.available);
+                                var chosenArray = this.config.get(this.chosen);
+                                if ((availableArray && (availableArray.indexOf(facet.id) > -1) || (chosenArray && chosenArray.indexOf(facet.id) > -1))) {
+                                    facetList.push(facet);
                                 }
                             } else {
                                 // default unordered behavior
-                                this.dimensions.push(facet);
+                                facetList.push(facet);
                             }
                         }
+
                         // avoid holes
-                        if (!this.dimensions[i]) {
-                            this.dimensions[i] = null;
+                        if (!facetList[i]) {
+                            facetList[i] = null;
                         }
                     }
                     var noneSelected = true;
                     var dimIdx;
-                    for (dimIdx=0; dimIdx<this.dimensions.length; dimIdx++) {
-                        var facet1 = this.dimensions[dimIdx];
+                    for (dimIdx=0; dimIdx<facetList.length; dimIdx++) {
+                        var facet1 = facetList[dimIdx];
                         if (facet1) {
                             // check if selected
                             var selected = this.isChosen(facet1);
@@ -152,7 +192,7 @@
                             } else {
                                 name = facet1.dimension.name;
                             }
-                            var option = {"label" : name, "value" : facet1.id, "selected" : selected, "error" : this.dimensions[dimIdx].error};
+                            var option = {"label" : name, "value" : facet1.id, "selected" : selected, "error" : facetList[dimIdx].error};
                             jsonData.options.push(option);
                         }
                     }
@@ -214,7 +254,41 @@
             return this;
         },
 
-        events: squid_api.view.CollectionSelectorUtils.events,
+        events: {
+            "change": function() {
+                var oid = this.$el.find("select option:selected");
+
+                var chosen = this.config.get(this.chosen);
+                var chosenNew;
+
+                if (this.singleSelect) {
+                    chosenNew = _.clone(chosen);
+                    if (oid.val()) {
+                        chosenNew[this.singleSelectIndex] = oid.val();
+                    } else {
+                        chosenNew.splice(this.singleSelectIndex, 1);
+                    }
+                } else {
+                    var selected = [];
+
+                    // build the selection array
+                    for (i = 0; i < oid.length; i++) {
+                        var selectedOid = $(oid[i]).val();
+                        selected.push(selectedOid);
+                    }
+
+                    // check for additions
+                    chosenNew = _.intersection(_.union(chosen, selected), selected);
+                }
+
+                // Update
+                if (this.onChangeHandler) {
+                    this.onChangeHandler.call(this);
+                } else {
+                    this.config.set(this.chosen,chosenNew);
+                }
+            }
+        },
 
         showConfiguration: squid_api.view.CollectionSelectorUtils.showConfiguration,
 
@@ -222,13 +296,17 @@
 
         isChosen : function(facet) {
             var selected = false;
-
-            var dimensions = this.config.get("chosenDimensions");
-
-            if (dimensions) {
-                for (var j=0; j<dimensions.length; j++) {
-                    if (facet.id === dimensions[j]) {
-                        selected = true;
+            var dimensions = this.config.get(this.chosen);
+            if (this.singleSelect === true) {
+                if (dimensions[this.singleSelectIndex] === facet.id) {
+                    selected = true;
+                }
+            } else {
+                if (dimensions) {
+                    for (var j=0; j<dimensions.length; j++) {
+                        if (facet.id === dimensions[j]) {
+                            selected = true;
+                        }
                     }
                 }
             }

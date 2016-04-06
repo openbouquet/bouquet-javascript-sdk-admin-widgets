@@ -34,7 +34,13 @@
 
         events: {
             "change": function() {
-                var oid = this.$el.find("select option:selected");
+                var oid;
+                if (this.$el.find("select").length > 0) {
+                    oid = this.$el.find("select option:selected");
+                } else if (this.$el.find("input").length > 0) {
+                    oid = this.$el.find("input:checked");
+                }
+
                 // Remove Button Title Tag
                 this.$el.find("button").removeAttr('title');
 
@@ -43,8 +49,11 @@
 
                 // build the selection array
                 for (i = 0; i < oid.length; i++) {
-                    var selectedOid = $(oid[i]).val();
-                    selected.push(selectedOid);
+                    var val = $(oid[i]).val();
+                    if (val.length > 0) {
+                        var selectedOid = $(oid[i]).val();
+                        selected.push(selectedOid);
+                    }
                 }
 
                 // check for additions
@@ -106,7 +115,7 @@
             }
             return selected;
         },
-        
+
         renderButton: function() {
             var label = this.typeLabelPlural;
             var jsonData = {
@@ -118,7 +127,7 @@
             };
             if (this.collection || this.collectionLoading) {
                 jsonData.usable = true;
-                if (this.selectedModel) {  
+                if (this.selectedModel) {
                     if (this.selectedModel.get("oid")) {
                         jsonData.label = this.selectedModel.get("name");
                         jsonData.selectedModel = true;
