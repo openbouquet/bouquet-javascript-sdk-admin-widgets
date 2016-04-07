@@ -356,6 +356,7 @@
                                         bookmark.roles = this.getModelRoles(item);
                                         bookmark.selected = (bookmark.oid === selectedId);
                                         bookmark.visible = true;
+                                        bookmark.userFriendlyName = friendlyPath;
                                     }
                                     collection[x].bookmarks.push(bookmark);
                                 }
