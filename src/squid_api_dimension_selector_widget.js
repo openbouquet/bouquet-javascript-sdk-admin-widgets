@@ -79,9 +79,6 @@
                 this.listenTo(this.config,"change:"+this.available, this.render);
             }
             
-            // listen config change as we use it to get chosen dimensions
-            this.listenTo(this.config,"change:"+this.chosen, this.render);
-
             if (this.configurationEnabled === true) {
                 // initialize dimension collection for management view
                 this.collectionManagementView = new squid_api.view.DimensionColumnsManagementWidget();
@@ -158,10 +155,9 @@
                                     facetList[idx] = facet;
                                 }
                             } else if (this.available) {
-                                // check this facet is available (or chosen)
+                                // check this facet is available
                                 var availableArray = this.config.get(this.available);
-                                var chosenArray = this.config.get(this.chosen);
-                                if ((availableArray && (availableArray.indexOf(facet.id) > -1) || (chosenArray && chosenArray.indexOf(facet.id) > -1))) {
+                                if (availableArray && availableArray.indexOf(facet.id) > -1) {
                                     facetList.push(facet);
                                 }
                             } else {
