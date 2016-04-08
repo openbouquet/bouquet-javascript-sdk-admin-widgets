@@ -3995,7 +3995,7 @@ function program1(depth0,data) {
                     if ((add === true) && this.available) {
                         // check this metric is available
                         var availableArray = this.config.get(this.available);
-                        if (availableArray && availableArray.indexOf(item.get("oid")) < 0) {
+                        if (!(availableArray && availableArray.indexOf(item.get("oid")) >= 0)) {
                             add = false;
                         }
                     }
