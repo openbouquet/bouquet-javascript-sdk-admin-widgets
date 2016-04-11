@@ -14,8 +14,8 @@
         singleSelectIndex : 0,
         configurationEnabled : false,
         updateMultiQuantity : null,
-
-
+        chosenRefreshEvent: null,
+        
         initialize: function(options) {
             var me = this;
 
@@ -58,6 +58,9 @@
                 if (options.configurationEnabled) {
                     this.configurationEnabled = options.configurationEnabled;
                 }
+                if (options.chosenRefreshEvent) {
+                    this.chosenRefreshEvent = options.chosenRefreshEvent;
+                }
             }
 
             if (this.config) {
@@ -78,9 +81,11 @@
                 // listen config change as we use it to get available dimensions
                 this.listenTo(this.config,"change:"+this.available, this.render);
             }
-            
+
             // listen config change as we use it to get chosen dimensions
-            this.listenTo(this.config,"change:"+this.chosen, this.render);
+            if (this.chosenRefreshEvent) {
+                this.listenTo(this.config,"change:"+this.chosen, this.render);
+            }
 
             if (this.configurationEnabled === true) {
                 // initialize dimension collection for management view
