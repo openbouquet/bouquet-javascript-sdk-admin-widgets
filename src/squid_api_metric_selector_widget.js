@@ -113,8 +113,7 @@
                     if ((add === true) && this.available) {
                         // check this metric is available
                         var availableArray = this.config.get(this.available);
-                        var chosenArray = this.config.get(this.chosen);
-                        if (availableArray && ((availableArray.indexOf(item.get("oid")) < 0) || (chosenArray && chosenArray.indexOf(item.get("oid")) < 0))) {
+                        if (!(availableArray && availableArray.indexOf(item.get("oid")) >= 0)) {
                             add = false;
                         }
                     }

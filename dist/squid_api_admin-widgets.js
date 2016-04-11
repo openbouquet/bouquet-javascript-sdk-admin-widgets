@@ -1865,6 +1865,7 @@ function program1(depth0,data) {
                                         bookmark.roles = this.getModelRoles(item);
                                         bookmark.selected = (bookmark.oid === selectedId);
                                         bookmark.visible = true;
+                                        bookmark.userFriendlyName = friendlyPath;
                                     }
                                     collection[x].bookmarks.push(bookmark);
                                 }
@@ -3409,7 +3410,7 @@ function program1(depth0,data) {
         configurationEnabled : false,
         updateMultiQuantity : null,
         chosenRefreshEvent: null,
-        
+
         initialize: function(options) {
             var me = this;
 
@@ -3475,12 +3476,10 @@ function program1(depth0,data) {
                 // listen config change as we use it to get available dimensions
                 this.listenTo(this.config,"change:"+this.available, this.render);
             }
-
             // listen config change as we use it to get chosen dimensions
             if (this.chosenRefreshEvent) {
                 this.listenTo(this.config,"change:"+this.chosen, this.render);
             }
-
             if (this.configurationEnabled === true) {
                 // initialize dimension collection for management view
                 this.collectionManagementView = new squid_api.view.DimensionColumnsManagementWidget();
@@ -3557,10 +3556,9 @@ function program1(depth0,data) {
                                     facetList[idx] = facet;
                                 }
                             } else if (this.available) {
-                                // check this facet is available (or chosen)
+                                // check this facet is available
                                 var availableArray = this.config.get(this.available);
-                                var chosenArray = this.config.get(this.chosen);
-                                if ((availableArray && (availableArray.indexOf(facet.id) > -1) || (chosenArray && chosenArray.indexOf(facet.id) > -1))) {
+                                if (availableArray && availableArray.indexOf(facet.id) > -1) {
                                     facetList.push(facet);
                                 }
                             } else {
@@ -4003,8 +4001,7 @@ function program1(depth0,data) {
                     if ((add === true) && this.available) {
                         // check this metric is available
                         var availableArray = this.config.get(this.available);
-                        var chosenArray = this.config.get(this.chosen);
-                        if (availableArray && ((availableArray.indexOf(item.get("oid")) < 0) || (chosenArray && chosenArray.indexOf(item.get("oid")) < 0))) {
+                        if (!(availableArray && availableArray.indexOf(item.get("oid")) >= 0)) {
                             add = false;
                         }
                     }
