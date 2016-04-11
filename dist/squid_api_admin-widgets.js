@@ -3455,11 +3455,13 @@ function program1(depth0,data) {
                 }
             }
 
-            if (this.config) {
-                this.config = options.model;
+            // setup the models
+            if (this.model) {
+                this.config = this.model;
             } else {
                 this.config = squid_api.model.config;
             }
+            
             if (this.status) {
                 this.status = options.status;
             } else {
@@ -3937,7 +3939,9 @@ function program1(depth0,data) {
             }
 
             // setup the models
-            if (!this.config) {
+            if (this.model) {
+                this.config = this.model;
+            } else {
                 this.config = squid_api.model.config;
             }
 

@@ -55,7 +55,9 @@
             }
 
             // setup the models
-            if (!this.config) {
+            if (this.model) {
+                this.config = this.model;
+            } else {
                 this.config = squid_api.model.config;
             }
 
