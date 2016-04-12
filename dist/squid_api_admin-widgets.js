@@ -3961,12 +3961,22 @@ function program1(depth0,data) {
             this.renderBase();
         },
 
+        applyUserAttention: function() {
+            if (this.userAttention) {
+                this.$el.find("button").addClass("user-attention");
+            } else {
+                this.$el.find("button").removeClass("user-attention");
+            }
+        },
+
         activateUserAttention: function() {
-            this.$el.find("button").addClass("user-attention");
+            this.userAttention = true;
+            this.applyUserAttention();
         },
 
         removeUserAttention: function() {
-            this.$el.find("button").removeClass("user-attention");
+            this.userAttention = false;
+            this.applyUserAttention();
         },
 
         enable: function() {
@@ -4042,6 +4052,7 @@ function program1(depth0,data) {
                         this.showConfiguration();
                     }
                 }
+                this.applyUserAttention();
             }
             return this;
         },
