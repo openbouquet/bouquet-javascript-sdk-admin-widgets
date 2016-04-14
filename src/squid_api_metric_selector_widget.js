@@ -13,7 +13,6 @@
         filterBy : null,
         buttonText : null,
         customView : null,
-        defaultButtonText : null,
 
         init: function(options) {
 
@@ -47,9 +46,6 @@
                 }
                 if (options.buttonText) {
                     this.buttonText = options.buttonText;
-                }
-                if (options.defaultButtonText) {
-                    this.defaultButtonText = options.defaultButtonText;
                 }
                 if (options.onChangeHandler) {
                     this.onChangeHandler = options.onChangeHandler;
@@ -174,6 +170,12 @@
         renderBase: function(data) {
             var html = this.template({options : data});
             this.$el.html(html);
+            if (this.afterRender) {
+                this.afterRender.call(this);
+
+                // re-delegate events if external widget is used in callback
+                this.delegateEvents();
+            }
         },
 
         render: function() {
@@ -181,7 +183,7 @@
 
             // Initialize plugin
             if (! this.customView) {
-                var selectOptions = {
+                this.$el.find("select").multiselect({
                     "buttonContainer": '<div class="squid-api-data-widgets-metric-selector-open" />',
                     "buttonText": function() {
                         var label = "Metrics";
@@ -196,18 +198,10 @@
                             me.showConfiguration();
                         }
                     }
-                };
-                if (this.defaultButtonText) {
-                    delete selectOptions.buttonText;
-                }
-                this.$el.find("select").multiselect(selectOptions);
+                });
 
                 // Remove Button Title Tag
                 this.$el.find("button").removeAttr('title');
-            }
-
-            if (this.afterRender) {
-                this.afterRender.call(this);
             }
 
             // update view data if render is called after the metric change event
