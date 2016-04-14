@@ -3903,6 +3903,7 @@ function program1(depth0,data) {
         filterBy : null,
         buttonText : null,
         customView : null,
+        defaultButtonText : null,
 
         init: function(options) {
 
@@ -3936,6 +3937,9 @@ function program1(depth0,data) {
                 }
                 if (options.buttonText) {
                     this.buttonText = options.buttonText;
+                }
+                if (options.defaultButtonText) {
+                    this.defaultButtonText = options.defaultButtonText;
                 }
                 if (options.onChangeHandler) {
                     this.onChangeHandler = options.onChangeHandler;
@@ -4067,7 +4071,7 @@ function program1(depth0,data) {
 
             // Initialize plugin
             if (! this.customView) {
-                this.$el.find("select").multiselect({
+                var selectOptions = {
                     "buttonContainer": '<div class="squid-api-data-widgets-metric-selector-open" />',
                     "buttonText": function() {
                         var label = "Metrics";
@@ -4082,7 +4086,11 @@ function program1(depth0,data) {
                             me.showConfiguration();
                         }
                     }
-                });
+                };
+                if (this.defaultButtonText) {
+                    delete selectOptions.buttonText;
+                }
+                this.$el.find("select").multiselect(selectOptions);
 
                 // Remove Button Title Tag
                 this.$el.find("button").removeAttr('title');
