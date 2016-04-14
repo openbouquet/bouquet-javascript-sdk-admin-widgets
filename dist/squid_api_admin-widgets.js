@@ -4159,6 +4159,10 @@ function program1(depth0,data) {
             this.$el.modal("toggle");
         },
 
+        updateHeaderText: function(string) {
+            this.$el.find(".modal-header h4").text(string);
+        },
+
         renderBase: function() {
             var containerData = {
                 modalCount : $(".squid-api-modal-view").length,
