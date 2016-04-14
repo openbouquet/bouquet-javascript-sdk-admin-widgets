@@ -3464,7 +3464,7 @@ function program1(depth0,data) {
             } else {
                 this.config = squid_api.model.config;
             }
-            
+
             if (this.status) {
                 this.status = options.status;
             } else {
@@ -3621,6 +3621,9 @@ function program1(depth0,data) {
 
                 if (this.afterRender) {
                     this.afterRender.call(this);
+
+                    // re-delegate events if external widget is used in callback
+                    this.delegateEvents();
                 }
             }
         },
@@ -4060,6 +4063,12 @@ function program1(depth0,data) {
         renderBase: function(data) {
             var html = this.template({options : data});
             this.$el.html(html);
+            if (this.afterRender) {
+                this.afterRender.call(this);
+
+                // re-delegate events if external widget is used in callback
+                this.delegateEvents();
+            }
         },
 
         render: function() {
@@ -4086,10 +4095,6 @@ function program1(depth0,data) {
 
                 // Remove Button Title Tag
                 this.$el.find("button").removeAttr('title');
-            }
-
-            if (this.afterRender) {
-                this.afterRender.call(this);
             }
 
             // update view data if render is called after the metric change event

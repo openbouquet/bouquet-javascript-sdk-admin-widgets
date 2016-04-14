@@ -170,6 +170,12 @@
         renderBase: function(data) {
             var html = this.template({options : data});
             this.$el.html(html);
+            if (this.afterRender) {
+                this.afterRender.call(this);
+
+                // re-delegate events if external widget is used in callback
+                this.delegateEvents();
+            }
         },
 
         render: function() {
@@ -196,10 +202,6 @@
 
                 // Remove Button Title Tag
                 this.$el.find("button").removeAttr('title');
-            }
-
-            if (this.afterRender) {
-                this.afterRender.call(this);
             }
 
             // update view data if render is called after the metric change event

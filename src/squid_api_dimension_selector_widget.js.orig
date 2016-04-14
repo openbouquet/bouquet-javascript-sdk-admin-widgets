@@ -63,13 +63,11 @@
                 }
             }
 
-            // setup the models
-            if (this.model) {
-                this.config = this.model;
+            if (this.config) {
+                this.config = options.model;
             } else {
                 this.config = squid_api.model.config;
             }
-
             if (this.status) {
                 this.status = options.status;
             } else {
@@ -226,9 +224,6 @@
 
                 if (this.afterRender) {
                     this.afterRender.call(this);
-
-                    // re-delegate events if external widget is used in callback
-                    this.delegateEvents();
                 }
             }
         },
