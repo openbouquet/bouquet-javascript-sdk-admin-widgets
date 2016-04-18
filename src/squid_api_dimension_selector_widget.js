@@ -202,9 +202,6 @@
                     }
                 }
 
-
-                jsonData.options = this.sort(jsonData.options);
-
                 // check if empty
                 if (jsonData.options.length === 0) {
                     jsonData.empty = true;

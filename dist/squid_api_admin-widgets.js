@@ -3604,9 +3604,6 @@ function program1(depth0,data) {
                     }
                 }
 
-
-                jsonData.options = this.sort(jsonData.options);
-
                 // check if empty
                 if (jsonData.options.length === 0) {
                     jsonData.empty = true;
