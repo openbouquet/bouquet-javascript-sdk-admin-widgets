@@ -342,6 +342,10 @@
             // update list
             var listHtml = $(this.template(filteredCollection)).find(".list").html();
             this.$el.find(".list").html(listHtml);
+
+            if (this.afterRender) {
+                this.afterRender.call(this);
+            }
         },
 
         filterCollection: function(text) {

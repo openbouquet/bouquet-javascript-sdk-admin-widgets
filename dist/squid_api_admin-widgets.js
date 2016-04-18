@@ -1217,6 +1217,10 @@ function program1(depth0,data) {
             // update list
             var listHtml = $(this.template(filteredCollection)).find(".list").html();
             this.$el.find(".list").html(listHtml);
+
+            if (this.afterRender) {
+                this.afterRender.call(this);
+            }
         },
 
         filterCollection: function(text) {
@@ -1541,7 +1545,7 @@ function program1(depth0,data) {
                 this.filteredOids = options.filteredOids;
             }
             if (options.onChangeHandler) {
-            	this.onChangeHandler = options.onChangeHandler;
+                this.onChangeHandler = options.onChangeHandler;
             }
             if (options.descriptionHover) {
                 this.descriptionHover = options.descriptionHover;
@@ -1554,7 +1558,7 @@ function program1(depth0,data) {
         loadCollection : function(parentId) {
             return squid_api.getCustomer().then(function(customer) {
                 return customer.get("projects").load(parentId).then(function(project) {
-                	return project.get("bookmarks").load();
+                    return project.get("bookmarks").load();
                 });
             });
         },
@@ -1576,13 +1580,13 @@ function program1(depth0,data) {
             }
             //Callback to keep filters selection on Counter apps for ex
             if (this.onChangeHandler) {
-            	this.onChangeHandler(value ,this.collection);
+                this.onChangeHandler(value ,this.collection);
             }
             else {
-            	squid_api.setBookmarkId(value);
-            	if (this.onSelect) {
-            		this.onSelect.call();
-            	}
+                squid_api.setBookmarkId(value);
+                if (this.onSelect) {
+                    this.onSelect.call();
+                }
             }
         },
 
@@ -1616,6 +1620,9 @@ function program1(depth0,data) {
                 this.templateWidgets("open");
             } else {
                 this.templateWidgets();
+            }
+            if (this.afterRender) {
+                this.afterRender.call(this);
             }
         },
 
@@ -1784,32 +1791,32 @@ function program1(depth0,data) {
                     var item = this.collection.at(i);
                     var validPath = false;
                     if (this.filteredPaths === null) {
-                    	validPath = true;
+                        validPath = true;
                     } else {
-                    	for (j=0; j<this.filteredPaths.length; j++) {
+                        for (j=0; j<this.filteredPaths.length; j++) {
                             if (this.filteredPaths[j] === item.get("path")) {
-                            	validPath = true;
+                                validPath = true;
                             }
-                    	}
+                        }
                     }
                     var validOid = false;
                     if (this.filteredOids === null) {
-                    	validOid = true ;
+                        validOid = true ;
                     } else {
-                    	for (j=0; j<this.filteredOids.length; j++) {
+                        for (j=0; j<this.filteredOids.length; j++) {
                             if (this.filteredOids[j] === item.get("oid")) {
-                            	 validOid = true;
+                                 validOid = true;
                             }
-                    	}
+                        }
                     }
                     if (validOid && validPath) {
-	                    var bookmark = {
-	                        label : item.get("name"),
-	                        description : item.get("description")
-	                    };
+                        var bookmark = {
+                            label : item.get("name"),
+                            description : item.get("description")
+                        };
 
-	                    //var existingPath = this.getModelLabel(item);
-	                    var path =  this.getPathLabel(item);
+                        //var existingPath = this.getModelLabel(item);
+                        var path =  this.getPathLabel(item);
                         if (path) {
                             var friendlyPath = path;
 
@@ -1872,7 +1879,7 @@ function program1(depth0,data) {
                             }
                         }
                     }
-	            }
+                }
 
                 // sort bookmarks by label
                 for (ix=0; ix<collection.length; ix++) {
