@@ -101,6 +101,14 @@
             this.renderView();
         },
 
+        enableDisplay: function() {
+            this.$el.attr("disabled", false);
+        },
+
+        disableDisplay: function() {
+            this.$el.attr("disabled", true);
+        },
+
         hide: function() {
             this.$el.hide();
         },
@@ -267,8 +275,13 @@
 
                 if (this.singleSelect) {
                     chosenNew = _.clone(chosen);
-                    if (oid.val()) {
-                        chosenNew[this.singleSelectIndex] = oid.val();
+                    var value = oid.val();
+                    if (value) {
+                        if (! chosenNew.includes(value)) {
+                            chosenNew[this.singleSelectIndex] = value;
+                        } else {
+                            this.$el.find("select").val("");
+                        }
                     } else {
                         chosenNew.splice(this.singleSelectIndex, 1);
                     }
