@@ -14,7 +14,6 @@
         singleSelectIndex : 0,
         configurationEnabled : false,
         updateMultiQuantity : null,
-        chosenRefreshEvent: null,
 
         initialize: function(options) {
             var me = this;
@@ -58,9 +57,6 @@
                 if (options.configurationEnabled) {
                     this.configurationEnabled = options.configurationEnabled;
                 }
-                if (options.chosenRefreshEvent) {
-                    this.chosenRefreshEvent = options.chosenRefreshEvent;
-                }
             }
 
             // setup the models
@@ -84,9 +80,8 @@
                 this.listenTo(this.config,"change:"+this.available, this.render);
             }
             // listen config change as we use it to get chosen dimensions
-            if (this.chosenRefreshEvent) {
-                this.listenTo(this.config,"change:"+this.chosen, this.render);
-            }
+            this.listenTo(this.config,"change:"+this.chosen, this.render);
+
             if (this.configurationEnabled === true) {
                 // initialize dimension collection for management view
                 this.collectionManagementView = new squid_api.view.DimensionColumnsManagementWidget();
@@ -240,27 +235,32 @@
 
         renderView: function(jsonData) {
             var me = this;
-            var html = this.template(jsonData);
-            this.$el.html(html);
 
-            // Initialize plugin
-            if (! this.singleSelect) {
-                this.$el.find("select").multiselect({
-                    buttonContainer: '<div class="squid-api-data-widgets-dimension-selector" />',
-                    buttonText: function() {
-                        if (! me.updateMultiQuantity) {
-                            return 'Dimensions';
-                        } else {
-                            return 'Dimensions (' + me.$el.find("option:selected").length + ')';
+            if (this.$el.find("select").length === 0) {
+                var html = this.template(jsonData);
+                this.$el.html(html);
+                // Initialize plugin
+                if (! this.singleSelect) {
+                    this.$el.find("select").multiselect({
+                        buttonContainer: '<div class="squid-api-data-widgets-dimension-selector" />',
+                        buttonText: function() {
+                            if (! me.updateMultiQuantity) {
+                                return 'Dimensions';
+                            } else {
+                                return 'Dimensions (' + me.$el.find("option:selected").length + ')';
+                            }
+                        },
+                        buttonClass: "form-control",
+                        onDropdownShown: function() {
+                            if (me.configurationEnabled) {
+                                me.showConfiguration();
+                            }
                         }
-                    },
-                    buttonClass: "form-control",
-                    onDropdownShown: function() {
-                        if (me.configurationEnabled) {
-                            me.showConfiguration();
-                        }
-                    }
-                });
+                    });
+                }
+            } else {
+                this.$el.find("select").multiselect('dataprovider', jsonData.options);
+                this.$el.find("select").multiselect('rebuild');
             }
 
             return this;

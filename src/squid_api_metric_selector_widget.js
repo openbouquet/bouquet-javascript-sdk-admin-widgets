@@ -158,6 +158,7 @@
                 } else {
                     // update dropdown content
                     this.$el.find("select").multiselect("dataprovider", jsonData.options);
+                    this.$el.find("select").multiselect("rebuild");
                     if (this.configurationEnabled) {
                         this.showConfiguration();
                     }
@@ -168,13 +169,18 @@
         },
 
         renderBase: function(data) {
-            var html = this.template({options : data});
-            this.$el.html(html);
-            if (this.afterRender) {
-                this.afterRender.call(this);
+            if (this.$el.find("select").length === 0) {
+                var html = this.template({options : data});
+                this.$el.html(html);
+                if (this.afterRender) {
+                    this.afterRender.call(this);
 
-                // re-delegate events if external widget is used in callback
-                this.delegateEvents();
+                    // re-delegate events if external widget is used in callback
+                    this.delegateEvents();
+                }
+            } else {
+                this.$el.find("select").multiselect("dataprovider", data);
+                this.$el.find("select").multiselect("rebuild");
             }
         },
 
@@ -182,7 +188,7 @@
             var me = this;
 
             // Initialize plugin
-            if (! this.customView) {
+            if (! this.customView && this.$el.find("select").length === 0) {
                 this.$el.find("select").multiselect({
                     "buttonContainer": '<div class="squid-api-data-widgets-metric-selector-open" />',
                     "buttonText": function() {

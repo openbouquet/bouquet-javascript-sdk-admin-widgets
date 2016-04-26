@@ -3416,7 +3416,6 @@ function program1(depth0,data) {
         singleSelectIndex : 0,
         configurationEnabled : false,
         updateMultiQuantity : null,
-        chosenRefreshEvent: null,
 
         initialize: function(options) {
             var me = this;
@@ -3460,9 +3459,6 @@ function program1(depth0,data) {
                 if (options.configurationEnabled) {
                     this.configurationEnabled = options.configurationEnabled;
                 }
-                if (options.chosenRefreshEvent) {
-                    this.chosenRefreshEvent = options.chosenRefreshEvent;
-                }
             }
 
             // setup the models
@@ -3486,9 +3482,8 @@ function program1(depth0,data) {
                 this.listenTo(this.config,"change:"+this.available, this.render);
             }
             // listen config change as we use it to get chosen dimensions
-            if (this.chosenRefreshEvent) {
-                this.listenTo(this.config,"change:"+this.chosen, this.render);
-            }
+            this.listenTo(this.config,"change:"+this.chosen, this.render);
+
             if (this.configurationEnabled === true) {
                 // initialize dimension collection for management view
                 this.collectionManagementView = new squid_api.view.DimensionColumnsManagementWidget();
@@ -3642,27 +3637,32 @@ function program1(depth0,data) {
 
         renderView: function(jsonData) {
             var me = this;
-            var html = this.template(jsonData);
-            this.$el.html(html);
 
-            // Initialize plugin
-            if (! this.singleSelect) {
-                this.$el.find("select").multiselect({
-                    buttonContainer: '<div class="squid-api-data-widgets-dimension-selector" />',
-                    buttonText: function() {
-                        if (! me.updateMultiQuantity) {
-                            return 'Dimensions';
-                        } else {
-                            return 'Dimensions (' + me.$el.find("option:selected").length + ')';
+            if (this.$el.find("select").length === 0) {
+                var html = this.template(jsonData);
+                this.$el.html(html);
+                // Initialize plugin
+                if (! this.singleSelect) {
+                    this.$el.find("select").multiselect({
+                        buttonContainer: '<div class="squid-api-data-widgets-dimension-selector" />',
+                        buttonText: function() {
+                            if (! me.updateMultiQuantity) {
+                                return 'Dimensions';
+                            } else {
+                                return 'Dimensions (' + me.$el.find("option:selected").length + ')';
+                            }
+                        },
+                        buttonClass: "form-control",
+                        onDropdownShown: function() {
+                            if (me.configurationEnabled) {
+                                me.showConfiguration();
+                            }
                         }
-                    },
-                    buttonClass: "form-control",
-                    onDropdownShown: function() {
-                        if (me.configurationEnabled) {
-                            me.showConfiguration();
-                        }
-                    }
-                });
+                    });
+                }
+            } else {
+                this.$el.find("select").multiselect('dataprovider', jsonData.options);
+                this.$el.find("select").multiselect('rebuild');
             }
 
             return this;
@@ -4068,6 +4068,7 @@ function program1(depth0,data) {
                 } else {
                     // update dropdown content
                     this.$el.find("select").multiselect("dataprovider", jsonData.options);
+                    this.$el.find("select").multiselect("rebuild");
                     if (this.configurationEnabled) {
                         this.showConfiguration();
                     }
@@ -4078,13 +4079,18 @@ function program1(depth0,data) {
         },
 
         renderBase: function(data) {
-            var html = this.template({options : data});
-            this.$el.html(html);
-            if (this.afterRender) {
-                this.afterRender.call(this);
+            if (this.$el.find("select").length === 0) {
+                var html = this.template({options : data});
+                this.$el.html(html);
+                if (this.afterRender) {
+                    this.afterRender.call(this);
 
-                // re-delegate events if external widget is used in callback
-                this.delegateEvents();
+                    // re-delegate events if external widget is used in callback
+                    this.delegateEvents();
+                }
+            } else {
+                this.$el.find("select").multiselect("dataprovider", data);
+                this.$el.find("select").multiselect("rebuild");
             }
         },
 
@@ -4092,7 +4098,7 @@ function program1(depth0,data) {
             var me = this;
 
             // Initialize plugin
-            if (! this.customView) {
+            if (! this.customView && this.$el.find("select").length === 0) {
                 this.$el.find("select").multiselect({
                     "buttonContainer": '<div class="squid-api-data-widgets-metric-selector-open" />',
                     "buttonText": function() {
