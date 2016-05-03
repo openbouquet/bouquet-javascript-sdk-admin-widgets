@@ -219,7 +219,7 @@
         },
         bookmarkFolderStateSet: function(item, action) {
             var project = this.config.get("project");
-            var bookmarkFolderState = this.config.get("bookmarkFolderState");
+            var bookmarkFolderState = $.extend(true, {}, this.config.get("bookmarkFolderState"));
             if (action == "show") {
                 if (bookmarkFolderState) {
                     bookmarkFolderState[project] = item;
