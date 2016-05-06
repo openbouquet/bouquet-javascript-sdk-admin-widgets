@@ -92,8 +92,6 @@
 
             // listen for global status change
             this.listenTo(this.status,"change:status", this.enable);
-
-            this.renderView();
         },
 
         enableDisplay: function() {
@@ -267,7 +265,7 @@
         },
 
         events: {
-            "change": function() {
+            "change": function(one, two) {
                 var oid = this.$el.find("select option:selected");
 
                 var chosen = this.config.get(this.chosen);
