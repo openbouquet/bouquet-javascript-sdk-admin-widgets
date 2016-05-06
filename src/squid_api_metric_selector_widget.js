@@ -188,7 +188,7 @@
             var me = this;
 
             // Initialize plugin
-            if (! this.customView && this.$el.find("select").length === 0) {
+            if (! this.customView) {
                 this.$el.find("select").multiselect({
                     "buttonContainer": '<div class="squid-api-data-widgets-metric-selector-open" />',
                     "buttonText": function() {
