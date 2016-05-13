@@ -99,8 +99,8 @@
             // filter collection
             var filteredCollection = this.filterCollection(text);
             // update list
-            var listHtml = $(this.template(filteredCollection)).find(".list").html();
-            this.$el.find(".list").html(listHtml);
+            var listHtml = $(this.template(filteredCollection)).find(".list").last().html();
+            this.$el.find(".list").last().html(listHtml);
 
             //this.bookmarkFolderStateCheck();
             if (text.length > 0) {
