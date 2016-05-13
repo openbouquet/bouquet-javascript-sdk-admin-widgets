@@ -156,6 +156,10 @@
             "click .edit": function(event) {
                 this.eventEdit(event);
             },
+            "click .branch": function(event) {
+                var folderName = $.trim($(event.currentTarget).text());
+                this.render(folderName);
+            },
             "click .refresh": function(event) {
                 this.eventRefresh(event);
             },
@@ -245,7 +249,7 @@
                 }
             }
         },
-        render: function() {
+        render: function(folderName) {
             console.log("render CollectionManagementWidget "+this.type);
             var project = this.config.get("project");
             var bookmarkFolderState = this.config.get("bookmarkFolderState");
@@ -360,6 +364,10 @@
                                         bookmark.selected = (bookmark.oid === selectedId);
                                         bookmark.visible = true;
                                         bookmark.userFriendlyName = friendlyPath;
+                                    }
+                                    // store active folder
+                                    if (folderName === $.trim(friendlyPath)) {
+                                        collection[x].active = true;
                                     }
                                     collection[x].bookmarks.push(bookmark);
                                 }
