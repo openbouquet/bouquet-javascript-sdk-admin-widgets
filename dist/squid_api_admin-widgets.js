@@ -1889,7 +1889,7 @@ function program1(depth0,data) {
                     }
                 }
 
-                if (_.where(collection, {active: true}).length === 0) {
+                if (_.where(collection, {active: true}).length === 0 && collection.length > 0) {
                     collection[0].active = true;
                 }
 
@@ -1965,7 +1965,7 @@ function program1(depth0,data) {
     root.squid_api.view.BookmarkModelManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_bookmark_config_editor);
 
 }(this, function (Backbone, squid_api, template) {
-    
+
     squid_api.model.BookmarkModel.prototype.definition = "Bookmark";
     squid_api.model.BookmarkModel.prototype.ignoredAttributes = ['accessRights'];
     squid_api.model.BookmarkModel.prototype.schema = {
@@ -1978,7 +1978,7 @@ function program1(depth0,data) {
             }
         },
         "description" : {
-            "type" : "Text",
+            "type" : "TextArea",
             "editorClass" : "form-control",
             "fieldClass" : "description",
             "editorAttrs" : {
@@ -2020,10 +2020,10 @@ function program1(depth0,data) {
             "fieldClass" : "object-id"
         }
     };
-    
+
     // Define "setConfig" Custom Editor
     var configEditor = Backbone.Form.editors.Base.extend({
-        
+
         template : template,
 
         initialize: function(options) {
@@ -2054,7 +2054,7 @@ function program1(depth0,data) {
             }
             return json;
         },
-        
+
         events: {
             "click #set" : "setConfig"
         },
@@ -2068,7 +2068,7 @@ function program1(depth0,data) {
             delete config.project;
             this.setValue(config);
         },
-        
+
         render: function() {
             var id = this.$el.attr("id");
             var name = this.$el.attr("name");
@@ -2097,7 +2097,7 @@ function program1(depth0,data) {
                 bookmarkId : val
             };
         },
-        
+
         render: function() {
             if (this.value.bookmarkId) {
                 // editing not enabled
@@ -2698,6 +2698,11 @@ function program1(depth0,data) {
                 "editorClass" : "form-control",
                 "fieldClass" : "name"
             },
+            "description" : {
+                "type" : "TextArea",
+                "editorClass" : "form-control",
+                "fieldClass" : "description"
+            },
             "dbUrl" : {
                 "title" : "Database URL",
                 "type" : "Text",
@@ -2763,6 +2768,11 @@ function program1(depth0,data) {
                 "type" : "Text",
                 "editorClass" : "form-control",
                 "fieldClass" : "name"
+            },
+            "description" : {
+                "type" : "TextArea",
+                "editorClass" : "form-control",
+                "fieldClass" : "description"
             },
             "subject" : {
                 "type" : "Object",
@@ -2908,6 +2918,11 @@ function program1(depth0,data) {
                 "editorClass" : "form-control",
                 "fieldClass" : "name"
             },
+            "description" : {
+                "type" : "TextArea",
+                "editorClass" : "form-control",
+                "fieldClass" : "description"
+            },
             "type" : {
                 "type" : "Checkboxes",
                 "editorClass" : " ",
@@ -2998,6 +3013,11 @@ function program1(depth0,data) {
                 "editorClass" : "form-control",
                 "fieldClass" : "name"
             },
+            "description" : {
+                "type" : "TextArea",
+                "editorClass" : "form-control",
+                "fieldClass" : "description"
+            },
             "expression" : {
                 "title" : "",
                 "type" : "Object",
@@ -3038,7 +3058,7 @@ function program1(depth0,data) {
             if (event) {
                 event.preventDefault();
             }
-            
+
             // add class for spinning wheel
             this.$el.addClass("in-progress");
             // collect prerequisites

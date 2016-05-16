@@ -26,6 +26,11 @@
                 "editorClass" : "form-control",
                 "fieldClass" : "name"
             },
+            "description" : {
+                "type" : "TextArea",
+                "editorClass" : "form-control",
+                "fieldClass" : "description"
+            },
             "dbUrl" : {
                 "title" : "Database URL",
                 "type" : "Text",
@@ -91,6 +96,11 @@
                 "type" : "Text",
                 "editorClass" : "form-control",
                 "fieldClass" : "name"
+            },
+            "description" : {
+                "type" : "TextArea",
+                "editorClass" : "form-control",
+                "fieldClass" : "description"
             },
             "subject" : {
                 "type" : "Object",
@@ -236,6 +246,11 @@
                 "editorClass" : "form-control",
                 "fieldClass" : "name"
             },
+            "description" : {
+                "type" : "TextArea",
+                "editorClass" : "form-control",
+                "fieldClass" : "description"
+            },
             "type" : {
                 "type" : "Checkboxes",
                 "editorClass" : " ",
@@ -326,6 +341,11 @@
                 "editorClass" : "form-control",
                 "fieldClass" : "name"
             },
+            "description" : {
+                "type" : "TextArea",
+                "editorClass" : "form-control",
+                "fieldClass" : "description"
+            },
             "expression" : {
                 "title" : "",
                 "type" : "Object",
@@ -366,7 +386,7 @@
             if (event) {
                 event.preventDefault();
             }
-            
+
             // add class for spinning wheel
             this.$el.addClass("in-progress");
             // collect prerequisites

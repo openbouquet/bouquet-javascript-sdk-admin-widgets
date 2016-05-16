@@ -376,7 +376,7 @@
                     }
                 }
 
-                if (_.where(collection, {active: true}).length === 0) {
+                if (_.where(collection, {active: true}).length === 0 && collection.length > 0) {
                     collection[0].active = true;
                 }
 
