@@ -1615,7 +1615,7 @@ function program1(depth0,data) {
             var listHtml = $(this.template(filteredCollection)).find(".list").last().html();
             this.$el.find(".list").last().html(listHtml);
 
-            //this.bookmarkFolderStateCheck();
+            // this.bookmarkFolderStateCheck();
             if (text.length > 0) {
                 this.templateWidgets("open");
             } else {
@@ -1949,7 +1949,7 @@ function program1(depth0,data) {
 
             if (collapseState == "open") {
                 var folders = this.$el.find(".collapse");
-                for (i=0; i<folders.length; i++) {
+                for (var i=0; i<folders.length; i++) {
                     if ($(folders[i]).find("li").length > 0) {
                         $(folders[i]).collapse('toggle');
                     }
@@ -3786,7 +3786,7 @@ function program1(depth0,data) {
             this.modelView = squid_api.view.BaseModelManagementWidget;
             this.relationView = squid_api.view.RelationCollectionManagementWidget;
         },
-        
+
         loadCollection : function(parentId) {
             return squid_api.getCustomer().then(function(customer) {
                 return customer.get("projects").load(parentId).then(function(project) {
@@ -3835,7 +3835,7 @@ function program1(depth0,data) {
         renderRelationView: function(relationView) {
             this.$el.html(relationView.el);
         },
-        
+
         getModelLabel: function(model) {
             if (model.get("dynamic")) {
                 return "~ " + model.get("name");
@@ -3843,7 +3843,7 @@ function program1(depth0,data) {
                 return model.get("name");
             }
         },
-        
+
         getModelRoles : function(model) {
             var roles = squid_api.view.BaseCollectionManagementWidget.prototype.getModelRoles.call(this, model);
             roles.relation = true;

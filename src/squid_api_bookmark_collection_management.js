@@ -102,7 +102,7 @@
             var listHtml = $(this.template(filteredCollection)).find(".list").last().html();
             this.$el.find(".list").last().html(listHtml);
 
-            //this.bookmarkFolderStateCheck();
+            // this.bookmarkFolderStateCheck();
             if (text.length > 0) {
                 this.templateWidgets("open");
             } else {
@@ -436,7 +436,7 @@
 
             if (collapseState == "open") {
                 var folders = this.$el.find(".collapse");
-                for (i=0; i<folders.length; i++) {
+                for (var i=0; i<folders.length; i++) {
                     if ($(folders[i]).find("li").length > 0) {
                         $(folders[i]).collapse('toggle');
                     }
