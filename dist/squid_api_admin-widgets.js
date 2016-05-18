@@ -3503,7 +3503,7 @@ function program1(depth0,data) {
 
             if (this.singleSelect) {
                 // add an empty (none selected) option
-                jsonData.options.push({"label" : "-"});
+                jsonData.options.push({"label" : "None"});
             }
 
             // iterate through all filter facets
