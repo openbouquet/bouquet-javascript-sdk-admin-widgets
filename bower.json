@@ -23,7 +23,8 @@
     "bootstrap-duallistbox": "~3.0.4",
     "backbone-forms": "https://github.com/powmedia/backbone-forms.git#24f4e18fcd8b84857d007191135d442db1401156",
     "clipboard": "~1.5.5",
-    "bootstrap-multiselect":"https://github.com/davidstutz/bootstrap-multiselect.git#0.9.13"
+    "bootstrap-multiselect": "https://github.com/davidstutz/bootstrap-multiselect.git#0.9.13",
+    "ace-builds": "^1.2.3"
   },
   "resolutions": {
     "jquery": ">=1.7.0"
