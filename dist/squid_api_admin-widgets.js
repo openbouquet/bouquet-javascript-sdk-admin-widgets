@@ -3569,7 +3569,7 @@ function program1(depth0,data) {
 
             if (this.singleSelect) {
                 // add an empty (none selected) option
-                jsonData.options.push({"label" : "-"});
+                jsonData.options.push({"label" : "None"});
             }
 
             // iterate through all filter facets
@@ -3786,7 +3786,7 @@ function program1(depth0,data) {
             this.modelView = squid_api.view.BaseModelManagementWidget;
             this.relationView = squid_api.view.RelationCollectionManagementWidget;
         },
-
+        
         loadCollection : function(parentId) {
             return squid_api.getCustomer().then(function(customer) {
                 return customer.get("projects").load(parentId).then(function(project) {
@@ -3835,7 +3835,7 @@ function program1(depth0,data) {
         renderRelationView: function(relationView) {
             this.$el.html(relationView.el);
         },
-
+        
         getModelLabel: function(model) {
             if (model.get("dynamic")) {
                 return "~ " + model.get("name");
@@ -3843,7 +3843,7 @@ function program1(depth0,data) {
                 return model.get("name");
             }
         },
-
+        
         getModelRoles : function(model) {
             var roles = squid_api.view.BaseCollectionManagementWidget.prototype.getModelRoles.call(this, model);
             roles.relation = true;
