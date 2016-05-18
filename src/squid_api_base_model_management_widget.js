@@ -41,7 +41,7 @@
                 if (typeof(data[x]) == "object") {
                     for (var y in data[x]) {
                         if (data[x][y] !== null) {
-                            if (data[x][y].length === 0) {
+                            if (!data[x][y] || (data[x][y].length === 0)) {
                                 data[x][y] = null;
                             }
                         }

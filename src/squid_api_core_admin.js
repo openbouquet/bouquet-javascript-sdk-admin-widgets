@@ -4,72 +4,6 @@
 
     /*jshint multistr: true */
 
-    squid_api.model.ProjectModel.prototype.definition = "Project";
-    squid_api.model.ProjectModel.prototype.ignoredAttributes = [
-                                                                'accessRights', 'config', 'relations', 'domains' ];
-    squid_api.model.ProjectModel.prototype.schema = {
-            "id" : {
-                "title" : " ",
-                "type" : "Object",
-                "subSchema" : {
-                    "projectId" : {
-                        "options" : [],
-                        "type" : "Text",
-                        "editorClass" : "hidden"
-                    }
-                },
-                "editorClass" : "hidden",
-                "fieldClass" : "id"
-            },
-            "name" : {
-                "type" : "Text",
-                "editorClass" : "form-control",
-                "fieldClass" : "name"
-            },
-            "description" : {
-                "type" : "TextArea",
-                "editorClass" : "form-control",
-                "fieldClass" : "description"
-            },
-            "dbUrl" : {
-                "title" : "Database URL",
-                "type" : "Text",
-                "editorClass" : "form-control",
-                "position" : 1,
-                "help" : "jdbc:[driver_name]://[host]:[port]/{[database]}{options}",
-                "fieldClass" : "dbUrl"
-            },
-            "dbUser" : {
-                "title" : "Database User",
-                "type" : "Text",
-                "editorClass" : "form-control",
-                "position" : 2,
-                "fieldClass" : "dbUser"
-            },
-            "dbPassword" : {
-                "title" : "Database Password",
-                "type" : "Password",
-                "editorClass" : "form-control",
-                "position" : 3,
-                "fieldClass" : "dbPassword"
-            },
-            "dbCheckConnection" : {
-                "type" : "DbCheckConnection",
-                "fieldClass" : "squid-api-check-db-connection",
-                "editorClass" : "form-control",
-                "position" : 4
-            },
-            "dbSchemas" : {
-                "title" : "Database Schemas",
-                "type" : "Checkboxes",
-                "editorClass" : " ",
-                "options" : [],
-                "position" : 5,
-                "fieldClass" : "dbSchemas checkbox"
-            }
-    };
-
-
     squid_api.model.DomainModel.prototype.definition = "Domain";
     squid_api.model.DomainModel.prototype.ignoredAttributes = [
                                                                'accessRights', 'dimensions', 'metrics' ];
@@ -393,15 +327,15 @@
             var dburl = this.form.fields.dbUrl.getValue();
             var dbPassword =  this.form.fields.dbPassword.getValue();
             var dbUser = this.form.fields.dbUser.getValue();
-            var projectId = this.form.fields.id.getValue().projectId;
+            var id = this.form.fields.id.getValue();
             var url = squid_api.apiURL + "/connections/validate" + "?access_token="+this.login.get("accessToken")+"&url="+dburl+"&username="+ dbUser +"&password=" + encodeURIComponent(dbPassword);
-            if (projectId) {
-                url = url + "&projectId="+projectId;
+            if (id && id.projectId) {
+                url = url + "&projectId="+id.projectId;
             }
 
             $.ajax({
                 type: "GET",
-                url: squid_api.apiURL + "/connections/validate" + "?access_token="+this.login.get("accessToken")+"&projectId="+projectId+"&url="+dburl+"&username="+ dbUser +"&password=" + encodeURIComponent(dbPassword),
+                url: url,
                 dataType: 'json',
                 contentType: 'application/json',
                 success: function (response) {

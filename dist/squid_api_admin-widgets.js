@@ -1389,7 +1389,7 @@ function program1(depth0,data) {
                 if (typeof(data[x]) == "object") {
                     for (var y in data[x]) {
                         if (data[x][y] !== null) {
-                            if (data[x][y].length === 0) {
+                            if (!data[x][y] || (data[x][y].length === 0)) {
                                 data[x][y] = null;
                             }
                         }
@@ -2676,72 +2676,6 @@ function program1(depth0,data) {
 
     /*jshint multistr: true */
 
-    squid_api.model.ProjectModel.prototype.definition = "Project";
-    squid_api.model.ProjectModel.prototype.ignoredAttributes = [
-                                                                'accessRights', 'config', 'relations', 'domains' ];
-    squid_api.model.ProjectModel.prototype.schema = {
-            "id" : {
-                "title" : " ",
-                "type" : "Object",
-                "subSchema" : {
-                    "projectId" : {
-                        "options" : [],
-                        "type" : "Text",
-                        "editorClass" : "hidden"
-                    }
-                },
-                "editorClass" : "hidden",
-                "fieldClass" : "id"
-            },
-            "name" : {
-                "type" : "Text",
-                "editorClass" : "form-control",
-                "fieldClass" : "name"
-            },
-            "description" : {
-                "type" : "TextArea",
-                "editorClass" : "form-control",
-                "fieldClass" : "description"
-            },
-            "dbUrl" : {
-                "title" : "Database URL",
-                "type" : "Text",
-                "editorClass" : "form-control",
-                "position" : 1,
-                "help" : "jdbc:[driver_name]://[host]:[port]/{[database]}{options}",
-                "fieldClass" : "dbUrl"
-            },
-            "dbUser" : {
-                "title" : "Database User",
-                "type" : "Text",
-                "editorClass" : "form-control",
-                "position" : 2,
-                "fieldClass" : "dbUser"
-            },
-            "dbPassword" : {
-                "title" : "Database Password",
-                "type" : "Password",
-                "editorClass" : "form-control",
-                "position" : 3,
-                "fieldClass" : "dbPassword"
-            },
-            "dbCheckConnection" : {
-                "type" : "DbCheckConnection",
-                "fieldClass" : "squid-api-check-db-connection",
-                "editorClass" : "form-control",
-                "position" : 4
-            },
-            "dbSchemas" : {
-                "title" : "Database Schemas",
-                "type" : "Checkboxes",
-                "editorClass" : " ",
-                "options" : [],
-                "position" : 5,
-                "fieldClass" : "dbSchemas checkbox"
-            }
-    };
-
-
     squid_api.model.DomainModel.prototype.definition = "Domain";
     squid_api.model.DomainModel.prototype.ignoredAttributes = [
                                                                'accessRights', 'dimensions', 'metrics' ];
@@ -3065,15 +2999,15 @@ function program1(depth0,data) {
             var dburl = this.form.fields.dbUrl.getValue();
             var dbPassword =  this.form.fields.dbPassword.getValue();
             var dbUser = this.form.fields.dbUser.getValue();
-            var projectId = this.form.fields.id.getValue().projectId;
+            var id = this.form.fields.id.getValue();
             var url = squid_api.apiURL + "/connections/validate" + "?access_token="+this.login.get("accessToken")+"&url="+dburl+"&username="+ dbUser +"&password=" + encodeURIComponent(dbPassword);
-            if (projectId) {
-                url = url + "&projectId="+projectId;
+            if (id && id.projectId) {
+                url = url + "&projectId="+id.projectId;
             }
 
             $.ajax({
                 type: "GET",
-                url: squid_api.apiURL + "/connections/validate" + "?access_token="+this.login.get("accessToken")+"&projectId="+projectId+"&url="+dburl+"&username="+ dbUser +"&password=" + encodeURIComponent(dbPassword),
+                url: url,
                 dataType: 'json',
                 contentType: 'application/json',
                 success: function (response) {
@@ -3786,7 +3720,7 @@ function program1(depth0,data) {
             this.modelView = squid_api.view.BaseModelManagementWidget;
             this.relationView = squid_api.view.RelationCollectionManagementWidget;
         },
-
+        
         loadCollection : function(parentId) {
             return squid_api.getCustomer().then(function(customer) {
                 return customer.get("projects").load(parentId).then(function(project) {
@@ -3835,7 +3769,7 @@ function program1(depth0,data) {
         renderRelationView: function(relationView) {
             this.$el.html(relationView.el);
         },
-
+        
         getModelLabel: function(model) {
             if (model.get("dynamic")) {
                 return "~ " + model.get("name");
@@ -3843,7 +3777,7 @@ function program1(depth0,data) {
                 return model.get("name");
             }
         },
-
+        
         getModelRoles : function(model) {
             var roles = squid_api.view.BaseCollectionManagementWidget.prototype.getModelRoles.call(this, model);
             roles.relation = true;
@@ -4317,6 +4251,95 @@ function program1(depth0,data) {
     root.squid_api.view.ProjectModelManagementWidget = factory(root.Backbone, root.squid_api);
 
 }(this, function (Backbone, squid_api, template) {
+    
+    squid_api.model.ProjectModel.prototype.definition = "Project";
+    squid_api.model.ProjectModel.prototype.ignoredAttributes = [
+                                                                'accessRights', 'config', 'relations', 'domains' ];
+    squid_api.model.ProjectModel.prototype.schema = {
+            "name" : {
+                "type" : "Text",
+                "editorClass" : "form-control",
+                "fieldClass" : "name"
+            },
+            "description" : {
+                "type" : "TextArea",
+                "editorClass" : "form-control",
+                "fieldClass" : "description"
+            },
+            "dbUrl" : {
+                "title" : "Database URL",
+                "type" : "Text",
+                "editorClass" : "form-control",
+                "position" : 1,
+                "help" : "jdbc:[driver_name]://[host]:[port]/{[database]}{options}",
+                "fieldClass" : "dbUrl"
+            },
+            "dbUser" : {
+                "title" : "Database User",
+                "type" : "Text",
+                "editorClass" : "form-control",
+                "position" : 2,
+                "fieldClass" : "dbUser"
+            },
+            "dbPassword" : {
+                "title" : "Database Password",
+                "type" : "Password",
+                "editorClass" : "form-control",
+                "position" : 3,
+                "fieldClass" : "dbPassword"
+            },
+            "dbCheckConnection" : {
+                "type" : "DbCheckConnection",
+                "fieldClass" : "squid-api-check-db-connection",
+                "editorClass" : "form-control",
+                "position" : 4
+            },
+            "dbSchemas" : {
+                "title" : "Database Schemas",
+                "type" : "Checkboxes",
+                "editorClass" : " ",
+                "options" : [],
+                "position" : 5,
+                "fieldClass" : "dbSchemas checkbox"
+            },
+            "id" : {
+                "title" : "Object ID",
+                "type" : "ObjectID",
+                "editorClass" : "form-control",
+                "fieldClass" : "object-id"
+            }
+    };
+    
+
+    // Define "objectIDEditor" Custom Editor
+    var objectIDEditor = Backbone.Form.editors.Text.extend({
+
+        setValue: function(value) {
+            this.value = value;
+            this.$el.val(value.projectId);
+        },
+
+        getValue: function() {
+            var val = this.$el.val();
+            return {
+                projectId : val
+            };
+        },
+
+        render: function() {
+            if (this.value.bookmarkId) {
+                // editing not enabled
+                this.$el.attr("disabled", true);
+                this.$el.removeClass("form-control");
+            } else {
+                this.$el.removeAttr("disabled");
+            }
+            this.setValue(this.value);
+            return this;
+        }
+    });
+
+    Backbone.Form.editors.ObjectID = objectIDEditor;
 
     var View = squid_api.view.BaseModelManagementWidget.extend({
         formEvents: function() {
