@@ -4508,7 +4508,7 @@ function program1(depth0,data) {
             },
             "id" : {
                 "title" : "Object ID",
-                "type" : "ObjectID",
+                "type" : "ProjectObjectID",
                 "editorClass" : "form-control",
                 "fieldClass" : "object-id"
             }
@@ -4516,7 +4516,7 @@ function program1(depth0,data) {
     
 
     // Define "objectIDEditor" Custom Editor
-    var objectIDEditor = Backbone.Form.editors.Text.extend({
+    var projectObjectIDEditor = Backbone.Form.editors.Text.extend({
 
         setValue: function(value) {
             this.value = value;
@@ -4543,7 +4543,7 @@ function program1(depth0,data) {
         }
     });
 
-    Backbone.Form.editors.ObjectID = objectIDEditor;
+    Backbone.Form.editors.ProjectObjectID = projectObjectIDEditor;
 
     var View = squid_api.view.BaseModelManagementWidget.extend({
         formEvents: function() {
