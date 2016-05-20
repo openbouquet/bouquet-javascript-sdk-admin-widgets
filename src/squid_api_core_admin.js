@@ -510,6 +510,18 @@
             this.edit.setValue(value);
         },
 
+        uniq: function(a) {
+            var prims = {"boolean":{}, "number":{}, "string":{}}, objs = [];
+
+            return a.filter(function(item) {
+                var type = typeof item;
+                if(type in prims)
+                    return prims[type].hasOwnProperty(item) ? false : (prims[type][item] = true);
+                else
+                    return objs.indexOf(item) >= 0 ? false : objs.push(item);
+            });
+        },
+
         editor: function() {
             this.edit = ace.edit("expression-editor");
             this.edit.$blockScrolling = Infinity;
@@ -560,7 +572,7 @@
 
                                 function (suggestionList) {
                                     //{"suggestions":[{"display":"POWER(Numeric n,Numeric exponent)","description":"Function that take two arguments: a number and an exponent","caption":"POWER(Numeric n,Numeric exponent)","suggestion":"POWER(${1:n},${2:p})","objectType":"FORMULA","valueType":"NUMERIC"}],"definitions":["POWER(${1:n},${2:p})"],"validateMessage":"failed to parse expression:\n---\nPOWE\n\n---\n at token 'POWE' \n caused by Encountered \"<EOF>\" at line 1, column 4.\nWas expecting:\n    \"(\" ...\n    ","filterIndex":0,"beginInsertPos":0,"endInsertPos":2,"filter":"POW"}
-                                    callback(null, suggestionList.suggestions.map(function (ea) {
+                                    callback(null, me.uniq( suggestionList.suggestions.map(function (ea) {
                                         return {
                                             name: ea.display,
                                             caption: ea.caption,
@@ -570,7 +582,7 @@
                                             score: 1,
                                             meta: ea.valueType
                                         };
-                                    }));
+                                    }) )) ;
                                 }
                             )
                         } else {
@@ -581,7 +593,7 @@
 
                                     function (suggestionList) {
                                         //{"suggestions":[{"display":"POWER(Numeric n,Numeric exponent)","description":"Function that take two arguments: a number and an exponent","caption":"POWER(Numeric n,Numeric exponent)","suggestion":"POWER(${1:n},${2:p})","objectType":"FORMULA","valueType":"NUMERIC"}],"definitions":["POWER(${1:n},${2:p})"],"validateMessage":"failed to parse expression:\n---\nPOWE\n\n---\n at token 'POWE' \n caused by Encountered \"<EOF>\" at line 1, column 4.\nWas expecting:\n    \"(\" ...\n    ","filterIndex":0,"beginInsertPos":0,"endInsertPos":2,"filter":"POW"}
-                                        callback(null, suggestionList.suggestions.map(function (ea) {
+                                        callback(null, me.uniq( suggestionList.suggestions.map(function (ea) {
                                             return {
                                                 name: ea.display,
                                                 caption: ea.caption,
@@ -591,7 +603,7 @@
                                                 score: 1,
                                                 meta: ea.valueType
                                             };
-                                        }));
+                                        })));
                                     }
                                 )
                             })
