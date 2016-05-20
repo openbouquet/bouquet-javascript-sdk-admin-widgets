@@ -579,7 +579,7 @@
                                             value: ea.suggestion,
                                             snippet: ea.suggestion,
                                             description: ea.description,
-                                            score: 1,
+                                            score: ea.ranking,
                                             meta: ea.valueType
                                         };
                                     }) )) ;
@@ -600,7 +600,7 @@
                                                 value: ea.suggestion,
                                                 snippet: ea.suggestion,
                                                 description: ea.description,
-                                                score: 1,
+                                                score: ea.ranking,
                                                 meta: ea.valueType
                                             };
                                         })));
