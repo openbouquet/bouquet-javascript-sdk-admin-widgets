@@ -1562,7 +1562,7 @@ function program1(depth0,data) {
 			getSegmentFacet: function (facets) {
 				if (facets) {
 					for (var i=0; i<facets.length;i++) {
-						if (facets[i].dimension.type === "SEGMENTS") {
+						if (facets[i].id === "__segments") {
 							return facets[i];
 						}
 					}
@@ -1580,6 +1580,8 @@ function program1(depth0,data) {
 							return facets[i];
 						} else if (oid && facets[i].dimension.oid === oid) {
 							return facets[i];
+						} else if (facets[i].id === "__segments" && facets[i].dimension.id.domainId === facetName) {
+							return facets[i];
 						}
 					}
 				}
@@ -1588,36 +1590,44 @@ function program1(depth0,data) {
 			/**
 			 * @return name from the dimension of the facet as selected items from a config don't include the facet name
 			 */
-			normalyzeFacetName: function (domain, facet) {
+			normalyzeFacetName: function (facet) {
 				var facetName = facet.dimension.name;
 				//Simplification of code
 				/*	if (facet.dimension.type === "CONTINUOUS" && facet.dimension.valueType === "DATE") {
 	    			facetName = "__Period__";
-	    		} else if (facet.dimension.type === "SEGMENTS") {
-	    			facetName = domain;
 	    		}*/
+				//Segments have to be handled at a domain level
+				if (facet.id === "__segments") {
+	    			facetName = facet.dimension.id.domainId;
+	    		}
 				return facetName;
 			},
 
 			/**
 			 * @return a custom selection of items (not defined in a reference such as a bookmark)
 			 */
-			getCustomSelection: function (currentItems, referenceItems) {
+			getCustomSelection: function (currentItems, referenceItems, availableItems) {
 				var segmentItems = [];
 				if (currentItems) {
 					for (var i=0; i<currentItems.length; i++) {
-						var allItem = currentItems[i];
+						var item = currentItems[i];
 						var add=true;
 						if (referenceItems) {
 							for (var j=0; j<referenceItems.length; j++) {
 								var referenceItem = referenceItems[j];
-								if (allItem.type && referenceItem.type && allItem.type === referenceItem.type && allItem.id && referenceItem.id && allItem.id === referenceItem.id) {
+								if (item.type && referenceItem.type && item.type === referenceItem.type && item.id && referenceItem.id && item.id === referenceItem.id) {
 									add=false;
 								}
 							}
 						}
 						if (add) {
-							segmentItems.push(allItem);
+							if (availableItems) {
+								if (containsSelection(availableItems,item)) {
+									segmentItems.push(item);
+								}
+							} else {
+								segmentItems.push(item);
+							}
 						}
 					}
 				}
@@ -1636,17 +1646,56 @@ function program1(depth0,data) {
 				}
 				return false;
 			},
+			
+			/**
+			 * Remove/clean from a custom selection items 
+			 * Remove an facet when no more custom items are present
+			 * the commented code is an attempt to strengthen with all available items from the facet if they can be sent
+			 * @param customSelections: array of all custom selection facets
+			 * @param facetName: the facet name to look at
+			 * @param availableItems: the list of all available items from the facet
+			 */
+			cleanCustomSelection: function(customSelections, facetName, availableItems) {
+				if (customSelections.has(facetName)) {
+/*					if (availableItems) {
+						cleanedItems = this.cleanItems(customSelections.get(facetName), availableItems);
+						if (cleanedItems && cleanedItems.length>=1) {
+							customSelections.set(facetName, cleanedItems);
+						} else {
+							customSelections.delete(facetName);
+						}
+					} else {
+*/						
+					customSelections.delete(facetName);
+/*					}
+*/				}
+			},
+
+			/**
+			 * Build a clean list of custom items (not present in the list of all available items from the facet
+			 * @param items: the list of items to consider
+			 * @param availableItems: the list of all available items from the facet
+			 */
+			cleanItems: function(items, availableItems) {
+				var cleanedItems = [];
+				for (var i=0; i<items.length; i++) {
+					if (this.containsSelection(availableItems, items[i]) === false) {
+						cleanedItems.push(items[i]);
+					}
+				}
+				return cleanedItems;
+			},
 
 			/**
 			 * Merge several list of items into a new list, used to define the new selection from user's interaction
 			 * @param savedSelection: custom items selected by the user
 			 * @param forcedSelection: last selection known on the same bookmark
-			 * @param allItems: list of facet's item (optional) for strengthening 
+			 * @param facetForItems: list of facet's item (optional) for strengthening 
 			 * @param bookmarkSelection: selected items defined in the bookmark
 			 * @param deletedSelection: custom items recently deleted by the user
 			 * @return the merged list of selected items
 			 */
-			mergeSelection: function (savedSelection, forcedSelection, allItems, bookmarkSelection, deletedSelection) {
+			mergeSelection: function (savedSelection, forcedSelection, facetForItems, bookmarkSelection, deletedSelection) {
 				var segments = [];
 				var toAdd = [];
 
@@ -1680,11 +1729,11 @@ function program1(depth0,data) {
 						//Do we remove because it is not all segments from the domain (strengthen)
 						if (add === true) {
 							var addItem = false;
-							if (allItems) {
-								for (var k=0; k<allItems.items.length; k++) {
-									if (segment.value && allItems.items[k].value && segment.value === allItems.items[k].value) {
+							if (facetForItems) {
+								for (var k=0; k<facetForItems.items.length; k++) {
+									if (segment.value && facetForItems.items[k].value && segment.value === facetForItems.items[k].value) {
 										addItem=true;
-										segment = allItems.items[k];
+										segment = facetForItems.items[k];
 									}
 								}
 							} else {
@@ -1717,27 +1766,43 @@ function program1(depth0,data) {
 			 * @param bookmarksCollection
 			 * @returns the new configuration
 			 */
-			onChangeReportHandler: function(bookmarkId, bookmarksCollection) {
+			changeReportHandler: function(bookmarkId, bookmarksCollection) {
 				
 				var me = this;
 				var config = squid_api.model.config;
 				var copyConfig = $.extend(true, {}, config);
 
+				var oldFacets = this.loadFacets(copyConfig.get("project"), copyConfig.get("domain"));
+				var newBookmark = bookmarksCollection.get(bookmarkId);
+				var newFacets = this.loadFacets(copyConfig.get("project"), newBookmark.get("config").domain);
+
+				var cleanedItems;
 				if (squid_api.model.config.get("bookmark") === bookmarkId) {
 					// force bookmark reset
+					$.when(oldFacets).done(function(oldFacets)  {
+						if (oldFacets) {
+							for (var k=0; k<oldFacets.length; k++) {
+								var availableFacet = oldFacets[k];
+								var facetName = me.normalyzeFacetName(availableFacet);
+								var availableItems = null;
+								if (availableFacet.id === "__segments") {
+									availableItems = availableFacet.items;
+								}
+								me.cleanCustomSelection(me.customAddedFacets, facetName, availableItems);
+								me.cleanCustomSelection(customDeletedFacets, facetName, availableItems);
+							}
+						}
+
+					});
 					squid_api.setBookmarkId(bookmarkId);
 				} else {
-					var newBookmark = bookmarksCollection.get(bookmarkId);
 					//Get list of available facets for each domains
-					var oldFacets = this.loadFacets(copyConfig.get("project"), copyConfig.get("domain"));
-					var newFacets = this.loadFacets(copyConfig.get("project"), newBookmark.get("config").domain);
-					var userMgt = this;
-					$.when(oldFacets, newFacets).done(function(oldFacets, newFacets, userMgt) {
+					$.when(oldFacets, newFacets).done(function(oldFacets, newFacets) {
 						console.log("merge filters from bookmarks");
 						var forcedConfig = function(newConfig) {
 							newConfig.bookmark = bookmarkId;
 							var facetName;
-							var allItems;
+							var facetForItems;
 							//Find bookmarks
 							var currentBookmark = bookmarksCollection.get(copyConfig.get("bookmark"));
 							if (currentBookmark && currentBookmark.id) {
@@ -1758,35 +1823,46 @@ function program1(depth0,data) {
 								if (oldFacets) {
 									for (var k=0; k<oldFacets.length; k++) {
 										var availableFacet = oldFacets[k];
-										facetName = me.normalyzeFacetName(copyConfig.get("domain"), availableFacet);
+										var existsInNewConfig = me.containsSelection(newFacets, availableFacet);
+										facetName = me.normalyzeFacetName(availableFacet);
 										var selectedItems = [];
 										var deletedItems = [];
 
-										var bookmarkItems = me.getFacetByName(currentBookmark.get("config").selection.facets, facetName, availableFacet.dimension.oid);
-										allItems = me.getFacetByName(currentSelection.facets, facetName, availableFacet.dimension.oid);
-										if (allItems && allItems.selectedItems) {
-											if (bookmarkItems) {
-												var diffItems = me.getCustomSelection(allItems.selectedItems, bookmarkItems.selectedItems);   
+										var bookmarkFacet = me.getFacetByName(currentBookmark.get("config").selection.facets, facetName, availableFacet.dimension.oid);
+										facetForItems = me.getFacetByName(currentSelection.facets, facetName, availableFacet.dimension.oid);
+
+										var availableItems = null;
+										if (facetForItems && facetForItems.selectedItems) {
+											if (facetForItems.id === "__segments") {
+												availableItems = me.getSegmentFacet(newFacets).items;
+											}
+											if (bookmarkFacet) {
+												var diffItems = me.getCustomSelection(facetForItems.selectedItems, bookmarkFacet.selectedItems);   
 												if (diffItems && diffItems.length>0) {
 													selectedItems=diffItems;
 												}		
-												diffItems = me.getCustomSelection(bookmarkItems.selectedItems, allItems.selectedItems);   
-												if (diffItems && diffItems.length>0) {
-													deletedItems=diffItems;
-												}		
+
+												diffItems = me.getCustomSelection(bookmarkFacet.selectedItems, facetForItems.selectedItems, availableItems);
+												
+												//No need for period as it is a single selection
+												if ((availableFacet.dimension.type === "CONTINUOUS" && availableFacet.dimension.valueType === "DATE") === false) {
+													if (diffItems && diffItems.length>0) {
+														deletedItems=diffItems;
+													}		
+												}
 											} else {
-												selectedItems = allItems.selectedItems;
+												selectedItems = facetForItems.selectedItems;
 											}
 										}
 										if (selectedItems && selectedItems.length>0) {
 											me.customAddedFacets.set(facetName, selectedItems);
-										} else if (me.customAddedFacets.has(facetName)) {
-											me.customAddedFacets.delete(facetName);
+										} else {
+											me.cleanCustomSelection(me.customAddedFacets, facetName, availableItems);
 										}
 										if (deletedItems && deletedItems.length>0) {
 											me.customDeletedFacets.set(facetName, deletedItems);
-										} else if (me.customAddedFacets.has(facetName)) {
-											me.customDeletedFacets.delete(facetName);
+										} else if (me.customDeletedFacets.has(facetName)) {
+											me.cleanCustomSelection(me.customDeletedFacets, facetName, availableItems);
 										}
 									}
 								}
@@ -1795,7 +1871,7 @@ function program1(depth0,data) {
 								if (newFacets) {
 									for (var f=0; f<newFacets.length; f++) {
 										var newFacet = newFacets[f];
-										facetName = me.normalyzeFacetName(savedNewConfig.domain, newFacet);
+										facetName = me.normalyzeFacetName(newFacet);
 										var complementFacetItems = null;
 										if (newFacet.dimension.type === "CONTINUOUS" && newFacet.dimension.valueType === "DATE") {
 											//For dates there is only one selection item
@@ -1820,11 +1896,11 @@ function program1(depth0,data) {
 											var deletedSelection = me.customDeletedFacets.get(facetName);
 											var bookmarkSelection = me.getFacetByName(newConfig.selection.facets, facetName, newFacet.dimension.oid); // when renaming a child dimension, the dimension name in the bookmark is not updated
 											var lastSelection = me.getFacetByName(savedNewConfig.selection.facets, facetName, newFacet.dimension.oid);
-											allItems = null;
-											if (newFacet.dimension.type === "SEGMENTS") {
-												allItems = me.getSegmentFacet(newFacets);
+											facetForItems = null;
+											if (newFacet.id === "__segments") {
+												facetForItems = me.getSegmentFacet(newFacets);
 											}
-											complementFacetItems = me.mergeSelection(savedSelection, lastSelection, allItems, bookmarkSelection, deletedSelection);
+											complementFacetItems = me.mergeSelection(savedSelection, lastSelection, facetForItems, bookmarkSelection, deletedSelection);
 										}
 										if (complementFacetItems && complementFacetItems.length>0) {
 											var copiedFacet = {
@@ -1926,7 +2002,12 @@ function program1(depth0,data) {
 			}
 			//Callback to keep filters selection on Counter apps for ex
 			if (this.onChangeHandler) {
-				this.onChangeHandler.onChangeReportHandler(value ,this.collection);
+				if (this.onChangeHandler.changeReportHandler) {
+					this.onChangeHandler.changeReportHandler(value ,this.collection);
+				} else {
+					//Legacy with older apps (Inkwell, Counter)
+					this.onChangeHandler(value ,this.collection);
+				}
 			}
 			else {
 				squid_api.setBookmarkId(value);
@@ -3639,7 +3720,7 @@ function program1(depth0,data) {
                             ].join("");
                     }
                 },
-                identifierRegexps: [/[a-zA-Z_0-9\$\#\@\'\.\-\u00A2-\uFFFF]/]
+                identifierRegexps: [/[a-zA-Z_0-9\$\#\@\'\.\-\:\_]/]
             };
             langTools.addCompleter(bouquetCompleter);
         },
