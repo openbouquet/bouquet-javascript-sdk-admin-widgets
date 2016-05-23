@@ -525,7 +525,7 @@
         editor: function() {
             this.edit = ace.edit("expression-editor");
             this.edit.$blockScrolling = Infinity;
-            if(this.value!=null){
+            if(this.value !== null){
                 this.edit.setValue(""+this.value);
             }
             this.edit.getSession().setMode("ace/mode/bouquet");
@@ -541,8 +541,8 @@
                     }
                     squid_api.getSelectedProject().then(function (project) {
 
-                        if (me.type == null || me.type == "domains") {
-                            me.url = squid_api.apiURL + "/projects/" + project.id + "/domains-suggestion?access_token=" + squid_api.model.login.get("accessToken") + "&expression=" + encodeURIComponent(prefix)
+                        if (me.type === null || me.type === "domains") {
+                            me.url = squid_api.apiURL + "/projects/" + project.id + "/domains-suggestion?access_token=" + squid_api.model.login.get("accessToken") + "&expression=" + encodeURIComponent(prefix);
                             $.getJSON(
                                 me.url,
 
@@ -560,10 +560,10 @@
                                         };
                                     }) )) ;
                                 }
-                            )
+                            );
                         } else {
                             squid_api.getSelectedDomain().then(function (domain) {
-                                me.url = squid_api.apiURL + "/projects/" + project.id + "/domains/" + domain.id + "/" + me.type + "-suggestion?access_token=" + squid_api.model.login.get("accessToken") + "&expression=" + encodeURIComponent(prefix)
+                                me.url = squid_api.apiURL + "/projects/" + project.id + "/domains/" + domain.id + "/" + me.type + "-suggestion?access_token=" + squid_api.model.login.get("accessToken") + "&expression=" + encodeURIComponent(prefix);
                                 $.getJSON(
                                     me.url,
 
@@ -581,11 +581,11 @@
                                             };
                                         })));
                                     }
-                                )
-                            })
+                                );
+                            });
                         }
 
-                        })
+                        });
 
                 },
                 getDocTooltip: function(item) {
