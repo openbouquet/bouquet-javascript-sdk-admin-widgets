@@ -3311,7 +3311,7 @@ function program1(depth0,data) {
                             ].join("");
                     }
                 },
-                identifierRegexps: [/[a-zA-Z_0-9\$\#\@\'\.\-\u00A2-\uFFFF]/]
+                identifierRegexps: [/[a-zA-Z_0-9\$\#\@\'\.\-\:\_]/]
             };
             langTools.addCompleter(bouquetCompleter);
         },
