@@ -1622,7 +1622,7 @@ function program1(depth0,data) {
 						}
 						if (add) {
 							if (availableItems) {
-								if (containsSelection(availableItems,item)) {
+								if (this.containsSelection(availableItems,item)) {
 									segmentItems.push(item);
 								}
 							} else {

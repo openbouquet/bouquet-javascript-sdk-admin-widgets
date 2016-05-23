@@ -109,7 +109,7 @@
 						}
 						if (add) {
 							if (availableItems) {
-								if (containsSelection(availableItems,item)) {
+								if (this.containsSelection(availableItems,item)) {
 									segmentItems.push(item);
 								}
 							} else {
