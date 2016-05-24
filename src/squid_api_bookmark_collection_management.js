@@ -328,8 +328,17 @@
 												if (diffItems && diffItems.length>0) {
 													selectedItems=diffItems;
 												}		
+												//Now we clean deleted items if segments as it is shared among bookmarks on same domain
+												if (availableFacet.id === "__segments" && me.customDeletedFacets.get(facetName) && diffItems.length>0) {
+													me.customDeletedFacets.set(facetName, me.cleanItems(me.customDeletedFacets.get(facetName), diffItems));
+												}
 
 												diffItems = me.getCustomSelection(bookmarkFacet.selectedItems, facetForItems.selectedItems, availableItems);
+												
+												//Now we copy back remaining deleted items if segments as it is shared among bookmarks on same domain
+												if (availableFacet.id === "__segments" && me.customDeletedFacets.get(facetName)) {
+													diffItems = diffItems.concat(me.customDeletedFacets.get(facetName));
+												}
 												
 												//No need for period as it is a single selection
 												if ((availableFacet.dimension.type === "CONTINUOUS" && availableFacet.dimension.valueType === "DATE") === false) {
