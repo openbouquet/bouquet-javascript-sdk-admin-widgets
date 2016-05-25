@@ -14,6 +14,16 @@
 			savedAnalysesConfig: new Map(),
 			customAddedFacets: new Map(),
 			customDeletedFacets: new Map(),
+			
+			/**
+			 * Function allowing to reset the whole user navigation (for ex when changing the project)
+			 */
+			resetAll: function() {
+				this.savedAnalysesConfig = new Map();
+				this.customAddedFacets = new Map();
+				this.customDeletedFacets = new Map();
+			},
+	
 			/**
 			 * @return available facets from a domain
 			 */
