@@ -518,6 +518,15 @@ function program5(depth0,data) {
   return buffer;
   });
 
+this["squid_api"]["template"]["squid_api_core_admin"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  
+
+
+  return "<script id=\"formTemplate\" type=\"text/html\">\n<script>var editor = ace.edit(\"editor\");</script>\n</script>\n<div id=\"editor\"></div>;\n\n";
+  });
+
 this["squid_api"]["template"]["squid_api_dimension_selector_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -578,6 +587,15 @@ function program8(depth0,data) {
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\r\n</select>\r\n";
   return buffer;
+  });
+
+this["squid_api"]["template"]["squid_api_editor_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  
+
+
+  return "<div class=\"squid-api-editor-view\">\n<div id=\"ace_editor\"></div>\n</div>\n";
   });
 
 this["squid_api"]["template"]["squid_api_metric_selector_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -3201,6 +3219,33 @@ function program1(depth0,data) {
                 this.edit.setValue(""+this.value);
             }
             this.edit.getSession().setMode("ace/mode/bouquet");
+            this.edit.commands.addCommand({
+                name: 'SearchFunction',
+                bindKey: {win: 'Ctrl-M',  mac: 'Ctrl-M'},
+                exec: function(editor) {
+                    alert('<div class="input-group search-wrapper"> <input type="text" class="form-control search" placeholder="Search for..." value="{{searchText}}"> <span class="input-group-btn"> <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button> </span> </div>');
+                },
+                readOnly: true // false if this command should not apply in readOnly mode
+            });
+            // <div class="input-group search-wrapper"> <input type="text" class="form-control search" placeholder="Search for..." value="{{searchText}}"> <span class="input-group-btn"> <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button> </span> </div>
+            this.edit.commands.addCommand({
+                name: 'ValidateFunction',
+                bindKey: {win: 'Ctrl-L',  mac: 'Ctrl-L'},
+                exec: function(editor) {
+                    squid_api.getSelectedProject().then(function (project) {
+
+                        if (me.type === null || me.type === "domains") {
+                            me.url = squid_api.apiURL + "/projects/" + project.id + "/domains-suggestion?access_token=" + squid_api.model.login.get("accessToken") + "&expression=" + encodeURIComponent(prefix);
+
+                        }else{
+                            squid_api.getSelectedDomain().then(function (domain) {
+                                me.url = squid_api.apiURL + "/projects/" + project.id + "/domains/" + domain.id + "/" + me.type + "-suggestion?access_token=" + squid_api.model.login.get("accessToken") + "&expression=" + encodeURIComponent(prefix);
+
+                            })
+                        }})
+                },
+                readOnly: true // false if this command should not apply in readOnly mode
+            });
 
             var me = this;
             var langTools = ace.require("ace/ext/language_tools");
@@ -3275,6 +3320,7 @@ function program1(depth0,data) {
         },
 
         onSave: function(model) {
+            console.log("test");
             console.log(this.value);
         },
 
@@ -3953,6 +3999,28 @@ function program1(depth0,data) {
         render : squid_api.view.CollectionSelectorUtils.renderButton
 
     });
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.Editor = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_editors_widget);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = Backbone.View.extend({
+
+        initialize: function() {
+            //this.editor = ace.edit("ace_editor");
+            this.editor = ace.edit("ace_editor");
+            this.editor.setTheme("ace/theme/monokai");
+            this.editor.getSession().setMode("ace/mode/javascript");
+        },
+        render: function() {
+            var me = this;
+            this.$el.html(this.template());
+        }
+    });
+
     return View;
 }));
 

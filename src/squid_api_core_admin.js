@@ -529,6 +529,33 @@
                 this.edit.setValue(""+this.value);
             }
             this.edit.getSession().setMode("ace/mode/bouquet");
+            this.edit.commands.addCommand({
+                name: 'SearchFunction',
+                bindKey: {win: 'Ctrl-M',  mac: 'Ctrl-M'},
+                exec: function(editor) {
+                    alert('<div class="input-group search-wrapper"> <input type="text" class="form-control search" placeholder="Search for..." value="{{searchText}}"> <span class="input-group-btn"> <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button> </span> </div>');
+                },
+                readOnly: true // false if this command should not apply in readOnly mode
+            });
+            // <div class="input-group search-wrapper"> <input type="text" class="form-control search" placeholder="Search for..." value="{{searchText}}"> <span class="input-group-btn"> <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button> </span> </div>
+            this.edit.commands.addCommand({
+                name: 'ValidateFunction',
+                bindKey: {win: 'Ctrl-L',  mac: 'Ctrl-L'},
+                exec: function(editor) {
+                    squid_api.getSelectedProject().then(function (project) {
+
+                        if (me.type === null || me.type === "domains") {
+                            me.url = squid_api.apiURL + "/projects/" + project.id + "/domains-suggestion?access_token=" + squid_api.model.login.get("accessToken") + "&expression=" + encodeURIComponent(prefix);
+
+                        }else{
+                            squid_api.getSelectedDomain().then(function (domain) {
+                                me.url = squid_api.apiURL + "/projects/" + project.id + "/domains/" + domain.id + "/" + me.type + "-suggestion?access_token=" + squid_api.model.login.get("accessToken") + "&expression=" + encodeURIComponent(prefix);
+
+                            })
+                        }})
+                },
+                readOnly: true // false if this command should not apply in readOnly mode
+            });
 
             var me = this;
             var langTools = ace.require("ace/ext/language_tools");
@@ -603,6 +630,7 @@
         },
 
         onSave: function(model) {
+            console.log("test");
             console.log(this.value);
         },
 
