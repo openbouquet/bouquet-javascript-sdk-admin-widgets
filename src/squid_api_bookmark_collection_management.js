@@ -286,7 +286,7 @@
 									availableItems = availableFacet.items;
 								}
 								me.cleanCustomSelection(me.customAddedFacets, facetName, availableItems);
-								me.cleanCustomSelection(customDeletedFacets, facetName, availableItems);
+								me.cleanCustomSelection(me.customDeletedFacets, facetName, availableItems);
 							}
 						}
 
