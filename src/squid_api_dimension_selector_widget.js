@@ -164,9 +164,10 @@
                                     facetList[idx] = facet;
                                 }
                             } else if (this.available) {
-                                // check this facet is available
+                                // check this facet is available (or chosen)
                                 var availableArray = this.config.get(this.available);
-                                if (availableArray && availableArray.indexOf(facet.id) > -1) {
+                                var chosenArray = this.config.get(this.chosen);
+                                if ((availableArray && (availableArray.indexOf(facet.id) > -1) || (chosenArray && chosenArray.indexOf(facet.id) > -1))) {
                                     facetList.push(facet);
                                 }
                             } else {
