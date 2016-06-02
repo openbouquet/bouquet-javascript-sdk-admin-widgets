@@ -11734,11 +11734,11 @@ ace.define("ace/mode/bouquet_worker",["require","exports","module","ace/lib/oop"
     (function() {
         this.setOptions = function(options) {
             this.options = options || {
-                    esnext: true,
-                    moz: true,
-                    devel: true,
-                    browser: true,
-                    node: true,
+                    esnext: false,
+                    moz: false,
+                    devel: false,
+                    browser: false,
+                    node: false,
                     laxcomma: true,
                     laxbreak: true,
                     lastsemic: true,
@@ -11747,7 +11747,7 @@ ace.define("ace/mode/bouquet_worker",["require","exports","module","ace/lib/oop"
                     maxerr: 100,
                     expr: true,
                     multistr: true,
-                    globalstrict: true
+                    globalstrict: false
                 };
             this.doc.getValue() && this.deferredUpdate.schedule(100);
         };
@@ -11775,7 +11775,20 @@ ace.define("ace/mode/bouquet_worker",["require","exports","module","ace/lib/oop"
 
             var errors = [];
             var maxErrorLevel = this.isValidJS(value) ? "warning" : "error";
-            lint(value, this.options);
+            var error = {};
+	    error.line=1;
+	    error.character=1;
+	    error.reason="Missing test";
+	    var type = "warning";
+	    var raw = "This is a test";
+	    errors.push({
+                    row: error.line-1,
+                    column: error.character-1,
+                    text: error.reason,
+                    type: type,
+                    raw: raw
+            });
+            /*lint(value, this.options);
             var results = lint.errors;
 
             var errorAdded = false
@@ -11823,7 +11836,7 @@ ace.define("ace/mode/bouquet_worker",["require","exports","module","ace/lib/oop"
 
                 if (errorAdded) {
                 }
-            }
+            }*/
 
             this.sender.emit("annotate", errors);
         };

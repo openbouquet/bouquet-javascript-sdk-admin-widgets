@@ -68,7 +68,7 @@ ace.define("ace/mode/bouquet_highlight_rules",["require","exports","module","ace
             "decodeURI|decodeURIComponent|encodeURI|encodeURIComponent|eval|isFinite|" + // Non-constructor functions
             "isNaN|parseFloat|parseInt|"                                               +
             "JSON|Math|"                                                               + // Other
-            "this|arguments|prototype|window|document"                                 , // Pseudo
+            "this|arguments|prototype|window|document|ADD_MONTHS|ASC|CEIL|COSH|CURRENT|DAILY|DATE|DATE_ADD|DATE_INTERVAL|DATE_SUB|DATE_TRUNCATE|DAY|DAY_OF_WEEK|DAY_OF_YEAR|DEGREES|DESC|FLOOR|FOLLOWING|FROM_EPOCH|GREATEST|HOUR|HOURLY|JSON_ARRAY_LENGTH|JSON_EXTRACT_ARRAY_ELEMENT_TEXT|JSON_EXTRACT_PATH_TEXT|LEAST|LENGTH|LOWER|LPAD|LTRIM|MD5|MINUTE|MONTH|MONTHLY|MONTHS_BETWEEN|MONTLY|NULL|POSITION|POWER|PRECEDING|RADIANS|RAND|RANK|REGEXP_COUNT|REGEXP_INSTR|REGEXP_REPLACE|REGEXP_SUBSTR|REPLACE|REVERSE|ROUND|ROWNUMBER|ROWS|RPAD|RTRIM|SECOND|SIGN|SINH|SPLIT_PART|SUBSTRING|TANH|TO_CHAR|TO_DATE|TO_EPOCH|TO_INTEGER|TO_NUMBER|TO_TIMESTAMP|TRANSLATE|TRIM|TRUNC|UNBOUNDED|UNDEFINED|UPPER|WEEKLY|YEAR|YEARLY"                                 , // Pseudo
             "keyword":
             "const|yield|import|get|set|" +
             "break|case|catch|continue|default|delete|do|else|finally|for|function|" +
@@ -1121,11 +1121,7 @@ ace.define("ace/mode/bouquet",["require","exports","module","ace/lib/oop","ace/m
 
         this.createWorker = function(session) {
             var worker = new WorkerClient(["ace"], "ace/mode/bouquet_worker", "BouquetWorker");
-            //var worker = new WorkerClient(["ace"], "worker_bouquet", "BouquetWorker");
-            //var worker = new WorkerClient(["ace"], "ace/mode/bower_components/ace-builds/src-noconflict/javascript_worker", "JavaScriptWorker");
-            //var worker = new WorkerClient(["ace"], "ace/mode/bouquet-worker", "BouquetWorker");
-            //var worker = new WorkerClient(["ace"], "bouquet-worker", "BouquetWorker");
-            //var worker = new WorkerClient(["ace"], "bouquet_worker", "BouquetWorker");
+            //worker.changeOptions({url : "https://localhost"})
             worker.attachToDocument(session.getDocument());
 
             worker.on("annotate", function(results) {

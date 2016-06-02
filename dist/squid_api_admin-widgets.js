@@ -3249,7 +3249,7 @@ function program1(depth0,data) {
 
             var me = this;
             var langTools = ace.require("ace/ext/language_tools");
-            this.edit.setOptions({enableBasicAutocompletion: true, enableLiveAutocompletion:false, enableSnippets:true});
+            this.edit.setOptions({enableBasicAutocompletion: true, enableLiveAutocompletion:true, enableSnippets:true});
             var bouquetCompleter = {
                 getCompletions: function (editor, session, pos, prefix, callback) {
                     if (prefix.length === 0) {
