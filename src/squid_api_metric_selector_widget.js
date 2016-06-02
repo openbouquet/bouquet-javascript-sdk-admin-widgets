@@ -55,7 +55,9 @@
             }
 
             // setup the models
-            if (!this.config) {
+            if (this.model) {
+                this.config = this.model;
+            } else {
                 this.config = squid_api.model.config;
             }
 
@@ -69,12 +71,22 @@
             this.renderBase();
         },
 
+        applyUserAttention: function() {
+            if (this.userAttention) {
+                this.$el.find("button").addClass("user-attention");
+            } else {
+                this.$el.find("button").removeClass("user-attention");
+            }
+        },
+
         activateUserAttention: function() {
-            this.$el.find("button").addClass("user-attention");
+            this.userAttention = true;
+            this.applyUserAttention();
         },
 
         removeUserAttention: function() {
-            this.$el.find("button").removeClass("user-attention");
+            this.userAttention = false;
+            this.applyUserAttention();
         },
 
         enable: function() {
@@ -110,11 +122,11 @@
                         }
                     }
 
-                    if ((add === true) && this.available) {
-                        // check this metric is available
+                    if ((add === true) && (this.available || this.chosen)) {
+                        // check this metric is available (or chosen)
                         var availableArray = this.config.get(this.available);
                         var chosenArray = this.config.get(this.chosen);
-                        if (availableArray && ((availableArray.indexOf(item.get("oid")) < 0) || (chosenArray && chosenArray.indexOf(item.get("oid")) < 0))) {
+                        if ((availableArray && availableArray.indexOf(item.get("oid")) < 0) && (chosenArray && chosenArray.indexOf(item.get("oid")) < 0)) {
                             add = false;
                         }
                     }
@@ -147,17 +159,30 @@
                 } else {
                     // update dropdown content
                     this.$el.find("select").multiselect("dataprovider", jsonData.options);
+                    this.$el.find("select").multiselect("rebuild");
                     if (this.configurationEnabled) {
                         this.showConfiguration();
                     }
                 }
+                this.applyUserAttention();
             }
             return this;
         },
 
         renderBase: function(data) {
-            var html = this.template({options : data});
-            this.$el.html(html);
+            if (this.$el.find("select").length === 0) {
+                var html = this.template({options : data});
+                this.$el.html(html);
+                if (this.afterRender) {
+                    this.afterRender.call(this);
+
+                    // re-delegate events if external widget is used in callback
+                    this.delegateEvents();
+                }
+            } else {
+                this.$el.find("select").multiselect("dataprovider", data);
+                this.$el.find("select").multiselect("rebuild");
+            }
         },
 
         render: function() {
@@ -184,10 +209,6 @@
 
                 // Remove Button Title Tag
                 this.$el.find("button").removeAttr('title');
-            }
-
-            if (this.afterRender) {
-                this.afterRender.call(this);
             }
 
             // update view data if render is called after the metric change event

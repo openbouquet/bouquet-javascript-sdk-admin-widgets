@@ -54,7 +54,7 @@
             // listen for config change
             this.listenTo(this.config,"change", function () {
                 var parentChanged = this.config.hasChanged(me.configParentId);
-                var selectionChanged = this.config.hasChanged(me.configSelectedId);
+                var selectionChanged = this.config.hasChanged(me.configSelectedId) || (this.config.get(me.configSelectedId) && ! this.selectedModel);
                 this.initModel(this.config, parentChanged, selectionChanged);
             });
 
@@ -200,7 +200,7 @@
             // create a new model
             var model = new this.collection.model();
             model.set("id", this.collection.parent.get("id"));
-            
+
             this.renderModelView(new this.modelView({
                 model : model,
                 cancelCallback : function() {
@@ -342,6 +342,10 @@
             // update list
             var listHtml = $(this.template(filteredCollection)).find(".list").html();
             this.$el.find(".list").html(listHtml);
+
+            if (this.afterRender) {
+                this.afterRender.call(this);
+            }
         },
 
         filterCollection: function(text) {

@@ -929,7 +929,7 @@ function program1(depth0,data) {
             // listen for config change
             this.listenTo(this.config,"change", function () {
                 var parentChanged = this.config.hasChanged(me.configParentId);
-                var selectionChanged = this.config.hasChanged(me.configSelectedId);
+                var selectionChanged = this.config.hasChanged(me.configSelectedId) || (this.config.get(me.configSelectedId) && ! this.selectedModel);
                 this.initModel(this.config, parentChanged, selectionChanged);
             });
 
@@ -1075,7 +1075,7 @@ function program1(depth0,data) {
             // create a new model
             var model = new this.collection.model();
             model.set("id", this.collection.parent.get("id"));
-            
+
             this.renderModelView(new this.modelView({
                 model : model,
                 cancelCallback : function() {
@@ -1217,6 +1217,10 @@ function program1(depth0,data) {
             // update list
             var listHtml = $(this.template(filteredCollection)).find(".list").html();
             this.$el.find(".list").html(listHtml);
+
+            if (this.afterRender) {
+                this.afterRender.call(this);
+            }
         },
 
         filterCollection: function(text) {
@@ -1385,7 +1389,7 @@ function program1(depth0,data) {
                 if (typeof(data[x]) == "object") {
                     for (var y in data[x]) {
                         if (data[x][y] !== null) {
-                            if (data[x][y].length === 0) {
+                            if (!data[x][y] || (data[x][y].length === 0)) {
                                 data[x][y] = null;
                             }
                         }
@@ -1541,7 +1545,7 @@ function program1(depth0,data) {
                 this.filteredOids = options.filteredOids;
             }
             if (options.onChangeHandler) {
-            	this.onChangeHandler = options.onChangeHandler;
+                this.onChangeHandler = options.onChangeHandler;
             }
             if (options.descriptionHover) {
                 this.descriptionHover = options.descriptionHover;
@@ -1554,7 +1558,7 @@ function program1(depth0,data) {
         loadCollection : function(parentId) {
             return squid_api.getCustomer().then(function(customer) {
                 return customer.get("projects").load(parentId).then(function(project) {
-                	return project.get("bookmarks").load();
+                    return project.get("bookmarks").load();
                 });
             });
         },
@@ -1576,13 +1580,13 @@ function program1(depth0,data) {
             }
             //Callback to keep filters selection on Counter apps for ex
             if (this.onChangeHandler) {
-            	this.onChangeHandler(value ,this.collection);
+                this.onChangeHandler(value ,this.collection);
             }
             else {
-            	squid_api.setBookmarkId(value);
-            	if (this.onSelect) {
-            		this.onSelect.call();
-            	}
+                squid_api.setBookmarkId(value);
+                if (this.onSelect) {
+                    this.onSelect.call();
+                }
             }
         },
 
@@ -1608,14 +1612,17 @@ function program1(depth0,data) {
             // filter collection
             var filteredCollection = this.filterCollection(text);
             // update list
-            var listHtml = $(this.template(filteredCollection)).find(".list").html();
-            this.$el.find(".list").html(listHtml);
+            var listHtml = $(this.template(filteredCollection)).find(".list").last().html();
+            this.$el.find(".list").last().html(listHtml);
 
-            //this.bookmarkFolderStateCheck();
+            // this.bookmarkFolderStateCheck();
             if (text.length > 0) {
                 this.templateWidgets("open");
             } else {
                 this.templateWidgets();
+            }
+            if (this.afterRender) {
+                this.afterRender.call(this);
             }
         },
 
@@ -1661,6 +1668,10 @@ function program1(depth0,data) {
             },
             "click .edit": function(event) {
                 this.eventEdit(event);
+            },
+            "click .branch": function(event) {
+                var path = $(event.currentTarget).attr("data-value");
+                this.render(path);
             },
             "click .refresh": function(event) {
                 this.eventRefresh(event);
@@ -1725,7 +1736,7 @@ function program1(depth0,data) {
         },
         bookmarkFolderStateSet: function(item, action) {
             var project = this.config.get("project");
-            var bookmarkFolderState = this.config.get("bookmarkFolderState");
+            var bookmarkFolderState = $.extend(true, {}, this.config.get("bookmarkFolderState"));
             if (action == "show") {
                 if (bookmarkFolderState) {
                     bookmarkFolderState[project] = item;
@@ -1751,7 +1762,7 @@ function program1(depth0,data) {
                 }
             }
         },
-        render: function() {
+        render: function(activePath) {
             console.log("render CollectionManagementWidget "+this.type);
             var project = this.config.get("project");
             var bookmarkFolderState = this.config.get("bookmarkFolderState");
@@ -1784,32 +1795,32 @@ function program1(depth0,data) {
                     var item = this.collection.at(i);
                     var validPath = false;
                     if (this.filteredPaths === null) {
-                    	validPath = true;
+                        validPath = true;
                     } else {
-                    	for (j=0; j<this.filteredPaths.length; j++) {
+                        for (j=0; j<this.filteredPaths.length; j++) {
                             if (this.filteredPaths[j] === item.get("path")) {
-                            	validPath = true;
+                                validPath = true;
                             }
-                    	}
+                        }
                     }
                     var validOid = false;
                     if (this.filteredOids === null) {
-                    	validOid = true ;
+                        validOid = true ;
                     } else {
-                    	for (j=0; j<this.filteredOids.length; j++) {
+                        for (j=0; j<this.filteredOids.length; j++) {
                             if (this.filteredOids[j] === item.get("oid")) {
-                            	 validOid = true;
+                                 validOid = true;
                             }
-                    	}
+                        }
                     }
                     if (validOid && validPath) {
-	                    var bookmark = {
-	                        label : item.get("name"),
-	                        description : item.get("description")
-	                    };
+                        var bookmark = {
+                            label : item.get("name"),
+                            description : item.get("description")
+                        };
 
-	                    //var existingPath = this.getModelLabel(item);
-	                    var path =  this.getPathLabel(item);
+                        //var existingPath = this.getModelLabel(item);
+                        var path =  this.getPathLabel(item);
                         if (path) {
                             var friendlyPath = path;
 
@@ -1865,13 +1876,22 @@ function program1(depth0,data) {
                                         bookmark.roles = this.getModelRoles(item);
                                         bookmark.selected = (bookmark.oid === selectedId);
                                         bookmark.visible = true;
+                                        bookmark.userFriendlyName = friendlyPath;
+                                    }
+                                    // store active folder
+                                    if (activePath === collection[x].path.value) {
+                                        collection[x].active = true;
                                     }
                                     collection[x].bookmarks.push(bookmark);
                                 }
                             }
                         }
                     }
-	            }
+                }
+
+                if (_.where(collection, {active: true}).length === 0 && collection.length > 0) {
+                    collection[0].active = true;
+                }
 
                 // sort bookmarks by label
                 for (ix=0; ix<collection.length; ix++) {
@@ -1929,7 +1949,7 @@ function program1(depth0,data) {
 
             if (collapseState == "open") {
                 var folders = this.$el.find(".collapse");
-                for (i=0; i<folders.length; i++) {
+                for (var i=0; i<folders.length; i++) {
                     if ($(folders[i]).find("li").length > 0) {
                         $(folders[i]).collapse('toggle');
                     }
@@ -1945,7 +1965,7 @@ function program1(depth0,data) {
     root.squid_api.view.BookmarkModelManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_bookmark_config_editor);
 
 }(this, function (Backbone, squid_api, template) {
-    
+
     squid_api.model.BookmarkModel.prototype.definition = "Bookmark";
     squid_api.model.BookmarkModel.prototype.ignoredAttributes = ['accessRights'];
     squid_api.model.BookmarkModel.prototype.schema = {
@@ -1958,7 +1978,7 @@ function program1(depth0,data) {
             }
         },
         "description" : {
-            "type" : "Text",
+            "type" : "TextArea",
             "editorClass" : "form-control",
             "fieldClass" : "description",
             "editorAttrs" : {
@@ -2000,10 +2020,10 @@ function program1(depth0,data) {
             "fieldClass" : "object-id"
         }
     };
-    
+
     // Define "setConfig" Custom Editor
     var configEditor = Backbone.Form.editors.Base.extend({
-        
+
         template : template,
 
         initialize: function(options) {
@@ -2034,7 +2054,7 @@ function program1(depth0,data) {
             }
             return json;
         },
-        
+
         events: {
             "click #set" : "setConfig"
         },
@@ -2048,7 +2068,7 @@ function program1(depth0,data) {
             delete config.project;
             this.setValue(config);
         },
-        
+
         render: function() {
             var id = this.$el.attr("id");
             var name = this.$el.attr("name");
@@ -2077,7 +2097,7 @@ function program1(depth0,data) {
                 bookmarkId : val
             };
         },
-        
+
         render: function() {
             if (this.value.bookmarkId) {
                 // editing not enabled
@@ -2656,67 +2676,6 @@ function program1(depth0,data) {
 
     /*jshint multistr: true */
 
-    squid_api.model.ProjectModel.prototype.definition = "Project";
-    squid_api.model.ProjectModel.prototype.ignoredAttributes = [
-                                                                'accessRights', 'config', 'relations', 'domains' ];
-    squid_api.model.ProjectModel.prototype.schema = {
-            "id" : {
-                "title" : " ",
-                "type" : "Object",
-                "subSchema" : {
-                    "projectId" : {
-                        "options" : [],
-                        "type" : "Text",
-                        "editorClass" : "hidden"
-                    }
-                },
-                "editorClass" : "hidden",
-                "fieldClass" : "id"
-            },
-            "name" : {
-                "type" : "Text",
-                "editorClass" : "form-control",
-                "fieldClass" : "name"
-            },
-            "dbUrl" : {
-                "title" : "Database URL",
-                "type" : "Text",
-                "editorClass" : "form-control",
-                "position" : 1,
-                "help" : "jdbc:[driver_name]://[host]:[port]/{[database]}{options}",
-                "fieldClass" : "dbUrl"
-            },
-            "dbUser" : {
-                "title" : "Database User",
-                "type" : "Text",
-                "editorClass" : "form-control",
-                "position" : 2,
-                "fieldClass" : "dbUser"
-            },
-            "dbPassword" : {
-                "title" : "Database Password",
-                "type" : "Password",
-                "editorClass" : "form-control",
-                "position" : 3,
-                "fieldClass" : "dbPassword"
-            },
-            "dbCheckConnection" : {
-                "type" : "DbCheckConnection",
-                "fieldClass" : "squid-api-check-db-connection",
-                "editorClass" : "form-control",
-                "position" : 4
-            },
-            "dbSchemas" : {
-                "title" : "Database Schemas",
-                "type" : "Checkboxes",
-                "editorClass" : " ",
-                "options" : [],
-                "position" : 5,
-                "fieldClass" : "dbSchemas checkbox"
-            }
-    };
-
-
     squid_api.model.DomainModel.prototype.definition = "Domain";
     squid_api.model.DomainModel.prototype.ignoredAttributes = [
                                                                'accessRights', 'dimensions', 'metrics' ];
@@ -2743,6 +2702,11 @@ function program1(depth0,data) {
                 "type" : "Text",
                 "editorClass" : "form-control",
                 "fieldClass" : "name"
+            },
+            "description" : {
+                "type" : "TextArea",
+                "editorClass" : "form-control",
+                "fieldClass" : "description"
             },
             "subject" : {
                 "type" : "Object",
@@ -2888,6 +2852,11 @@ function program1(depth0,data) {
                 "editorClass" : "form-control",
                 "fieldClass" : "name"
             },
+            "description" : {
+                "type" : "TextArea",
+                "editorClass" : "form-control",
+                "fieldClass" : "description"
+            },
             "type" : {
                 "type" : "Checkboxes",
                 "editorClass" : " ",
@@ -2978,6 +2947,11 @@ function program1(depth0,data) {
                 "editorClass" : "form-control",
                 "fieldClass" : "name"
             },
+            "description" : {
+                "type" : "TextArea",
+                "editorClass" : "form-control",
+                "fieldClass" : "description"
+            },
             "expression" : {
                 "title" : "",
                 "type" : "Object",
@@ -3018,22 +2992,22 @@ function program1(depth0,data) {
             if (event) {
                 event.preventDefault();
             }
-            
+
             // add class for spinning wheel
             this.$el.addClass("in-progress");
             // collect prerequisites
             var dburl = this.form.fields.dbUrl.getValue();
             var dbPassword =  this.form.fields.dbPassword.getValue();
             var dbUser = this.form.fields.dbUser.getValue();
-            var projectId = this.form.fields.id.getValue().projectId;
+            var id = this.form.fields.id.getValue();
             var url = squid_api.apiURL + "/connections/validate" + "?access_token="+this.login.get("accessToken")+"&url="+dburl+"&username="+ dbUser +"&password=" + encodeURIComponent(dbPassword);
-            if (projectId) {
-                url = url + "&projectId="+projectId;
+            if (id && id.projectId) {
+                url = url + "&projectId="+id.projectId;
             }
 
             $.ajax({
                 type: "GET",
-                url: squid_api.apiURL + "/connections/validate" + "?access_token="+this.login.get("accessToken")+"&projectId="+projectId+"&url="+dburl+"&username="+ dbUser +"&password=" + encodeURIComponent(dbPassword),
+                url: url,
                 dataType: 'json',
                 contentType: 'application/json',
                 success: function (response) {
@@ -3185,7 +3159,159 @@ function program1(depth0,data) {
         }
     });
 
-    var domainExpressionEditor = baseExpressionEditor.extend({
+    var AceExpressionEditor = Backbone.Form.editors.Base.extend({
+        tagName: 'textarea',
+        modelId: null,
+        edit: null,
+        type: null,
+
+        initialize: function(options) {
+            // Call parent constructor
+            Backbone.Form.editors.Base.prototype.initialize.call(this, options);
+            if (options.schema.modelId) {
+                this.modelId = options.schema.modelId;
+            }
+            this.template = options.template || this.constructor.template;
+        },
+
+        getValue: function() {
+            return this.edit.getValue();
+        },
+
+        setValue: function(value) {
+            this.edit.setValue(value);
+        },
+
+        uniq: function(a) {
+            var prims = {"boolean":{}, "number":{}, "string":{}}, objs = [];
+
+            return a.filter(function(item) {
+                var type = typeof item;
+                if(type in prims)
+                    return prims[type].hasOwnProperty(item) ? false : (prims[type][item] = true);
+                else
+                    return objs.indexOf(item) >= 0 ? false : objs.push(item);
+            });
+        },
+
+        editor: function() {
+            this.edit = ace.edit("expression-editor");
+            this.edit.$blockScrolling = Infinity;
+            if(this.value !== null){
+                this.edit.setValue(""+this.value);
+            }
+            this.edit.getSession().setMode("ace/mode/bouquet");
+
+            var me = this;
+            var langTools = ace.require("ace/ext/language_tools");
+            this.edit.setOptions({enableBasicAutocompletion: true, enableLiveAutocompletion:false, enableSnippets:true});
+            var bouquetCompleter = {
+                getCompletions: function (editor, session, pos, prefix, callback) {
+                    if (prefix.length === 0) {
+                        //By default look for ID
+                        prefix="'";
+                    }
+                    squid_api.getSelectedProject().then(function (project) {
+
+                        if (me.type === null || me.type === "domains") {
+                            me.url = squid_api.apiURL + "/projects/" + project.id + "/domains-suggestion?access_token=" + squid_api.model.login.get("accessToken") + "&expression=" + encodeURIComponent(prefix);
+                            $.getJSON(
+                                me.url,
+
+                                function (suggestionList) {
+                                    //{"suggestions":[{"display":"POWER(Numeric n,Numeric exponent)","description":"Function that take two arguments: a number and an exponent","caption":"POWER(Numeric n,Numeric exponent)","suggestion":"POWER(${1:n},${2:p})","objectType":"FORMULA","valueType":"NUMERIC"}],"definitions":["POWER(${1:n},${2:p})"],"validateMessage":"failed to parse expression:\n---\nPOWE\n\n---\n at token 'POWE' \n caused by Encountered \"<EOF>\" at line 1, column 4.\nWas expecting:\n    \"(\" ...\n    ","filterIndex":0,"beginInsertPos":0,"endInsertPos":2,"filter":"POW"}
+                                    callback(null, me.uniq( suggestionList.suggestions.map(function (ea) {
+                                        return {
+                                            name: ea.display,
+                                            caption: ea.caption,
+                                            value: ea.suggestion,
+                                            snippet: ea.suggestion,
+                                            description: ea.description,
+                                            score: ea.ranking,
+                                            meta: ea.valueType
+                                        };
+                                    }) )) ;
+                                }
+                            );
+                        } else {
+                            squid_api.getSelectedDomain().then(function (domain) {
+                                me.url = squid_api.apiURL + "/projects/" + project.id + "/domains/" + domain.id + "/" + me.type + "-suggestion?access_token=" + squid_api.model.login.get("accessToken") + "&expression=" + encodeURIComponent(prefix);
+                                $.getJSON(
+                                    me.url,
+
+                                    function (suggestionList) {
+                                        //{"suggestions":[{"display":"POWER(Numeric n,Numeric exponent)","description":"Function that take two arguments: a number and an exponent","caption":"POWER(Numeric n,Numeric exponent)","suggestion":"POWER(${1:n},${2:p})","objectType":"FORMULA","valueType":"NUMERIC"}],"definitions":["POWER(${1:n},${2:p})"],"validateMessage":"failed to parse expression:\n---\nPOWE\n\n---\n at token 'POWE' \n caused by Encountered \"<EOF>\" at line 1, column 4.\nWas expecting:\n    \"(\" ...\n    ","filterIndex":0,"beginInsertPos":0,"endInsertPos":2,"filter":"POW"}
+                                        callback(null, me.uniq( suggestionList.suggestions.map(function (ea) {
+                                            return {
+                                                name: ea.display,
+                                                caption: ea.caption,
+                                                value: ea.suggestion,
+                                                snippet: ea.suggestion,
+                                                description: ea.description,
+                                                score: ea.ranking,
+                                                meta: ea.valueType
+                                            };
+                                        })));
+                                    }
+                                );
+                            });
+                        }
+
+                        });
+
+                },
+                getDocTooltip: function(item) {
+                    if (!item.docHTML) {
+                        if(item.description !== null && item.name !== null)
+                            item.docHTML = [
+                                "<b>", /*lang.escapeHTML*/item.name, "</b>", "<hr></hr>",
+                                /*lang.escapeHTML*/item.description
+                            ].join("");
+                    }
+                },
+                identifierRegexps: [/[a-zA-Z_0-9\$\#\@\'\.\-\:\_]/]
+            };
+            langTools.addCompleter(bouquetCompleter);
+        },
+
+        onSave: function(model) {
+            console.log(this.value);
+        },
+
+
+        render: function() {
+            var me = this;
+
+            var $el = $(this.template());
+            this.setElement($el);
+
+
+            setTimeout(function() {
+                me.editor();
+            }, 0);
+
+            return this;
+        },
+
+        performRequest: function(url, data) {
+            console.log("perform");
+        }
+    }, {
+        template: _.template('<div id="expression-editor" style="height: 50px;"></div>', null, this.templateSettings)
+    });
+
+    var MetricExpressionEditor = AceExpressionEditor.extend({
+        type: 'metrics'
+    });
+
+    var DimensionDomainExpressionEditor = AceExpressionEditor.extend({
+        type: 'dimensions'
+    });
+
+
+
+
+    var domainExpressionEditor = AceExpressionEditor.extend({
         renderDialog: function() {
             var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/domains-suggestion";
             var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
@@ -3193,7 +3319,7 @@ function program1(depth0,data) {
 
         }
     });
-    var dimensionExpressionEditor = baseExpressionEditor.extend({
+    var dimensionExpressionEditor = DimensionDomainExpressionEditor.extend({
         renderDialog: function() {
             var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/domains/" + this.$el.parents("form").find(".id input[name='domainId']").val() + "/dimensions-suggestion";
             var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
@@ -3202,7 +3328,7 @@ function program1(depth0,data) {
 
         }
     });
-    var metricExpressionEditor = baseExpressionEditor.extend({
+    var metricExpressionEditor = MetricExpressionEditor.extend({
         renderDialog: function() {
             var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/domains/" + this.$el.parents("form").find(".id input[name='domainId']").val() + "/metrics-suggestion";
             var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
@@ -3409,7 +3535,6 @@ function program1(depth0,data) {
         configurationEnabled : false,
         updateMultiQuantity : null,
 
-
         initialize: function(options) {
             var me = this;
 
@@ -3454,11 +3579,13 @@ function program1(depth0,data) {
                 }
             }
 
-            if (this.config) {
-                this.config = options.model;
+            // setup the models
+            if (this.model) {
+                this.config = this.model;
             } else {
                 this.config = squid_api.model.config;
             }
+
             if (this.status) {
                 this.status = options.status;
             } else {
@@ -3472,7 +3599,6 @@ function program1(depth0,data) {
                 // listen config change as we use it to get available dimensions
                 this.listenTo(this.config,"change:"+this.available, this.render);
             }
-            
             // listen config change as we use it to get chosen dimensions
             this.listenTo(this.config,"change:"+this.chosen, this.render);
 
@@ -3486,8 +3612,14 @@ function program1(depth0,data) {
 
             // listen for global status change
             this.listenTo(this.status,"change:status", this.enable);
+        },
 
-            this.renderView();
+        enableDisplay: function() {
+            this.$el.attr("disabled", false);
+        },
+
+        disableDisplay: function() {
+            this.$el.attr("disabled", true);
         },
 
         hide: function() {
@@ -3523,7 +3655,7 @@ function program1(depth0,data) {
 
             if (this.singleSelect) {
                 // add an empty (none selected) option
-                jsonData.options.push({"label" : "-"});
+                jsonData.options.push({"label" : "None"});
             }
 
             // iterate through all filter facets
@@ -3592,9 +3724,6 @@ function program1(depth0,data) {
                     }
                 }
 
-
-                jsonData.options = this.sort(jsonData.options);
-
                 // check if empty
                 if (jsonData.options.length === 0) {
                     jsonData.empty = true;
@@ -3616,40 +3745,48 @@ function program1(depth0,data) {
 
                 if (this.afterRender) {
                     this.afterRender.call(this);
+
+                    // re-delegate events if external widget is used in callback
+                    this.delegateEvents();
                 }
             }
         },
 
         renderView: function(jsonData) {
             var me = this;
-            var html = this.template(jsonData);
-            this.$el.html(html);
 
-            // Initialize plugin
-            if (! this.singleSelect) {
-                this.$el.find("select").multiselect({
-                    buttonContainer: '<div class="squid-api-data-widgets-dimension-selector" />',
-                    buttonText: function() {
-                        if (! me.updateMultiQuantity) {
-                            return 'Dimensions';
-                        } else {
-                            return 'Dimensions (' + me.$el.find("option:selected").length + ')';
+            if (this.$el.find("select").length === 0) {
+                var html = this.template(jsonData);
+                this.$el.html(html);
+                // Initialize plugin
+                if (! this.singleSelect) {
+                    this.$el.find("select").multiselect({
+                        buttonContainer: '<div class="squid-api-data-widgets-dimension-selector" />',
+                        buttonText: function() {
+                            if (! me.updateMultiQuantity) {
+                                return 'Dimensions';
+                            } else {
+                                return 'Dimensions (' + me.$el.find("option:selected").length + ')';
+                            }
+                        },
+                        buttonClass: "form-control",
+                        onDropdownShown: function() {
+                            if (me.configurationEnabled) {
+                                me.showConfiguration();
+                            }
                         }
-                    },
-                    buttonClass: "form-control",
-                    onDropdownShown: function() {
-                        if (me.configurationEnabled) {
-                            me.showConfiguration();
-                        }
-                    }
-                });
+                    });
+                }
+            } else {
+                this.$el.find("select").multiselect('dataprovider', jsonData.options);
+                this.$el.find("select").multiselect('rebuild');
             }
 
             return this;
         },
 
         events: {
-            "change": function() {
+            "change": function(one, two) {
                 var oid = this.$el.find("select option:selected");
 
                 var chosen = this.config.get(this.chosen);
@@ -3657,8 +3794,13 @@ function program1(depth0,data) {
 
                 if (this.singleSelect) {
                     chosenNew = _.clone(chosen);
-                    if (oid.val()) {
-                        chosenNew[this.singleSelectIndex] = oid.val();
+                    var value = oid.val();
+                    if (value) {
+                        if (! chosenNew.includes(value)) {
+                            chosenNew[this.singleSelectIndex] = value;
+                        } else {
+                            this.$el.find("select").val("");
+                        }
                     } else {
                         chosenNew.splice(this.singleSelectIndex, 1);
                     }
@@ -3940,7 +4082,9 @@ function program1(depth0,data) {
             }
 
             // setup the models
-            if (!this.config) {
+            if (this.model) {
+                this.config = this.model;
+            } else {
                 this.config = squid_api.model.config;
             }
 
@@ -3954,12 +4098,22 @@ function program1(depth0,data) {
             this.renderBase();
         },
 
+        applyUserAttention: function() {
+            if (this.userAttention) {
+                this.$el.find("button").addClass("user-attention");
+            } else {
+                this.$el.find("button").removeClass("user-attention");
+            }
+        },
+
         activateUserAttention: function() {
-            this.$el.find("button").addClass("user-attention");
+            this.userAttention = true;
+            this.applyUserAttention();
         },
 
         removeUserAttention: function() {
-            this.$el.find("button").removeClass("user-attention");
+            this.userAttention = false;
+            this.applyUserAttention();
         },
 
         enable: function() {
@@ -3995,11 +4149,11 @@ function program1(depth0,data) {
                         }
                     }
 
-                    if ((add === true) && this.available) {
-                        // check this metric is available
+                    if ((add === true) && (this.available || this.chosen)) {
+                        // check this metric is available (or chosen)
                         var availableArray = this.config.get(this.available);
                         var chosenArray = this.config.get(this.chosen);
-                        if (availableArray && ((availableArray.indexOf(item.get("oid")) < 0) || (chosenArray && chosenArray.indexOf(item.get("oid")) < 0))) {
+                        if ((availableArray && availableArray.indexOf(item.get("oid")) < 0) && (chosenArray && chosenArray.indexOf(item.get("oid")) < 0)) {
                             add = false;
                         }
                     }
@@ -4032,17 +4186,30 @@ function program1(depth0,data) {
                 } else {
                     // update dropdown content
                     this.$el.find("select").multiselect("dataprovider", jsonData.options);
+                    this.$el.find("select").multiselect("rebuild");
                     if (this.configurationEnabled) {
                         this.showConfiguration();
                     }
                 }
+                this.applyUserAttention();
             }
             return this;
         },
 
         renderBase: function(data) {
-            var html = this.template({options : data});
-            this.$el.html(html);
+            if (this.$el.find("select").length === 0) {
+                var html = this.template({options : data});
+                this.$el.html(html);
+                if (this.afterRender) {
+                    this.afterRender.call(this);
+
+                    // re-delegate events if external widget is used in callback
+                    this.delegateEvents();
+                }
+            } else {
+                this.$el.find("select").multiselect("dataprovider", data);
+                this.$el.find("select").multiselect("rebuild");
+            }
         },
 
         render: function() {
@@ -4069,10 +4236,6 @@ function program1(depth0,data) {
 
                 // Remove Button Title Tag
                 this.$el.find("button").removeAttr('title');
-            }
-
-            if (this.afterRender) {
-                this.afterRender.call(this);
             }
 
             // update view data if render is called after the metric change event
@@ -4135,6 +4298,10 @@ function program1(depth0,data) {
 
         close: function() {
             this.$el.modal("toggle");
+        },
+
+        updateHeaderText: function(string) {
+            this.$el.find(".modal-header h4").text(string);
         },
 
         renderBase: function() {
@@ -4238,6 +4405,95 @@ function program1(depth0,data) {
     root.squid_api.view.ProjectModelManagementWidget = factory(root.Backbone, root.squid_api);
 
 }(this, function (Backbone, squid_api, template) {
+    
+    squid_api.model.ProjectModel.prototype.definition = "Project";
+    squid_api.model.ProjectModel.prototype.ignoredAttributes = [
+                                                                'accessRights', 'config', 'relations', 'domains' ];
+    squid_api.model.ProjectModel.prototype.schema = {
+            "name" : {
+                "type" : "Text",
+                "editorClass" : "form-control",
+                "fieldClass" : "name"
+            },
+            "description" : {
+                "type" : "TextArea",
+                "editorClass" : "form-control",
+                "fieldClass" : "description"
+            },
+            "dbUrl" : {
+                "title" : "Database URL",
+                "type" : "Text",
+                "editorClass" : "form-control",
+                "position" : 1,
+                "help" : "jdbc:[driver_name]://[host]:[port]/{[database]}{options}",
+                "fieldClass" : "dbUrl"
+            },
+            "dbUser" : {
+                "title" : "Database User",
+                "type" : "Text",
+                "editorClass" : "form-control",
+                "position" : 2,
+                "fieldClass" : "dbUser"
+            },
+            "dbPassword" : {
+                "title" : "Database Password",
+                "type" : "Password",
+                "editorClass" : "form-control",
+                "position" : 3,
+                "fieldClass" : "dbPassword"
+            },
+            "dbCheckConnection" : {
+                "type" : "DbCheckConnection",
+                "fieldClass" : "squid-api-check-db-connection",
+                "editorClass" : "form-control",
+                "position" : 4
+            },
+            "dbSchemas" : {
+                "title" : "Database Schemas",
+                "type" : "Checkboxes",
+                "editorClass" : " ",
+                "options" : [],
+                "position" : 5,
+                "fieldClass" : "dbSchemas checkbox"
+            },
+            "id" : {
+                "title" : "Object ID",
+                "type" : "ProjectObjectID",
+                "editorClass" : "form-control",
+                "fieldClass" : "object-id"
+            }
+    };
+    
+
+    // Define "objectIDEditor" Custom Editor
+    var projectObjectIDEditor = Backbone.Form.editors.Text.extend({
+
+        setValue: function(value) {
+            this.value = value;
+            this.$el.val(value.projectId);
+        },
+
+        getValue: function() {
+            var val = this.$el.val();
+            return {
+                projectId : val
+            };
+        },
+
+        render: function() {
+            if (this.value.bookmarkId) {
+                // editing not enabled
+                this.$el.attr("disabled", true);
+                this.$el.removeClass("form-control");
+            } else {
+                this.$el.removeAttr("disabled");
+            }
+            this.setValue(this.value);
+            return this;
+        }
+    });
+
+    Backbone.Form.editors.ProjectObjectID = projectObjectIDEditor;
 
     var View = squid_api.view.BaseModelManagementWidget.extend({
         formEvents: function() {

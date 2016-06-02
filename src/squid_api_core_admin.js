@@ -4,67 +4,6 @@
 
     /*jshint multistr: true */
 
-    squid_api.model.ProjectModel.prototype.definition = "Project";
-    squid_api.model.ProjectModel.prototype.ignoredAttributes = [
-                                                                'accessRights', 'config', 'relations', 'domains' ];
-    squid_api.model.ProjectModel.prototype.schema = {
-            "id" : {
-                "title" : " ",
-                "type" : "Object",
-                "subSchema" : {
-                    "projectId" : {
-                        "options" : [],
-                        "type" : "Text",
-                        "editorClass" : "hidden"
-                    }
-                },
-                "editorClass" : "hidden",
-                "fieldClass" : "id"
-            },
-            "name" : {
-                "type" : "Text",
-                "editorClass" : "form-control",
-                "fieldClass" : "name"
-            },
-            "dbUrl" : {
-                "title" : "Database URL",
-                "type" : "Text",
-                "editorClass" : "form-control",
-                "position" : 1,
-                "help" : "jdbc:[driver_name]://[host]:[port]/{[database]}{options}",
-                "fieldClass" : "dbUrl"
-            },
-            "dbUser" : {
-                "title" : "Database User",
-                "type" : "Text",
-                "editorClass" : "form-control",
-                "position" : 2,
-                "fieldClass" : "dbUser"
-            },
-            "dbPassword" : {
-                "title" : "Database Password",
-                "type" : "Password",
-                "editorClass" : "form-control",
-                "position" : 3,
-                "fieldClass" : "dbPassword"
-            },
-            "dbCheckConnection" : {
-                "type" : "DbCheckConnection",
-                "fieldClass" : "squid-api-check-db-connection",
-                "editorClass" : "form-control",
-                "position" : 4
-            },
-            "dbSchemas" : {
-                "title" : "Database Schemas",
-                "type" : "Checkboxes",
-                "editorClass" : " ",
-                "options" : [],
-                "position" : 5,
-                "fieldClass" : "dbSchemas checkbox"
-            }
-    };
-
-
     squid_api.model.DomainModel.prototype.definition = "Domain";
     squid_api.model.DomainModel.prototype.ignoredAttributes = [
                                                                'accessRights', 'dimensions', 'metrics' ];
@@ -91,6 +30,11 @@
                 "type" : "Text",
                 "editorClass" : "form-control",
                 "fieldClass" : "name"
+            },
+            "description" : {
+                "type" : "TextArea",
+                "editorClass" : "form-control",
+                "fieldClass" : "description"
             },
             "subject" : {
                 "type" : "Object",
@@ -236,6 +180,11 @@
                 "editorClass" : "form-control",
                 "fieldClass" : "name"
             },
+            "description" : {
+                "type" : "TextArea",
+                "editorClass" : "form-control",
+                "fieldClass" : "description"
+            },
             "type" : {
                 "type" : "Checkboxes",
                 "editorClass" : " ",
@@ -326,6 +275,11 @@
                 "editorClass" : "form-control",
                 "fieldClass" : "name"
             },
+            "description" : {
+                "type" : "TextArea",
+                "editorClass" : "form-control",
+                "fieldClass" : "description"
+            },
             "expression" : {
                 "title" : "",
                 "type" : "Object",
@@ -366,22 +320,22 @@
             if (event) {
                 event.preventDefault();
             }
-            
+
             // add class for spinning wheel
             this.$el.addClass("in-progress");
             // collect prerequisites
             var dburl = this.form.fields.dbUrl.getValue();
             var dbPassword =  this.form.fields.dbPassword.getValue();
             var dbUser = this.form.fields.dbUser.getValue();
-            var projectId = this.form.fields.id.getValue().projectId;
+            var id = this.form.fields.id.getValue();
             var url = squid_api.apiURL + "/connections/validate" + "?access_token="+this.login.get("accessToken")+"&url="+dburl+"&username="+ dbUser +"&password=" + encodeURIComponent(dbPassword);
-            if (projectId) {
-                url = url + "&projectId="+projectId;
+            if (id && id.projectId) {
+                url = url + "&projectId="+id.projectId;
             }
 
             $.ajax({
                 type: "GET",
-                url: squid_api.apiURL + "/connections/validate" + "?access_token="+this.login.get("accessToken")+"&projectId="+projectId+"&url="+dburl+"&username="+ dbUser +"&password=" + encodeURIComponent(dbPassword),
+                url: url,
                 dataType: 'json',
                 contentType: 'application/json',
                 success: function (response) {
@@ -533,7 +487,159 @@
         }
     });
 
-    var domainExpressionEditor = baseExpressionEditor.extend({
+    var AceExpressionEditor = Backbone.Form.editors.Base.extend({
+        tagName: 'textarea',
+        modelId: null,
+        edit: null,
+        type: null,
+
+        initialize: function(options) {
+            // Call parent constructor
+            Backbone.Form.editors.Base.prototype.initialize.call(this, options);
+            if (options.schema.modelId) {
+                this.modelId = options.schema.modelId;
+            }
+            this.template = options.template || this.constructor.template;
+        },
+
+        getValue: function() {
+            return this.edit.getValue();
+        },
+
+        setValue: function(value) {
+            this.edit.setValue(value);
+        },
+
+        uniq: function(a) {
+            var prims = {"boolean":{}, "number":{}, "string":{}}, objs = [];
+
+            return a.filter(function(item) {
+                var type = typeof item;
+                if(type in prims)
+                    return prims[type].hasOwnProperty(item) ? false : (prims[type][item] = true);
+                else
+                    return objs.indexOf(item) >= 0 ? false : objs.push(item);
+            });
+        },
+
+        editor: function() {
+            this.edit = ace.edit("expression-editor");
+            this.edit.$blockScrolling = Infinity;
+            if(this.value !== null){
+                this.edit.setValue(""+this.value);
+            }
+            this.edit.getSession().setMode("ace/mode/bouquet");
+
+            var me = this;
+            var langTools = ace.require("ace/ext/language_tools");
+            this.edit.setOptions({enableBasicAutocompletion: true, enableLiveAutocompletion:false, enableSnippets:true});
+            var bouquetCompleter = {
+                getCompletions: function (editor, session, pos, prefix, callback) {
+                    if (prefix.length === 0) {
+                        //By default look for ID
+                        prefix="'";
+                    }
+                    squid_api.getSelectedProject().then(function (project) {
+
+                        if (me.type === null || me.type === "domains") {
+                            me.url = squid_api.apiURL + "/projects/" + project.id + "/domains-suggestion?access_token=" + squid_api.model.login.get("accessToken") + "&expression=" + encodeURIComponent(prefix);
+                            $.getJSON(
+                                me.url,
+
+                                function (suggestionList) {
+                                    //{"suggestions":[{"display":"POWER(Numeric n,Numeric exponent)","description":"Function that take two arguments: a number and an exponent","caption":"POWER(Numeric n,Numeric exponent)","suggestion":"POWER(${1:n},${2:p})","objectType":"FORMULA","valueType":"NUMERIC"}],"definitions":["POWER(${1:n},${2:p})"],"validateMessage":"failed to parse expression:\n---\nPOWE\n\n---\n at token 'POWE' \n caused by Encountered \"<EOF>\" at line 1, column 4.\nWas expecting:\n    \"(\" ...\n    ","filterIndex":0,"beginInsertPos":0,"endInsertPos":2,"filter":"POW"}
+                                    callback(null, me.uniq( suggestionList.suggestions.map(function (ea) {
+                                        return {
+                                            name: ea.display,
+                                            caption: ea.caption,
+                                            value: ea.suggestion,
+                                            snippet: ea.suggestion,
+                                            description: ea.description,
+                                            score: ea.ranking,
+                                            meta: ea.valueType
+                                        };
+                                    }) )) ;
+                                }
+                            );
+                        } else {
+                            squid_api.getSelectedDomain().then(function (domain) {
+                                me.url = squid_api.apiURL + "/projects/" + project.id + "/domains/" + domain.id + "/" + me.type + "-suggestion?access_token=" + squid_api.model.login.get("accessToken") + "&expression=" + encodeURIComponent(prefix);
+                                $.getJSON(
+                                    me.url,
+
+                                    function (suggestionList) {
+                                        //{"suggestions":[{"display":"POWER(Numeric n,Numeric exponent)","description":"Function that take two arguments: a number and an exponent","caption":"POWER(Numeric n,Numeric exponent)","suggestion":"POWER(${1:n},${2:p})","objectType":"FORMULA","valueType":"NUMERIC"}],"definitions":["POWER(${1:n},${2:p})"],"validateMessage":"failed to parse expression:\n---\nPOWE\n\n---\n at token 'POWE' \n caused by Encountered \"<EOF>\" at line 1, column 4.\nWas expecting:\n    \"(\" ...\n    ","filterIndex":0,"beginInsertPos":0,"endInsertPos":2,"filter":"POW"}
+                                        callback(null, me.uniq( suggestionList.suggestions.map(function (ea) {
+                                            return {
+                                                name: ea.display,
+                                                caption: ea.caption,
+                                                value: ea.suggestion,
+                                                snippet: ea.suggestion,
+                                                description: ea.description,
+                                                score: ea.ranking,
+                                                meta: ea.valueType
+                                            };
+                                        })));
+                                    }
+                                );
+                            });
+                        }
+
+                        });
+
+                },
+                getDocTooltip: function(item) {
+                    if (!item.docHTML) {
+                        if(item.description !== null && item.name !== null)
+                            item.docHTML = [
+                                "<b>", /*lang.escapeHTML*/item.name, "</b>", "<hr></hr>",
+                                /*lang.escapeHTML*/item.description
+                            ].join("");
+                    }
+                },
+                identifierRegexps: [/[a-zA-Z_0-9\$\#\@\'\.\-\:\_]/]
+            };
+            langTools.addCompleter(bouquetCompleter);
+        },
+
+        onSave: function(model) {
+            console.log(this.value);
+        },
+
+
+        render: function() {
+            var me = this;
+
+            var $el = $(this.template());
+            this.setElement($el);
+
+
+            setTimeout(function() {
+                me.editor();
+            }, 0);
+
+            return this;
+        },
+
+        performRequest: function(url, data) {
+            console.log("perform");
+        }
+    }, {
+        template: _.template('<div id="expression-editor" style="height: 50px;"></div>', null, this.templateSettings)
+    });
+
+    var MetricExpressionEditor = AceExpressionEditor.extend({
+        type: 'metrics'
+    });
+
+    var DimensionDomainExpressionEditor = AceExpressionEditor.extend({
+        type: 'dimensions'
+    });
+
+
+
+
+    var domainExpressionEditor = AceExpressionEditor.extend({
         renderDialog: function() {
             var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/domains-suggestion";
             var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
@@ -541,7 +647,7 @@
 
         }
     });
-    var dimensionExpressionEditor = baseExpressionEditor.extend({
+    var dimensionExpressionEditor = DimensionDomainExpressionEditor.extend({
         renderDialog: function() {
             var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/domains/" + this.$el.parents("form").find(".id input[name='domainId']").val() + "/dimensions-suggestion";
             var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
@@ -550,7 +656,7 @@
 
         }
     });
-    var metricExpressionEditor = baseExpressionEditor.extend({
+    var metricExpressionEditor = MetricExpressionEditor.extend({
         renderDialog: function() {
             var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/domains/" + this.$el.parents("form").find(".id input[name='domainId']").val() + "/metrics-suggestion";
             var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};

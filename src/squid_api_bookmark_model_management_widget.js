@@ -2,7 +2,7 @@
     root.squid_api.view.BookmarkModelManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_bookmark_config_editor);
 
 }(this, function (Backbone, squid_api, template) {
-    
+
     squid_api.model.BookmarkModel.prototype.definition = "Bookmark";
     squid_api.model.BookmarkModel.prototype.ignoredAttributes = ['accessRights'];
     squid_api.model.BookmarkModel.prototype.schema = {
@@ -15,7 +15,7 @@
             }
         },
         "description" : {
-            "type" : "Text",
+            "type" : "TextArea",
             "editorClass" : "form-control",
             "fieldClass" : "description",
             "editorAttrs" : {
@@ -57,10 +57,10 @@
             "fieldClass" : "object-id"
         }
     };
-    
+
     // Define "setConfig" Custom Editor
     var configEditor = Backbone.Form.editors.Base.extend({
-        
+
         template : template,
 
         initialize: function(options) {
@@ -91,7 +91,7 @@
             }
             return json;
         },
-        
+
         events: {
             "click #set" : "setConfig"
         },
@@ -105,7 +105,7 @@
             delete config.project;
             this.setValue(config);
         },
-        
+
         render: function() {
             var id = this.$el.attr("id");
             var name = this.$el.attr("name");
@@ -134,7 +134,7 @@
                 bookmarkId : val
             };
         },
-        
+
         render: function() {
             if (this.value.bookmarkId) {
                 // editing not enabled

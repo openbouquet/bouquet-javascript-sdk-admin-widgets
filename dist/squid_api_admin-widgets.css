@@ -672,6 +672,10 @@ div.object-id input[disabled] {
 	background: #ffffff;
 }
 
+.squid-api-data-widgets-dimension-selector {
+	position : relative;
+}
+
 .squid-api-data-widgets-dimension-selector ul li.disabled {
 	text-decoration: line-through;
 }

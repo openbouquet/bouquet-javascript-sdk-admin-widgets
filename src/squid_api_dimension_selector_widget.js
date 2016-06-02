@@ -15,7 +15,6 @@
         configurationEnabled : false,
         updateMultiQuantity : null,
 
-
         initialize: function(options) {
             var me = this;
 
@@ -60,11 +59,13 @@
                 }
             }
 
-            if (this.config) {
-                this.config = options.model;
+            // setup the models
+            if (this.model) {
+                this.config = this.model;
             } else {
                 this.config = squid_api.model.config;
             }
+
             if (this.status) {
                 this.status = options.status;
             } else {
@@ -78,7 +79,6 @@
                 // listen config change as we use it to get available dimensions
                 this.listenTo(this.config,"change:"+this.available, this.render);
             }
-            
             // listen config change as we use it to get chosen dimensions
             this.listenTo(this.config,"change:"+this.chosen, this.render);
 
@@ -92,8 +92,14 @@
 
             // listen for global status change
             this.listenTo(this.status,"change:status", this.enable);
+        },
 
-            this.renderView();
+        enableDisplay: function() {
+            this.$el.attr("disabled", false);
+        },
+
+        disableDisplay: function() {
+            this.$el.attr("disabled", true);
         },
 
         hide: function() {
@@ -129,7 +135,7 @@
 
             if (this.singleSelect) {
                 // add an empty (none selected) option
-                jsonData.options.push({"label" : "-"});
+                jsonData.options.push({"label" : "None"});
             }
 
             // iterate through all filter facets
@@ -198,9 +204,6 @@
                     }
                 }
 
-
-                jsonData.options = this.sort(jsonData.options);
-
                 // check if empty
                 if (jsonData.options.length === 0) {
                     jsonData.empty = true;
@@ -222,40 +225,48 @@
 
                 if (this.afterRender) {
                     this.afterRender.call(this);
+
+                    // re-delegate events if external widget is used in callback
+                    this.delegateEvents();
                 }
             }
         },
 
         renderView: function(jsonData) {
             var me = this;
-            var html = this.template(jsonData);
-            this.$el.html(html);
 
-            // Initialize plugin
-            if (! this.singleSelect) {
-                this.$el.find("select").multiselect({
-                    buttonContainer: '<div class="squid-api-data-widgets-dimension-selector" />',
-                    buttonText: function() {
-                        if (! me.updateMultiQuantity) {
-                            return 'Dimensions';
-                        } else {
-                            return 'Dimensions (' + me.$el.find("option:selected").length + ')';
+            if (this.$el.find("select").length === 0) {
+                var html = this.template(jsonData);
+                this.$el.html(html);
+                // Initialize plugin
+                if (! this.singleSelect) {
+                    this.$el.find("select").multiselect({
+                        buttonContainer: '<div class="squid-api-data-widgets-dimension-selector" />',
+                        buttonText: function() {
+                            if (! me.updateMultiQuantity) {
+                                return 'Dimensions';
+                            } else {
+                                return 'Dimensions (' + me.$el.find("option:selected").length + ')';
+                            }
+                        },
+                        buttonClass: "form-control",
+                        onDropdownShown: function() {
+                            if (me.configurationEnabled) {
+                                me.showConfiguration();
+                            }
                         }
-                    },
-                    buttonClass: "form-control",
-                    onDropdownShown: function() {
-                        if (me.configurationEnabled) {
-                            me.showConfiguration();
-                        }
-                    }
-                });
+                    });
+                }
+            } else {
+                this.$el.find("select").multiselect('dataprovider', jsonData.options);
+                this.$el.find("select").multiselect('rebuild');
             }
 
             return this;
         },
 
         events: {
-            "change": function() {
+            "change": function(one, two) {
                 var oid = this.$el.find("select option:selected");
 
                 var chosen = this.config.get(this.chosen);
@@ -263,8 +274,13 @@
 
                 if (this.singleSelect) {
                     chosenNew = _.clone(chosen);
-                    if (oid.val()) {
-                        chosenNew[this.singleSelectIndex] = oid.val();
+                    var value = oid.val();
+                    if (value) {
+                        if (! chosenNew.includes(value)) {
+                            chosenNew[this.singleSelectIndex] = value;
+                        } else {
+                            this.$el.find("select").val("");
+                        }
                     } else {
                         chosenNew.splice(this.singleSelectIndex, 1);
                     }
