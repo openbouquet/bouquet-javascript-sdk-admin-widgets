@@ -551,8 +551,8 @@
                             squid_api.getSelectedDomain().then(function (domain) {
                                 me.url = squid_api.apiURL + "/projects/" + project.id + "/domains/" + domain.id + "/" + me.type + "-suggestion?access_token=" + squid_api.model.login.get("accessToken") + "&expression=" + encodeURIComponent(prefix);
 
-                            })
-                        }})
+                            });
+                        }});
                 },
                 readOnly: true // false if this command should not apply in readOnly mode
             });
