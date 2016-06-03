@@ -3687,7 +3687,18 @@ function program1(depth0,data) {
                                 // check this facet is available (or chosen)
                                 var availableArray = this.config.get(this.available);
                                 var chosenArray = this.config.get(this.chosen);
-                                if ((availableArray && (availableArray.indexOf(facet.id) > -1) || (chosenArray && chosenArray.indexOf(facet.id) > -1))) {
+                                var addToArray = true;
+
+                                // don't allow dimension reselection if using a singleSelectIndex
+                                if (this.singleSelectIndex) {
+                                    for (d=0; d<chosenArray.length; d++) {
+                                        if (d !== this.singleSelectIndex && chosenArray[d] === facet.id) {
+                                            addToArray = false;
+                                        }
+                                    }
+                                }
+
+                                if (addToArray && (availableArray && (availableArray.indexOf(facet.id) > -1) || (chosenArray && chosenArray.indexOf(facet.id) > -1))) {
                                     facetList.push(facet);
                                 }
                             } else {
