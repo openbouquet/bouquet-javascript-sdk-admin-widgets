@@ -4397,6 +4397,7 @@ function program1(depth0,data) {
         template : squid_api.template.squid_api_navigator,
         config : null,
         hierarchy : {},
+        filter : null,
 
         initialize : function(options) {
             
@@ -4407,6 +4408,9 @@ function program1(depth0,data) {
                 }
                 if (options.config) {
                     this.config = options.config;
+                }
+                if (options.filter) {
+                    this.filter = options.filter;
                 }
             }
             // listeners
@@ -4425,19 +4429,24 @@ function program1(depth0,data) {
             this.initialize();
         },
         
-        loadNode : function(parent, node) {
+        loadNode : function(parent, node, filter) {
             var me = this;
             var children = node.get("_children");
             if (children) {
                 parent.nodes = [];
                 for (var i=0; i<children.length; i++) {
                     var childName = children[i];
-                    var newNode = {
-                            "name" : childName,
-                            "nodes" : []
-                        };
-                    parent.nodes.push(newNode);
-                    this.loadCollection(newNode, node, childName);
+                    if ((!filter) || filter[childName]) {      
+                        var newNode = {
+                                "name" : childName,
+                                "nodes" : []
+                            };
+                        parent.nodes.push(newNode);
+                        if (filter) {
+                            filter = filter[childName];
+                        }
+                        this.loadCollection(newNode, node, childName, filter);
+                    }
                 }
             }
         },
@@ -4446,11 +4455,11 @@ function program1(depth0,data) {
             var me = this;
             this.hierarchy = {};
             squid_api.getCustomer().done(function(customer) {
-                me.loadNode(me.hierarchy, customer);
+                me.loadNode(me.hierarchy, customer, me.filter);
             });
         },
         
-        loadCollection : function(parent, node, child) {
+        loadCollection : function(parent, node, child, filter) {
             var me = this;
             node.get(child).load().then(function(childCollection) {
                 for (var i1=0; i1<childCollection.length; i1++) {
@@ -4464,7 +4473,7 @@ function program1(depth0,data) {
                     };
                     parent.nodes[i1] = newNode;
                     me.render();
-                    me.loadNode(newNode, childNode);
+                    me.loadNode(newNode, childNode, filter);
                 }
             });
         },
