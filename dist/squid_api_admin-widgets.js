@@ -3320,7 +3320,6 @@ function program1(depth0,data) {
         },
 
         onSave: function(model) {
-            console.log("test");
             console.log(this.value);
         },
 
