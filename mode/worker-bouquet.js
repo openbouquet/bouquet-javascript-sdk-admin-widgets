@@ -11699,10 +11699,11 @@ ace.define("ace/mode/javascript/jshint",["require","exports","module"], function
 ace.define("ace/mode/bouquet_worker",["require","exports","module", "ace/lib/oop","ace/worker/mirror","ace/mode/javascript/jshint"], function(require, exports, module) {
     "use strict";
 
-    //importScripts("bower_components/squid_api/dist/squid_api.js");
     var oop = require("../lib/oop");
     var Mirror = require("../worker/mirror").Mirror;
     var lint = require("./javascript/jshint").JSHINT;
+
+    var errors = new Array();
 
     function startRegex(arr) {
         return RegExp("^(" + arr.join("|") + ")");
@@ -11779,70 +11780,71 @@ ace.define("ace/mode/bouquet_worker",["require","exports","module", "ace/lib/oop
             return false
         };
 
+        this.reqListener = function (data){
+            var answer = JSON.parse(this.response);
+            var type = "warning";
+            if(answer.validateMessage.length==0) {
+                // NO error.
+            }else{
+                if(!answer.suggestions || answer.suggestions.length == 0){
+                    type = "error"
+                }
+                this.error = {
+                    row: 0,
+                    column: answer.beginInsertPos,
+                    text: answer.validateMessage,
+                    type: type,
+                    raw: answer
+                };
+            }
+
+
+        };
+
         this.onUpdate = function() {
             var value = this.doc.getValue();
             value = value.replace(/^#!.*\n/, "\n");
             if (!value)
                 return this.sender.emit("annotate", []);
 
-            var errors = [];
-            var maxErrorLevel = this.isValidJS(value) ? "warning" : "error";
-            var error = {};
-	        error.line=1;
-	        error.character=1;
-	        error.reason="Missing test";
-	        var type = "info";
+            this.errors = [];
+
+            var oReq = new XMLHttpRequest();
+
             if(this.options.domainId){
                 this.url = this.options.squid_apiUrl + "/projects/" + this.options.projectId + "/domains/" + this.options.domainId + "/" + "dimensions" + "-suggestion?access_token=" + this.options.tokenId + "&expression=" + encodeURIComponent(value);
-                $.getJSON(
-                    this.url,
-
-                    function (suggestionList) {
-                        //{"suggestions":[{"display":"POWER(Numeric n,Numeric exponent)","description":"Function that take two arguments: a number and an exponent","caption":"POWER(Numeric n,Numeric exponent)","suggestion":"POWER(${1:n},${2:p})","objectType":"FORMULA","valueType":"NUMERIC"}],"definitions":["POWER(${1:n},${2:p})"],"validateMessage":"failed to parse expression:\n---\nPOWE\n\n---\n at token 'POWE' \n caused by Encountered \"<EOF>\" at line 1, column 4.\nWas expecting:\n    \"(\" ...\n    ","filterIndex":0,"beginInsertPos":0,"endInsertPos":2,"filter":"POW"}
-                        callback(null, suggestionList.suggestions.map(function (ea) {
-                            return {
-                                name: ea.display,
-                                caption: ea.caption,
-                                value: ea.suggestion,
-                                snippet: ea.suggestion,
-                                description: ea.description,
-                                score: ea.ranking,
-                                meta: ea.valueType
-                            };
-                        }));
-                    }
-                );
-
             }else{
                 this.url = this.options.squid_apiUrl + "/projects/" + this.options.projectId + "/domains-suggestion?access_token=" + this.options.tokenId + "&expression=" + encodeURIComponent(value);
-                $.getJSON(
-                    this.url,
-
-                    function (suggestionList){
-                        //{"suggestions":[{"display":"POWER(Numeric n,Numeric exponent)","description":"Function that take two arguments: a number and an exponent","caption":"POWER(Numeric n,Numeric exponent)","suggestion":"POWER(${1:n},${2:p})","objectType":"FORMULA","valueType":"NUMERIC"}],"definitions":["POWER(${1:n},${2:p})"],"validateMessage":"failed to parse expression:\n---\nPOWE\n\n---\n at token 'POWE' \n caused by Encountered \"<EOF>\" at line 1, column 4.\nWas expecting:\n    \"(\" ...\n    ","filterIndex":0,"beginInsertPos":0,"endInsertPos":2,"filter":"POW"}
-                        callback(null, suggestionList.suggestions.map(function (ea) {
-                            return {
-                                name: ea.display,
-                                caption: ea.caption,
-                                value: ea.suggestion,
-                                snippet: ea.suggestion,
-                                description: ea.description,
-                                score: ea.ranking,
-                                meta: ea.valueType
-                            };
-                        }) ) ;
-                    }
-                );
             };
-	    var raw = "This is a test";
+            oReq.addEventListener("load", this.reqListener);
+            /*oReq.onload = function () {
+                var answer = JSON.parse(oReq.response);
+                var type = "warning";
+                if(!answer.suggestions || answer.suggestions.length == 0){
+                    type = "error"
+                }
+                this.errors.push({
+                    row: 0,
+                    column: answer.beginInsertPos,
+                    text: answer.validateMessage,
+                    type: type,
+                    raw: answer
+                });
+                this.sender.emit("annotate", this.errors);
+            };*/
+            oReq.open("GET", this.url, false);
+            oReq.send();
 
-	    errors.push({
+            if(oReq.error){
+                this.errors.push(oReq.error);
+            }
+            /*this.errors.push({
                     row: error.line-1,
                     column: error.character-1,
                     text: error.reason,
                     type: type,
                     raw: raw
-            });
+            });*/
             /*lint(value, this.options);
             var results = lint.errors;
 
@@ -11892,7 +11894,7 @@ ace.define("ace/mode/bouquet_worker",["require","exports","module", "ace/lib/oop
                 if (errorAdded) {
                 }
             }*/
-            this.sender.emit("annotate", errors);
+            this.sender.emit("annotate", this.errors);
         };
 
     }).call(BouquetWorker.prototype);
