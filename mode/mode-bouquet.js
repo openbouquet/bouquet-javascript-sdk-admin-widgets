@@ -1121,18 +1121,33 @@ ace.define("ace/mode/bouquet",["require","exports","module","ace/lib/oop","ace/m
 
         this.createWorker = function(session) {
             var worker = new WorkerClient(["ace"], "ace/mode/bouquet_worker", "BouquetWorker");
-            //worker.changeOptions({url : "https://localhost"})
-            worker.attachToDocument(session.getDocument());
 
-            worker.on("annotate", function(results) {
-                session.setAnnotations(results.data);
-            });
+            return squid_api.getSelectedProject().then(function (project) {
+                //worker.changeOptions({url : "https://localhost"})
+                worker.attachToDocument(session.getDocument());
 
-            worker.on("terminate", function() {
-                session.clearAnnotations();
-            });
+                squid_api.getSelectedDomain().then(function (domain) {
+                    worker.call("setOptions",[{squid_apiUrl: squid_api.apiURL,tokenId:squid_api.model.login.get("accessToken"),projectId:project.id,domainId:domain.id}]);
+                }, function(error){
+                    //no domain selected
+                    worker.call("setOptions",[{squid_apiUrl: squid_api.apiURL,tokenId:squid_api.model.login.get("accessToken"),projectId:project.id}]);
+                });
 
-            return worker;
+
+                worker.on("annotate", function (results) {
+                    session.setAnnotations(results.data);
+                });
+
+                worker.on("terminate", function () {
+                    session.clearAnnotations();
+                });
+
+
+                /*var e = {data: {type: "error", id: 0, data: "test"}}
+                worker.$worker.postMessage(e);*/
+
+                return worker;
+            })
         };
 
         this.$id = "ace/mode/bouquet";

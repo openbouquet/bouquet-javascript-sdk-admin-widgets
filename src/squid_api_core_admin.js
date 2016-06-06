@@ -630,7 +630,6 @@
         },
 
         onSave: function(model) {
-            console.log("test");
             console.log(this.value);
         },
 

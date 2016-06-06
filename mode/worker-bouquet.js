@@ -1356,6 +1356,9 @@ ace.define("ace/worker/mirror",["require","exports","module","ace/range","ace/do
     var Mirror = exports.Mirror = function(sender) {
         this.sender = sender;
         var doc = this.doc = new Document("");
+        var projectId;
+        var domainId;
+        var tokenId;
 
         var deferredUpdate = this.deferredUpdate = lang.delayedCall(this.onUpdate.bind(this));
 
@@ -1388,6 +1391,14 @@ ace.define("ace/worker/mirror",["require","exports","module","ace/range","ace/do
             this.$timeout = timeout;
         };
 
+        this.setOptions = function(value){
+            //value: [tokenId, projectId, domainId];
+            this.tokenId = value[0];
+            this.projectId = value[1];
+            this.domainId = value[2];
+            console.log("Mirror: Project ID: "+projectId)
+        }
+
         this.setValue = function(value) {
             this.doc.setValue(value);
             this.deferredUpdate.schedule(this.$timeout);
@@ -1397,7 +1408,7 @@ ace.define("ace/worker/mirror",["require","exports","module","ace/range","ace/do
             this.sender.callback(this.doc.getValue(), callbackId);
         };
 
-        this.onUpdate = function() {
+        this.onUpdate = function(e) {
         };
 
         this.isPending = function() {
@@ -11685,9 +11696,10 @@ ace.define("ace/mode/javascript/jshint",["require","exports","module"], function
 
 });
 
-ace.define("ace/mode/bouquet_worker",["require","exports","module","ace/lib/oop","ace/worker/mirror","ace/mode/javascript/jshint"], function(require, exports, module) {
+ace.define("ace/mode/bouquet_worker",["require","exports","module", "ace/lib/oop","ace/worker/mirror","ace/mode/javascript/jshint"], function(require, exports, module) {
     "use strict";
 
+    //importScripts("bower_components/squid_api/dist/squid_api.js");
     var oop = require("../lib/oop");
     var Mirror = require("../worker/mirror").Mirror;
     var lint = require("./javascript/jshint").JSHINT;
@@ -11776,11 +11788,54 @@ ace.define("ace/mode/bouquet_worker",["require","exports","module","ace/lib/oop"
             var errors = [];
             var maxErrorLevel = this.isValidJS(value) ? "warning" : "error";
             var error = {};
-	    error.line=1;
-	    error.character=1;
-	    error.reason="Missing test";
-	    var type = "warning";
+	        error.line=1;
+	        error.character=1;
+	        error.reason="Missing test";
+	        var type = "info";
+            if(this.options.domainId){
+                this.url = this.options.squid_apiUrl + "/projects/" + this.options.projectId + "/domains/" + this.options.domainId + "/" + "dimensions" + "-suggestion?access_token=" + this.options.tokenId + "&expression=" + encodeURIComponent(value);
+                $.getJSON(
+                    this.url,
+
+                    function (suggestionList) {
+                        //{"suggestions":[{"display":"POWER(Numeric n,Numeric exponent)","description":"Function that take two arguments: a number and an exponent","caption":"POWER(Numeric n,Numeric exponent)","suggestion":"POWER(${1:n},${2:p})","objectType":"FORMULA","valueType":"NUMERIC"}],"definitions":["POWER(${1:n},${2:p})"],"validateMessage":"failed to parse expression:\n---\nPOWE\n\n---\n at token 'POWE' \n caused by Encountered \"<EOF>\" at line 1, column 4.\nWas expecting:\n    \"(\" ...\n    ","filterIndex":0,"beginInsertPos":0,"endInsertPos":2,"filter":"POW"}
+                        callback(null, suggestionList.suggestions.map(function (ea) {
+                            return {
+                                name: ea.display,
+                                caption: ea.caption,
+                                value: ea.suggestion,
+                                snippet: ea.suggestion,
+                                description: ea.description,
+                                score: ea.ranking,
+                                meta: ea.valueType
+                            };
+                        }));
+                    }
+                );
+
+            }else{
+                this.url = this.options.squid_apiUrl + "/projects/" + this.options.projectId + "/domains-suggestion?access_token=" + this.options.tokenId + "&expression=" + encodeURIComponent(value);
+                $.getJSON(
+                    this.url,
+
+                    function (suggestionList){
+                        //{"suggestions":[{"display":"POWER(Numeric n,Numeric exponent)","description":"Function that take two arguments: a number and an exponent","caption":"POWER(Numeric n,Numeric exponent)","suggestion":"POWER(${1:n},${2:p})","objectType":"FORMULA","valueType":"NUMERIC"}],"definitions":["POWER(${1:n},${2:p})"],"validateMessage":"failed to parse expression:\n---\nPOWE\n\n---\n at token 'POWE' \n caused by Encountered \"<EOF>\" at line 1, column 4.\nWas expecting:\n    \"(\" ...\n    ","filterIndex":0,"beginInsertPos":0,"endInsertPos":2,"filter":"POW"}
+                        callback(null, suggestionList.suggestions.map(function (ea) {
+                            return {
+                                name: ea.display,
+                                caption: ea.caption,
+                                value: ea.suggestion,
+                                snippet: ea.suggestion,
+                                description: ea.description,
+                                score: ea.ranking,
+                                meta: ea.valueType
+                            };
+                        }) ) ;
+                    }
+                );
+            };
 	    var raw = "This is a test";
+
 	    errors.push({
                     row: error.line-1,
                     column: error.character-1,
@@ -11837,7 +11892,6 @@ ace.define("ace/mode/bouquet_worker",["require","exports","module","ace/lib/oop"
                 if (errorAdded) {
                 }
             }*/
-
             this.sender.emit("annotate", errors);
         };
 
