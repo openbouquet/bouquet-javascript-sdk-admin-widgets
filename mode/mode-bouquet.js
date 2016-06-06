@@ -59,28 +59,15 @@ ace.define("ace/mode/bouquet_highlight_rules",["require","exports","module","ace
     var BouquetHighlightRules = function(options) {
         var keywordMapper = this.createKeywordMapper({
             "variable.language":
-            "Array|Boolean|Date|Function|Iterator|Number|Object|RegExp|String|Proxy|"  + // Constructors
-            "Namespace|QName|XML|XMLList|"                                             + // E4X
-            "ArrayBuffer|Float32Array|Float64Array|Int16Array|Int32Array|Int8Array|"   +
-            "Uint16Array|Uint32Array|Uint8Array|Uint8ClampedArray|"                    +
-            "Error|EvalError|InternalError|RangeError|ReferenceError|StopIteration|"   + // Errors
-            "SyntaxError|TypeError|URIError|"                                          +
-            "decodeURI|decodeURIComponent|encodeURI|encodeURIComponent|eval|isFinite|" + // Non-constructor functions
-            "isNaN|parseFloat|parseInt|"                                               +
-            "JSON|Math|"                                                               + // Other
-            "this|arguments|prototype|window|document|ADD_MONTHS|ASC|CEIL|COSH|CURRENT|DAILY|DATE|DATE_ADD|DATE_INTERVAL|DATE_SUB|DATE_TRUNCATE|DAY|DAY_OF_WEEK|DAY_OF_YEAR|DEGREES|DESC|FLOOR|FOLLOWING|FROM_EPOCH|GREATEST|HOUR|HOURLY|JSON_ARRAY_LENGTH|JSON_EXTRACT_ARRAY_ELEMENT_TEXT|JSON_EXTRACT_PATH_TEXT|LEAST|LENGTH|LOWER|LPAD|LTRIM|MD5|MINUTE|MONTH|MONTHLY|MONTHS_BETWEEN|MONTLY|NULL|POSITION|POWER|PRECEDING|RADIANS|RAND|RANK|REGEXP_COUNT|REGEXP_INSTR|REGEXP_REPLACE|REGEXP_SUBSTR|REPLACE|REVERSE|ROUND|ROWNUMBER|ROWS|RPAD|RTRIM|SECOND|SIGN|SINH|SPLIT_PART|SUBSTRING|TANH|TO_CHAR|TO_DATE|TO_EPOCH|TO_INTEGER|TO_NUMBER|TO_TIMESTAMP|TRANSLATE|TRIM|TRUNC|UNBOUNDED|UNDEFINED|UPPER|WEEKLY|YEAR|YEARLY"                                 , // Pseudo
+            "ADD_MONTHS|ASC|CEIL|COSH|CURRENT|DAILY|DATE|DATE_ADD|DATE_INTERVAL|DATE_SUB|DATE_TRUNCATE|DAY|DAY_OF_WEEK|DAY_OF_YEAR|DEGREES|DESC|FLOOR|FOLLOWING|FROM_EPOCH|GREATEST|HOUR|HOURLY|JSON_ARRAY_LENGTH|JSON_EXTRACT_ARRAY_ELEMENT_TEXT|JSON_EXTRACT_PATH_TEXT|LEAST|LENGTH|LOWER|LPAD|LTRIM|MD5|MINUTE|MONTH|MONTHLY|MONTHS_BETWEEN|MONTLY|NULL|POSITION|POWER|PRECEDING|RADIANS|RAND|RANK|REGEXP_COUNT|REGEXP_INSTR|REGEXP_REPLACE|REGEXP_SUBSTR|REPLACE|REVERSE|ROUND|ROWNUMBER|ROWS|RPAD|RTRIM|SECOND|SIGN|SINH|SPLIT_PART|SUBSTRING|TANH|TO_CHAR|TO_DATE|TO_EPOCH|TO_INTEGER|TO_NUMBER|TO_TIMESTAMP|TRANSLATE|TRIM|TRUNC|UNBOUNDED|UNDEFINED|UPPER|WEEKLY|YEAR|YEARLY"                                 , // Pseudo
             "keyword":
-            "const|yield|import|get|set|" +
-            "break|case|catch|continue|default|delete|do|else|finally|for|function|" +
-            "if|in|instanceof|new|return|switch|throw|try|typeof|let|var|while|with|debugger|" +
-            "__parent__|__count__|escape|unescape|with|__proto__|" +
-            "class|enum|extends|super|export|implements|private|public|interface|package|protected|static",
+                "",
             "storage.type":
-                "const|let|var|function",
+                "",
             "constant.language":
-                "null|Infinity|NaN|undefined",
+                "",
             "support.function":
-                "alert",
+                "",
             "constant.language.boolean": "true|false"
         }, "identifier");
 

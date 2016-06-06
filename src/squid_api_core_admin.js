@@ -627,6 +627,8 @@
                 identifierRegexps: [/[a-zA-Z_0-9\$\#\@\'\.\-\:\_]/]
             };
             langTools.addCompleter(bouquetCompleter);
+            //Overriding the complters;
+            me.edit.completers=[bouquetCompleter];
         },
 
         onSave: function(model) {
