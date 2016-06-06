@@ -1135,7 +1135,21 @@ ace.define("ace/mode/bouquet",["require","exports","module","ace/lib/oop","ace/m
 
 
                 worker.on("annotate", function (results) {
+                    var markers = session.getMarkers(false);
+                    var keys = Object.keys(markers)
+                    keys.forEach(function(id){
+                        session.removeMarker(id);
+                    });
                     session.setAnnotations(results.data);
+                    if(results.data && results.data.length>0){
+                        if(results.data[0].row == results.data[0].end_column){
+                            session.addMarker(new Range(results.data[0].row, results.data[0].column, results.data[0].row, session.getValue().length), "ace_highlight-marker", "text", false);
+                        }else{
+                            session.addMarker(new Range(results.data[0].row, results.data[0].column, results.data[0].row, results.data[0].end_column), "ace_highlight-marker", "text", false);
+                        }
+                    }else{
+                        session.clearAnnotations();
+                    }
                 });
 
                 worker.on("terminate", function () {

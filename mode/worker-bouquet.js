@@ -11783,19 +11783,33 @@ ace.define("ace/mode/bouquet_worker",["require","exports","module", "ace/lib/oop
         this.reqListener = function (data){
             var answer = JSON.parse(this.response);
             var type = "warning";
-            if(answer.validateMessage.length==0) {
-                // NO error.
-            }else{
-                if(!answer.suggestions || answer.suggestions.length == 0){
-                    type = "error"
-                }
+            if(!answer.validateMessage && this.status != 200){
+                // error 500 for example
                 this.error = {
                     row: 0,
-                    column: answer.beginInsertPos,
-                    text: answer.validateMessage,
-                    type: type,
+                    column: 0,
+                    end_column: 0,
+                    text: "Error "+ this.status + ": "+ this.statusText,
+                    type: "error",
                     raw: answer
                 };
+            }else {
+                if (answer.validateMessage.length == 0 && this.status == 200) {
+                    // NO error.
+                } else {
+                    if (!answer.suggestions || answer.suggestions.length == 0) {
+                        type = "error"
+                    }
+
+                    this.error = {
+                        row: 0,
+                        column: answer.beginInsertPos,
+                        end_column: answer.endInsertPos,
+                        text: answer.validateMessage,
+                        type: type,
+                        raw: answer
+                    };
+                }
             }
 
 
