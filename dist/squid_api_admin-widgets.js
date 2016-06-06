@@ -4414,37 +4414,35 @@ function program1(depth0,data) {
                 }
             }
             // listeners
-            if (this.model) {
-                this.model.on('change', this.render, this);
-            }
             if (!this.config) {
                 this.config = squid_api.model.config;
             }
-            this.listenTo(this.config, "change:navigator", this.loadHierarchy);
-            this.loadHierarchy();
+            if (this.model) {
+                this.model.on('change', this.loadHierarchy, this);
+                this.loadHierarchy();
+            }
+            
         },
 
         setModel : function(model) {
             this.model = model;
             this.initialize();
         },
-        
+                
         loadNode : function(parent, node, filter) {
             var me = this;
-            var children = node.get("_children");
-            if (children) {
-                parent.nodes = [];
-                for (var i=0; i<children.length; i++) {
-                    var childName = children[i];
-                    if ((!filter) || filter[childName]) {      
+            if (filter) {
+                var children = Object.keys(filter);
+                if (children) {
+                    parent.nodes = [];
+                    for (var i = 0; i < children.length; i++) {
+                        var childName = children[i];
                         var newNode = {
-                                "name" : childName,
-                                "nodes" : []
-                            };
+                            "name" : childName,
+                            "nodes" : []
+                        };
                         parent.nodes.push(newNode);
-                        if (filter) {
-                            filter = filter[childName];
-                        }
+                        filter = filter[childName];
                         this.loadCollection(newNode, node, childName, filter);
                     }
                 }
@@ -4454,9 +4452,7 @@ function program1(depth0,data) {
         loadHierarchy : function() {
             var me = this;
             this.hierarchy = {};
-            squid_api.getCustomer().done(function(customer) {
-                me.loadNode(me.hierarchy, customer, me.filter);
-            });
+            me.loadNode(me.hierarchy, this.model, me.filter);
         },
         
         loadCollection : function(parent, node, child, filter) {
