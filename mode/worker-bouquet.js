@@ -11831,83 +11831,13 @@ ace.define("ace/mode/bouquet_worker",["require","exports","module", "ace/lib/oop
                 this.url = this.options.squid_apiUrl + "/projects/" + this.options.projectId + "/domains-suggestion?access_token=" + this.options.tokenId + "&expression=" + encodeURIComponent(value);
             };
             oReq.addEventListener("load", this.reqListener);
-            /*oReq.onload = function () {
-                var answer = JSON.parse(oReq.response);
-                var type = "warning";
-                if(!answer.suggestions || answer.suggestions.length == 0){
-                    type = "error"
-                }
-                this.errors.push({
-                    row: 0,
-                    column: answer.beginInsertPos,
-                    text: answer.validateMessage,
-                    type: type,
-                    raw: answer
-                });
-                this.sender.emit("annotate", this.errors);
-            };*/
-            oReq.open("GET", this.url, false);
+            oReq.open("GET", this.url, false); //synchrone to get the results and modify globally the workers and the editor.
             oReq.send();
 
             if(oReq.error){
                 this.errors.push(oReq.error);
             }
-            /*this.errors.push({
-                    row: error.line-1,
-                    column: error.character-1,
-                    text: error.reason,
-                    type: type,
-                    raw: raw
-            });*/
-            /*lint(value, this.options);
-            var results = lint.errors;
 
-            var errorAdded = false
-            for (var i = 0; i < results.length; i++) {
-                var error = results[i];
-                if (!error)
-                    continue;
-                var raw = error.raw;
-                var type = "warning";
-
-                if (raw == "Missing semicolon.") {
-                    var str = error.evidence.substr(error.character);
-                    str = str.charAt(str.search(/\S/));
-                    if (maxErrorLevel == "error" && str && /[\w\d{(['"]/.test(str)) {
-                        error.reason = 'Missing ";" before statement';
-                        type = "error";
-                    } else {
-                        type = "info";
-                    }
-                }
-                else if (disabledWarningsRe.test(raw)) {
-                    continue;
-                }
-                else if (infoRe.test(raw)) {
-                    type = "info"
-                }
-                else if (errorsRe.test(raw)) {
-                    errorAdded  = true;
-                    type = maxErrorLevel;
-                }
-                else if (raw == "'{a}' is not defined.") {
-                    type = "warning";
-                }
-                else if (raw == "'{a}' is defined but never used.") {
-                    type = "info";
-                }
-
-                errors.push({
-                    row: error.line-1,
-                    column: error.character-1,
-                    text: error.reason,
-                    type: type,
-                    raw: raw
-                });
-
-                if (errorAdded) {
-                }
-            }*/
             this.sender.emit("annotate", this.errors);
         };
 

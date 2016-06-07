@@ -180,75 +180,76 @@
     -webkit-animation: spin .7s infinite linear;
 }
 
-.squid-api-pre-suggestions li:before {
+.ace_line span:before {
 	font-family: FontAwesome;
 	margin-right: 15px;
+	margin-left: 0px;
 	padding: 3px;
 	color: #fff;
 	border-radius: 8px;
 }
-.squid-api-pre-suggestions .TABLE:before {
+.ace_content .ace_TABLE:before {
 	content: "\f0ce";
 }
 
-.squid-api-pre-suggestions .COLUMN:before {
+.ace_content .ace_COLUMN:before {
 	content: "\f198";
 }
 
-.squid-api-pre-suggestions .DOMAIN:before {
+.ace_content .ace_DOMAIN:before {
 	content: "\f1c0";
 }
 
-.squid-api-pre-suggestions .valueType {
+.ace_content .ace_valueType {
 	font-size: 11px;
 	padding-left: 5px;
 }
 
-.squid-api-pre-suggestions .table:before {
+.ace_content .ace_table:before {
 	background: #2c3e50;
 }
 
-.squid-api-pre-suggestions .date:before {
+.ace_content .ace_date:before {
 	background: hotpink;
 }
 
-.squid-api-pre-suggestions .domain:before {
+.ace_content .ace_domain:before {
 	background: #c0392b;
 }
 
-.squid-api-pre-suggestions .string:before {
+.ace_content .ace_string:before {
 	background: rgb(255,46,95);
 }
 
-.squid-api-pre-suggestions .other:before {
+.ace_content .ace_other:before {
 	background: deepskyblue;
 }
 
-.squid-api-pre-suggestions .numeric:before {
+.ace_content .ace_numeric:before {
 	background: black;
 }
 
-.squid-api-pre-suggestions .condition:before {
+.ace_content .ace_condition:before {
 	background: darkgoldenrod;
 }
 
-.squid-api-pre-suggestions .DOMAIN:before {
+.ace_content .ace_DOMAIN:before {
 	content: "\f1c0";
 }
 
-.squid-api-pre-suggestions .FORMULA:before {
+.ace_content .ace_FORMULA:before {
     content:  "\f1b2";
 }
 
-.squid-api-pre-suggestions .RELATION:before {
+.ace_content .ace_RELATION:before {
     content:  "\f061";
 }
 
-.squid-api-pre-suggestions .view:before {
+.ace_content .ace_view:before {
     background: #7a8799;
 }
 
-.squid-api-pre-suggestions .metric:before {
+.ace_content .ace_metric:before {
     background: grey;
 }
 

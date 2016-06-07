@@ -1125,27 +1125,25 @@ ace.define("ace/mode/bouquet",["require","exports","module","ace/lib/oop","ace/m
                     var markers = session.getMarkers(false);
                     var keys = Object.keys(markers)
                     keys.forEach(function(id){
-                        session.removeMarker(id);
+                        if(markers[id].clazz=="ace_highlight-marker"){
+                            session.removeMarker(id);
+                        }
                     });
-                    session.setAnnotations(results.data);
                     if(results.data && results.data.length>0){
                         if(results.data[0].row == results.data[0].end_column){
                             session.addMarker(new Range(results.data[0].row, results.data[0].column, results.data[0].row, session.getValue().length), "ace_highlight-marker", "text", false);
                         }else{
                             session.addMarker(new Range(results.data[0].row, results.data[0].column, results.data[0].row, results.data[0].end_column), "ace_highlight-marker", "text", false);
                         }
+                        session.setAnnotations(results.data);
                     }else{
-                        session.clearAnnotations();
+                        //session.clearAnnotations();
                     }
                 });
 
                 worker.on("terminate", function () {
                     session.clearAnnotations();
                 });
-
-
-                /*var e = {data: {type: "error", id: 0, data: "test"}}
-                worker.$worker.postMessage(e);*/
 
                 return worker;
             })
