@@ -559,7 +559,7 @@
                                             description: ea.description,
                                             score: ea.ranking,
                                             meta: ea.valueType,
-                                            className: ea.objectType+ " ."+ea.valueType.toLowerCase()
+                                            className: ea.objectType.toUpperCase()+ " ."+ea.valueType.toLowerCase()
                                         };
                                     }) )) ;
                                 }
