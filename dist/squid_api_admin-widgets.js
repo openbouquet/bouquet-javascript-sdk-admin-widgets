@@ -3249,7 +3249,7 @@ function program1(depth0,data) {
                                             description: ea.description,
                                             score: ea.ranking,
                                             meta: ea.valueType,
-                                            className: ea.objectType.toUpperCase()+ " ."+ea.valueType.toLowerCase()
+                                            className: ea.objectType.toUpperCase()
                                         };
                                     }) )) ;
                                 }
@@ -3271,7 +3271,7 @@ function program1(depth0,data) {
                                                 description: ea.description,
                                                 score: ea.ranking,
                                                 meta: ea.valueType,
-                                                className: ea.objectType.toUpperCase()+ " ."+ea.valueType.toLowerCase()
+                                                className: ea.objectType.toUpperCase()
                                             };
                                         })));
                                     }
