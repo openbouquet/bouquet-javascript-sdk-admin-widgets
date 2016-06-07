@@ -530,7 +530,6 @@
             }
 
             this.edit.getSession().setMode("ace/mode/bouquet");
-            this.edit.setTheme("ace/theme/chrome");
 
             var me = this;
             var langTools = ace.require("ace/ext/language_tools");
@@ -559,7 +558,7 @@
                                             description: ea.description,
                                             score: ea.ranking,
                                             meta: ea.valueType,
-                                            className: ea.objectType.toUpperCase()
+                                            className: ea.objectType.toUpperCase()+ " ."+ea.valueType.toLowerCase()
                                         };
                                     }) )) ;
                                 }
@@ -581,7 +580,7 @@
                                                 description: ea.description,
                                                 score: ea.ranking,
                                                 meta: ea.valueType,
-                                                className: ea.objectType.toUpperCase()
+                                                className: ea.objectType.toUpperCase()+ " ."+ea.valueType.toLowerCase()
                                             };
                                         })));
                                     }

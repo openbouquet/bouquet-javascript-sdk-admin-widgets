@@ -1065,9 +1065,9 @@ var AcePopup = function(parentNode) {
             if (last !== flag ) {
                 if(first){
                     first = false;
-                    tokens.push({type: data.className || "" + ( flag ? "completion-highlight" : ""), value: c});
+                    tokens.push({type: flag ? ( "" + (data.className || "" ) + " .completion-highlight") : ( "" + (data.className || "" )), value: c});
                 } else {
-                    tokens.push({type: "" + ( flag ? "completion-highlight" : ""), value: c});
+                    tokens.push({type: ("" + ( flag ? "completion-highlight" : "")), value: c});
                 }
                 last = flag;
             } else {

@@ -3220,7 +3220,6 @@ function program1(depth0,data) {
             }
 
             this.edit.getSession().setMode("ace/mode/bouquet");
-            this.edit.setTheme("ace/theme/chrome");
 
             var me = this;
             var langTools = ace.require("ace/ext/language_tools");
@@ -3249,7 +3248,7 @@ function program1(depth0,data) {
                                             description: ea.description,
                                             score: ea.ranking,
                                             meta: ea.valueType,
-                                            className: ea.objectType.toUpperCase()
+                                            className: ea.objectType.toUpperCase()+ " ."+ea.valueType.toLowerCase()
                                         };
                                     }) )) ;
                                 }
@@ -3271,7 +3270,7 @@ function program1(depth0,data) {
                                                 description: ea.description,
                                                 score: ea.ranking,
                                                 meta: ea.valueType,
-                                                className: ea.objectType.toUpperCase()
+                                                className: ea.objectType.toUpperCase()+ " ."+ea.valueType.toLowerCase()
                                             };
                                         })));
                                     }
