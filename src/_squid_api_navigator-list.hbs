@@ -1,0 +1,10 @@
+{{#each nodes}}
+<li>
+    {{name}} <a href="{{url}}">{{url}}</a>
+    {{#if nodes}}
+    <ul>
+    {{> squid_api_navigator-list}} {{! Recursively render the partial }}
+    </ul>
+    {{/if}}
+</li>
+{{/each}}

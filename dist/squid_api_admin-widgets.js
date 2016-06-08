@@ -1,6 +1,47 @@
 this["squid_api"] = this["squid_api"] || {};
 this["squid_api"]["template"] = this["squid_api"]["template"] || {};
 
+Handlebars.registerPartial("squid_api_navigator-list", Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); partials = this.merge(partials, Handlebars.partials); data = data || {};
+  var stack1, self=this, functionType="function", escapeExpression=this.escapeExpression;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\r\n<li>\r\n    ";
+  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + " <a href=\"";
+  if (helper = helpers.url) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.url); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\">";
+  if (helper = helpers.url) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.url); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</a>\r\n    ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.nodes), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\r\n</li>\r\n";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\r\n    <ul>\r\n    ";
+  stack1 = self.invokePartial(partials['squid_api_navigator-list'], 'squid_api_navigator-list', depth0, helpers, partials, data);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += " \r\n    </ul>\r\n    ";
+  return buffer;
+  }
+
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.nodes), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { return stack1; }
+  else { return ''; }
+  }));
+
 this["squid_api"]["template"]["squid_api_base_collection_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -666,6 +707,19 @@ function program5(depth0,data) {
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.footer), {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n  </div>\n</div>\n";
+  return buffer;
+  });
+
+this["squid_api"]["template"]["squid_api_navigator"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); partials = this.merge(partials, Handlebars.partials); data = data || {};
+  var buffer = "", stack1, self=this;
+
+
+  buffer += "<ul>\r\n";
+  stack1 = self.invokePartial(partials['squid_api_navigator-list'], 'squid_api_navigator-list', depth0, helpers, partials, data);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\r\n</ul>";
   return buffer;
   });
 
@@ -3687,7 +3741,18 @@ function program1(depth0,data) {
                                 // check this facet is available (or chosen)
                                 var availableArray = this.config.get(this.available);
                                 var chosenArray = this.config.get(this.chosen);
-                                if ((availableArray && (availableArray.indexOf(facet.id) > -1) || (chosenArray && chosenArray.indexOf(facet.id) > -1))) {
+                                var addToArray = true;
+
+                                // don't allow dimension reselection if using a singleSelectIndex
+                                if (this.singleSelectIndex) {
+                                    for (d=0; d<chosenArray.length; d++) {
+                                        if (d !== this.singleSelectIndex && chosenArray[d] === facet.id) {
+                                            addToArray = false;
+                                        }
+                                    }
+                                }
+
+                                if (addToArray && (availableArray && (availableArray.indexOf(facet.id) > -1) || (chosenArray && chosenArray.indexOf(facet.id) > -1))) {
                                     facetList.push(facet);
                                 }
                             } else {
@@ -4329,6 +4394,102 @@ function program1(depth0,data) {
 
             return this;
         }
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.Navigator = factory(root.Backbone, root.squid_api);
+}(this, function (Backbone, squid_api) {
+
+    View = Backbone.View.extend( {
+
+        template : squid_api.template.squid_api_navigator,
+        config : null,
+        hierarchy : {},
+        filter : null,
+
+        initialize : function(options) {
+            
+            // setup options
+            if (options) {
+                if (options.template) {
+                    this.template = options.template;
+                }
+                if (options.config) {
+                    this.config = options.config;
+                }
+                if (options.filter) {
+                    this.filter = options.filter;
+                }
+            }
+            // listeners
+            if (!this.config) {
+                this.config = squid_api.model.config;
+            }
+            if (this.model) {
+                this.model.on('change', this.loadHierarchy, this);
+                this.loadHierarchy();
+            }
+            
+        },
+
+        setModel : function(model) {
+            this.model = model;
+            this.initialize();
+        },
+                
+        loadNode : function(parent, node, filter) {
+            var me = this;
+            if (filter) {
+                var children = Object.keys(filter);
+                if (children) {
+                    parent.nodes = [];
+                    for (var i = 0; i < children.length; i++) {
+                        var childName = children[i];
+                        var newNode = {
+                            "name" : childName,
+                            "nodes" : []
+                        };
+                        parent.nodes.push(newNode);
+                        filter = filter[childName];
+                        this.loadCollection(newNode, node, childName, filter);
+                    }
+                }
+            }
+        },
+        
+        loadHierarchy : function() {
+            var me = this;
+            this.hierarchy = {};
+            me.loadNode(me.hierarchy, this.model, me.filter);
+        },
+        
+        loadCollection : function(parent, node, child, filter) {
+            var me = this;
+            node.get(child).load().then(function(childCollection) {
+                for (var i1=0; i1<childCollection.length; i1++) {
+                    var childNode = childCollection.at(i1);
+                    var id = childNode.get("id");
+                    var newNode = {
+                            "id" : id,
+                            "name" : childNode.get("name"),
+                            "description" : childNode.get("description"),
+                            "url" : squid_api.utils.idToPath(id)
+                    };
+                    parent.nodes[i1] = newNode;
+                    me.render();
+                    me.loadNode(newNode, childNode, filter);
+                }
+            });
+        },
+
+        render : function() {
+            this.$el.html(this.template(this.hierarchy));
+            return this;
+        }
+
     });
 
     return View;
