@@ -164,22 +164,29 @@
                                     facetList[idx] = facet;
                                 }
                             } else if (this.available) {
-                                // check this facet is available (or chosen)
+                                // check this facet is available
                                 var availableArray = this.config.get(this.available);
-                                var chosenArray = this.config.get(this.chosen);
-                                var addToArray = true;
-
-                                // don't allow dimension reselection if using a singleSelectIndex
-                                if (this.singleSelectIndex) {
-                                    for (d=0; d<chosenArray.length; d++) {
-                                        if (d !== this.singleSelectIndex && chosenArray[d] === facet.id) {
-                                            addToArray = false;
+                                if (!availableArray) {
+                                    // use chosen
+                                    availableArray = this.config.get(this.chosen);
+                                }
+                                if ((!availableArray) || (availableArray.length === 0)) {
+                                    // use all facets
+                                    facetList.push(facet);
+                                } else {
+                                    var addToArray = true;
+                                    // don't allow dimension reselection if using a singleSelectIndex
+                                    if (this.singleSelectIndex) {
+                                        for (d=0; d<availableArray.length; d++) {
+                                            if (d !== this.singleSelectIndex && availableArray[d] === facet.id) {
+                                                addToArray = false;
+                                            }
                                         }
                                     }
-                                }
-
-                                if (addToArray && (availableArray && (availableArray.indexOf(facet.id) > -1) || (chosenArray && chosenArray.indexOf(facet.id) > -1))) {
-                                    facetList.push(facet);
+    
+                                    if (addToArray && (availableArray && (availableArray.indexOf(facet.id) > -1))) {
+                                        facetList.push(facet);
+                                    }
                                 }
                             } else {
                                 // default unordered behavior
