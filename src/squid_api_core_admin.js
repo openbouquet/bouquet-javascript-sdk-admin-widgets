@@ -41,7 +41,7 @@
                 "title" : "",
                 "subSchema" : {
                     "value" : {
-                        "title" : "Subject Value",
+                        "title" : "Subject Value (use Ctrl-Space to have completion)",
                         "type" : "DomainExpressionEditor",
                         "editorClass" : "form-control suggestion-box"
                     }
@@ -231,7 +231,7 @@
                     "value" : {
                         "type" : "DimensionExpressionEditor",
                         "editorClass" : "form-control suggestion-box",
-                        "title" : "Expression Value",
+                        "title" : "Expression Value (use Ctrl-Space to have completion)",
                         "validators": ['required']
                     }
                 },
@@ -285,7 +285,7 @@
                 "type" : "Object",
                 "subSchema" : {
                     "value" : {
-                        "title" : "Expression Value",
+                        "title" : "Expression Value (use Ctrl-Space to have completion)",
                         "type" : "MetricExpressionEditor",
                         "editorClass" : "form-control suggestion-box"
                     }
@@ -641,9 +641,6 @@
         type: 'dimensions'
     });
 
-
-
-
     var domainExpressionEditor = AceExpressionEditor.extend({
         renderDialog: function() {
             var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/domains-suggestion";
@@ -676,7 +673,6 @@
             data.leftDomainId = this.$el.parents("form").find(".leftId select[name='domainId']").val();
             data.rightDomainId = this.$el.parents("form").find(".rightId select[name='domainId']").val();
             this.performRequest(url, data);
-
         }
     });
 

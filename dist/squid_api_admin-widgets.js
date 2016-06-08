@@ -2731,7 +2731,7 @@ function program1(depth0,data) {
                 "title" : "",
                 "subSchema" : {
                     "value" : {
-                        "title" : "Subject Value",
+                        "title" : "Subject Value (use Ctrl-Space to have completion)",
                         "type" : "DomainExpressionEditor",
                         "editorClass" : "form-control suggestion-box"
                     }
@@ -2921,7 +2921,7 @@ function program1(depth0,data) {
                     "value" : {
                         "type" : "DimensionExpressionEditor",
                         "editorClass" : "form-control suggestion-box",
-                        "title" : "Expression Value",
+                        "title" : "Expression Value (use Ctrl-Space to have completion)",
                         "validators": ['required']
                     }
                 },
@@ -2975,7 +2975,7 @@ function program1(depth0,data) {
                 "type" : "Object",
                 "subSchema" : {
                     "value" : {
-                        "title" : "Expression Value",
+                        "title" : "Expression Value (use Ctrl-Space to have completion)",
                         "type" : "MetricExpressionEditor",
                         "editorClass" : "form-control suggestion-box"
                     }
@@ -3331,9 +3331,6 @@ function program1(depth0,data) {
         type: 'dimensions'
     });
 
-
-
-
     var domainExpressionEditor = AceExpressionEditor.extend({
         renderDialog: function() {
             var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/domains-suggestion";
@@ -3366,7 +3363,6 @@ function program1(depth0,data) {
             data.leftDomainId = this.$el.parents("form").find(".leftId select[name='domainId']").val();
             data.rightDomainId = this.$el.parents("form").find(".rightId select[name='domainId']").val();
             this.performRequest(url, data);
-
         }
     });
 
