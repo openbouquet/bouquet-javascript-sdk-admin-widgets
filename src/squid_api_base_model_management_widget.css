@@ -271,6 +271,10 @@
     content:  "\f1b2";
 }
 
+.ace_content .ace_FUNCTION:before {
+	content:  "\f280";
+}
+
 .ace_content .ace_RELATION:before {
     content:  "\f061";
 }
