@@ -700,7 +700,7 @@
             me.edit.completers = [bouquetCompleter];
 
             this.edit.on("mousemove", function (e) {
-                if (e.editor.completer.getPopup().isOpen) {
+                if (e.editor.completer && e.editor.completer.getPopup().isOpen) {
                     me.removeTooltip();
                 } else {
                     var position = e.getDocumentPosition();
