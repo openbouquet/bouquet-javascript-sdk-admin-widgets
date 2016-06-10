@@ -597,11 +597,12 @@
 
                                 function (suggestionList) {
                                     //{"suggestions":[{"display":"POWER(Numeric n,Numeric exponent)","description":"Function that take two arguments: a number and an exponent","caption":"POWER(Numeric n,Numeric exponent)","suggestion":"POWER(${1:n},${2:p})","objectType":"FORMULA","valueType":"NUMERIC"}],"definitions":["POWER(${1:n},${2:p})"],"validateMessage":"failed to parse expression:\n---\nPOWE\n\n---\n at token 'POWE' \n caused by Encountered \"<EOF>\" at line 1, column 4.\nWas expecting:\n    \"(\" ...\n    ","filterIndex":0,"beginInsertPos":0,"endInsertPos":2,"filter":"POW"}
-                                    var caption_default = ea.caption;
-                                    if(!ea.caption && ea.display){
-                                        caption_default = ea.display;
-                                    }
+
                                     callback(null, me.uniq(suggestionList.suggestions.map(function (ea) {
+                                        var caption_default = ea.caption;
+                                        if(!ea.caption && ea.suggestion){
+                                            caption_default = ea.suggestion;
+                                        }
                                         return {
                                             name: ea.display,
                                             caption: caption_default,
@@ -625,8 +626,8 @@
                                         //{"suggestions":[{"display":"POWER(Numeric n,Numeric exponent)","description":"Function that take two arguments: a number and an exponent","caption":"POWER(Numeric n,Numeric exponent)","suggestion":"POWER(${1:n},${2:p})","objectType":"FORMULA","valueType":"NUMERIC"}],"definitions":["POWER(${1:n},${2:p})"],"validateMessage":"failed to parse expression:\n---\nPOWE\n\n---\n at token 'POWE' \n caused by Encountered \"<EOF>\" at line 1, column 4.\nWas expecting:\n    \"(\" ...\n    ","filterIndex":0,"beginInsertPos":0,"endInsertPos":2,"filter":"POW"}
                                         callback(null, me.uniq(suggestionList.suggestions.map(function (ea) {
                                             var caption_default = ea.caption;
-                                            if(!ea.caption && ea.display){
-                                                caption_default = ea.display;
+                                            if(!ea.caption && ea.suggestion){
+                                                caption_default = ea.suggestion;
                                             }
                                             return {
                                                 name: ea.display,
