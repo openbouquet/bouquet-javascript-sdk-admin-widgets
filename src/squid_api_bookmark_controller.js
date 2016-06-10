@@ -1,4 +1,4 @@
-/*! Squid Core API User Navigation Controller V1.0 */
+/*! Squid Core API Bookmark Controller V1.0 */
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD.
@@ -9,7 +9,7 @@
 }(this, function (Backbone, _, squid_api) {
 
     // Enhance Squid API controller
-    var controller= {
+    var Controller = {
 
             savedAnalysesConfig: new Map(),
             customAddedFacets: new Map(),
@@ -19,9 +19,9 @@
              * Function allowing to reset the whole user navigation (for ex when changing the project)
              */
             resetAll: function() {
-                this.savedAnalysesConfig = new Map();
-                this.customAddedFacets = new Map();
-                this.customDeletedFacets = new Map();
+                Controller.savedAnalysesConfig = new Map();
+                Controller.customAddedFacets = new Map();
+                Controller.customDeletedFacets = new Map();
             },
 
             /**
@@ -119,7 +119,7 @@
                         }
                         if (add) {
                             if (availableItems) {
-                                if (this.containsSelection(availableItems,item)) {
+                                if (Controller.containsSelection(availableItems,item)) {
                                     segmentItems.push(item);
                                 }
                             } else {
@@ -155,7 +155,7 @@
             cleanCustomSelection: function(customSelections, facetName, availableItems) {
                 if (customSelections.has(facetName)) {
                     /*					if (availableItems) {
-						cleanedItems = this.cleanItems(customSelections.get(facetName), availableItems);
+						cleanedItems = Controller.cleanItems(customSelections.get(facetName), availableItems);
 						if (cleanedItems && cleanedItems.length>=1) {
 							customSelections.set(facetName, cleanedItems);
 						} else {
@@ -176,7 +176,7 @@
             cleanItems: function(items, availableItems) {
                 var cleanedItems = [];
                 for (var i=0; i<items.length; i++) {
-                    if (this.containsSelection(availableItems, items[i]) === false) {
+                    if (Controller.containsSelection(availableItems, items[i]) === false) {
                         cleanedItems.push(items[i]);
                     }
                 }
@@ -205,7 +205,7 @@
 
                 //remove recently deleted items if any
                 for (var f=0; f<toAdd.length; f++) {
-                    if (!deletedSelection || this.containsSelection(deletedSelection, toAdd[f]) === false) {
+                    if (!deletedSelection || Controller.containsSelection(deletedSelection, toAdd[f]) === false) {
                         segments.push(toAdd[f]);			
                     }
                 }
@@ -263,178 +263,182 @@
              * @param bookmarksCollection
              * @returns the new configuration
              */
-            changeReportHandler: function(bookmarkId, bookmarksCollection) {
-
-                var me = this;
-                var config = squid_api.model.config;
-                var copyConfig = $.extend(true, {}, config);
-
-                var oldFacets = this.loadFacets(copyConfig.get("project"), copyConfig.get("domain"));
-                var newBookmark = bookmarksCollection.get(bookmarkId);
-                var newFacets = this.loadFacets(copyConfig.get("project"), newBookmark.get("config").domain);
-
-                var cleanedItems;
-                if (squid_api.model.config.get("bookmark") === bookmarkId) {
-                    // force bookmark reset
-                    $.when(oldFacets).done(function(oldFacets)  {
-                        if (oldFacets) {
-                            for (var k=0; k<oldFacets.length; k++) {
-                                var availableFacet = oldFacets[k];
-                                var facetName = me.normalyzeFacetName(availableFacet);
-                                var availableItems = null;
-                                if (availableFacet.id === "__segments") {
-                                    availableItems = availableFacet.items;
-                                }
-                                me.cleanCustomSelection(me.customAddedFacets, facetName, availableItems);
-                                me.cleanCustomSelection(me.customDeletedFacets, facetName, availableItems);
-                            }
-                        }
-
-                    });
-                    squid_api.setBookmarkId(bookmarkId);
+            setBookmarkAction: function(bookmark, forcedConfig, attributes) {
+                if (!squid_api.model.config.get("bookmark")) {
+                    // first time opening a bookmark
+                    squid_api.setBookmark(bookmark, forcedConfig, attributes);
                 } else {
-                    //Get list of available facets for each domains
-                    $.when(oldFacets, newFacets).done(function(oldFacets, newFacets) {
-                        console.log("merge filters from bookmarks");
-                        var forcedConfig = function(newConfig) {
-                            newConfig.bookmark = bookmarkId;
-                            var facetName;
-                            var facetForItems;
-                            //Find bookmarks
-                            var currentBookmark = bookmarksCollection.get(copyConfig.get("bookmark"));
-                            if (currentBookmark && currentBookmark.id) {
-                                me.savedAnalysesConfig.set(copyConfig.get("bookmark"), copyConfig.attributes);
+                    var me = Controller;
+                    var bookmarkId = bookmark.id;
+                    var config = squid_api.model.config;
+                    var copyConfig = $.extend(true, {}, config);
+    
+                    var oldFacets = Controller.loadFacets(copyConfig.get("project"), copyConfig.get("domain"));
+                    var newBookmark = bookmark;
+                    var newFacets = Controller.loadFacets(copyConfig.get("project"), newBookmark.get("config").domain);
+    
+                    var cleanedItems;
+                    if (squid_api.model.config.get("bookmark") === bookmarkId) {
+                        // force bookmark reset
+                        $.when(oldFacets).done(function(oldFacets)  {
+                            if (oldFacets) {
+                                for (var k=0; k<oldFacets.length; k++) {
+                                    var availableFacet = oldFacets[k];
+                                    var facetName = me.normalyzeFacetName(availableFacet);
+                                    var availableItems = null;
+                                    if (availableFacet.id === "__segments") {
+                                        availableItems = availableFacet.items;
+                                    }
+                                    me.cleanCustomSelection(me.customAddedFacets, facetName, availableItems);
+                                    me.cleanCustomSelection(me.customDeletedFacets, facetName, availableItems);
+                                }
                             }
-
-                            //Get the latest config used on the new bookmark used if any
-                            var savedNewConfig = me.savedAnalysesConfig.get(newBookmark.id);
-                            //In case it is the first bookmark selected
-                            if (!savedNewConfig || !savedNewConfig.selection) {
-                                savedNewConfig = newConfig;
-                            }
-                            var forcedSelection = { "compareTo" : [], "facets" : []};
-                            var currentSelection = copyConfig.get("selection");
-
-                            if (currentSelection && currentSelection.facets) {
-                                //Save/update any facet selected
-                                if (oldFacets) {
-                                    for (var k=0; k<oldFacets.length; k++) {
-                                        var availableFacet = oldFacets[k];
-                                        var existsInNewConfig = me.containsSelection(newFacets, availableFacet);
-                                        facetName = me.normalyzeFacetName(availableFacet);
-                                        var selectedItems = [];
-                                        var deletedItems = [];
-
-                                        var bookmarkFacet = me.getFacetByName(currentBookmark.get("config").selection.facets, facetName, availableFacet.dimension.oid);
-                                        facetForItems = me.getFacetByName(currentSelection.facets, facetName, availableFacet.dimension.oid);
-
-                                        var availableItems = null;
-                                        if (facetForItems && facetForItems.selectedItems) {
-                                            if (facetForItems.id === "__segments") {
-                                                availableItems = me.getSegmentFacet(newFacets).items;
-                                            }
-                                            if (bookmarkFacet) {
-                                                var diffItems = me.getCustomSelection(facetForItems.selectedItems, bookmarkFacet.selectedItems);   
-                                                if (diffItems && diffItems.length>0) {
-                                                    selectedItems=diffItems;
-                                                }		
-                                                //Now we clean deleted items if segments as it is shared among bookmarks on same domain
-                                                if (availableFacet.id === "__segments" && me.customDeletedFacets.get(facetName) && diffItems.length>0) {
-                                                    me.customDeletedFacets.set(facetName, me.cleanItems(me.customDeletedFacets.get(facetName), diffItems));
+                            squid_api.setBookmark(bookmark, forcedConfig, attributes);
+                        });
+                    } else {
+                        //Get list of available facets for each domains
+                        $.when(oldFacets, newFacets).done(function(oldFacets, newFacets) {
+                            console.log("merge filters from bookmarks");
+                            var forcedConfig = function(newConfig) {
+                                newConfig.bookmark = bookmarkId;
+                                var facetName;
+                                var facetForItems;
+                                //Find bookmarks
+                                var currentBookmark = bookmark;
+                                if (currentBookmark && currentBookmark.id) {
+                                    me.savedAnalysesConfig.set(copyConfig.get("bookmark"), copyConfig.attributes);
+                                }
+    
+                                //Get the latest config used on the new bookmark used if any
+                                var savedNewConfig = me.savedAnalysesConfig.get(newBookmark.id);
+                                //In case it is the first bookmark selected
+                                if (!savedNewConfig || !savedNewConfig.selection) {
+                                    savedNewConfig = newConfig;
+                                }
+                                var forcedSelection = { "compareTo" : [], "facets" : []};
+                                var currentSelection = copyConfig.get("selection");
+    
+                                if (currentSelection && currentSelection.facets) {
+                                    //Save/update any facet selected
+                                    if (oldFacets) {
+                                        for (var k=0; k<oldFacets.length; k++) {
+                                            var availableFacet = oldFacets[k];
+                                            var existsInNewConfig = me.containsSelection(newFacets, availableFacet);
+                                            facetName = me.normalyzeFacetName(availableFacet);
+                                            var selectedItems = [];
+                                            var deletedItems = [];
+    
+                                            var bookmarkFacet = me.getFacetByName(currentBookmark.get("config").selection.facets, facetName, availableFacet.dimension.oid);
+                                            facetForItems = me.getFacetByName(currentSelection.facets, facetName, availableFacet.dimension.oid);
+    
+                                            var availableItems = null;
+                                            if (facetForItems && facetForItems.selectedItems) {
+                                                if (facetForItems.id === "__segments") {
+                                                    availableItems = me.getSegmentFacet(newFacets).items;
                                                 }
-
-                                                diffItems = me.getCustomSelection(bookmarkFacet.selectedItems, facetForItems.selectedItems, availableItems);
-
-                                                //Now we copy back remaining deleted items if segments as it is shared among bookmarks on same domain
-                                                if (availableFacet.id === "__segments" && me.customDeletedFacets.get(facetName)) {
-                                                    diffItems = diffItems.concat(me.customDeletedFacets.get(facetName));
-                                                }
-
-                                                //No need for period as it is a single selection
-                                                if ((availableFacet.dimension.type === "CONTINUOUS" && availableFacet.dimension.valueType === "DATE") === false) {
+                                                if (bookmarkFacet) {
+                                                    var diffItems = me.getCustomSelection(facetForItems.selectedItems, bookmarkFacet.selectedItems);   
                                                     if (diffItems && diffItems.length>0) {
-                                                        deletedItems=diffItems;
+                                                        selectedItems=diffItems;
                                                     }		
-                                                }
-                                            } else {
-                                                selectedItems = facetForItems.selectedItems;
-                                            }
-                                        }
-                                        if (selectedItems && selectedItems.length>0) {
-                                            me.customAddedFacets.set(facetName, selectedItems);
-                                        } else {
-                                            me.cleanCustomSelection(me.customAddedFacets, facetName, availableItems);
-                                        }
-                                        if (deletedItems && deletedItems.length>0) {
-                                            me.customDeletedFacets.set(facetName, deletedItems);
-                                        } else if (me.customDeletedFacets.has(facetName)) {
-                                            me.cleanCustomSelection(me.customDeletedFacets, facetName, availableItems);
-                                        }
-                                    }
-                                }
-
-                                //We add new selected facets on other dashboards
-                                if (newFacets) {
-                                    for (var f=0; f<newFacets.length; f++) {
-                                        var newFacet = newFacets[f];
-                                        facetName = me.normalyzeFacetName(newFacet);
-                                        var complementFacetItems = null;
-                                        if (newFacet.dimension.type === "CONTINUOUS" && newFacet.dimension.valueType === "DATE") {
-                                            //For dates there is only one selection item
-                                            if (currentSelection.compareTo && currentSelection.compareTo.length === 1) {
-                                                var savedNewCompare = $.extend(true, {}, newFacet);
-                                                savedNewCompare.selectedItems = $.extend(true, [], currentSelection.compareTo[0].selectedItems);
-                                                forcedSelection.compareTo.push(savedNewCompare);
-                                            } else {
-                                                if (savedNewConfig.selection.compareTo) {
-                                                    forcedSelection.compareTo = $.extend(true, [], savedNewConfig.selection.compareTo);
+                                                    //Now we clean deleted items if segments as it is shared among bookmarks on same domain
+                                                    if (availableFacet.id === "__segments" && me.customDeletedFacets.get(facetName) && diffItems.length>0) {
+                                                        me.customDeletedFacets.set(facetName, me.cleanItems(me.customDeletedFacets.get(facetName), diffItems));
+                                                    }
+    
+                                                    diffItems = me.getCustomSelection(bookmarkFacet.selectedItems, facetForItems.selectedItems, availableItems);
+    
+                                                    //Now we copy back remaining deleted items if segments as it is shared among bookmarks on same domain
+                                                    if (availableFacet.id === "__segments" && me.customDeletedFacets.get(facetName)) {
+                                                        diffItems = diffItems.concat(me.customDeletedFacets.get(facetName));
+                                                    }
+    
+                                                    //No need for period as it is a single selection
+                                                    if ((availableFacet.dimension.type === "CONTINUOUS" && availableFacet.dimension.valueType === "DATE") === false) {
+                                                        if (diffItems && diffItems.length>0) {
+                                                            deletedItems=diffItems;
+                                                        }		
+                                                    }
+                                                } else {
+                                                    selectedItems = facetForItems.selectedItems;
                                                 }
                                             }
-                                            complementFacetItems = me.customAddedFacets.get(facetName);
-                                            if (!complementFacetItems) {
-                                                var periodFacet = me.getFacetByName(newConfig.selection.facets, facetName, newFacet.dimension.oid); 
-                                                if (periodFacet) {
-                                                    complementFacetItems = periodFacet.selectedItems;
-                                                }// when renaming a child dimension, the dimension name in the bookmark is not updated
+                                            if (selectedItems && selectedItems.length>0) {
+                                                me.customAddedFacets.set(facetName, selectedItems);
+                                            } else {
+                                                me.cleanCustomSelection(me.customAddedFacets, facetName, availableItems);
                                             }
-                                        } else {
-                                            var savedSelection = me.customAddedFacets.get(facetName);
-                                            var deletedSelection = me.customDeletedFacets.get(facetName);
-                                            var bookmarkSelection = me.getFacetByName(newConfig.selection.facets, facetName, newFacet.dimension.oid); // when renaming a child dimension, the dimension name in the bookmark is not updated
-                                            var lastSelection = me.getFacetByName(savedNewConfig.selection.facets, facetName, newFacet.dimension.oid);
-                                            facetForItems = null;
-                                            if (newFacet.id === "__segments") {
-                                                facetForItems = me.getSegmentFacet(newFacets);
+                                            if (deletedItems && deletedItems.length>0) {
+                                                me.customDeletedFacets.set(facetName, deletedItems);
+                                            } else if (me.customDeletedFacets.has(facetName)) {
+                                                me.cleanCustomSelection(me.customDeletedFacets, facetName, availableItems);
                                             }
-                                            complementFacetItems = me.mergeSelection(savedSelection, lastSelection, facetForItems, bookmarkSelection, deletedSelection);
-                                        }
-                                        if (complementFacetItems && complementFacetItems.length>0) {
-                                            var copiedFacet = {
-                                                    dimension: newFacet.dimension,
-                                                    id: newFacet.id,
-                                                    selectedItems: complementFacetItems
-                                            };
-                                            forcedSelection.facets.push(copiedFacet);
                                         }
                                     }
+    
+                                    //We add new selected facets on other dashboards
+                                    if (newFacets) {
+                                        for (var f=0; f<newFacets.length; f++) {
+                                            var newFacet = newFacets[f];
+                                            facetName = me.normalyzeFacetName(newFacet);
+                                            var complementFacetItems = null;
+                                            if (newFacet.dimension.type === "CONTINUOUS" && newFacet.dimension.valueType === "DATE") {
+                                                //For dates there is only one selection item
+                                                if (currentSelection.compareTo && currentSelection.compareTo.length === 1) {
+                                                    var savedNewCompare = $.extend(true, {}, newFacet);
+                                                    savedNewCompare.selectedItems = $.extend(true, [], currentSelection.compareTo[0].selectedItems);
+                                                    forcedSelection.compareTo.push(savedNewCompare);
+                                                } else {
+                                                    if (savedNewConfig.selection.compareTo) {
+                                                        forcedSelection.compareTo = $.extend(true, [], savedNewConfig.selection.compareTo);
+                                                    }
+                                                }
+                                                complementFacetItems = me.customAddedFacets.get(facetName);
+                                                if (!complementFacetItems) {
+                                                    var periodFacet = me.getFacetByName(newConfig.selection.facets, facetName, newFacet.dimension.oid); 
+                                                    if (periodFacet) {
+                                                        complementFacetItems = periodFacet.selectedItems;
+                                                    }// when renaming a child dimension, the dimension name in the bookmark is not updated
+                                                }
+                                            } else {
+                                                var savedSelection = me.customAddedFacets.get(facetName);
+                                                var deletedSelection = me.customDeletedFacets.get(facetName);
+                                                var bookmarkSelection = me.getFacetByName(newConfig.selection.facets, facetName, newFacet.dimension.oid); // when renaming a child dimension, the dimension name in the bookmark is not updated
+                                                var lastSelection = me.getFacetByName(savedNewConfig.selection.facets, facetName, newFacet.dimension.oid);
+                                                facetForItems = null;
+                                                if (newFacet.id === "__segments") {
+                                                    facetForItems = me.getSegmentFacet(newFacets);
+                                                }
+                                                complementFacetItems = me.mergeSelection(savedSelection, lastSelection, facetForItems, bookmarkSelection, deletedSelection);
+                                            }
+                                            if (complementFacetItems && complementFacetItems.length>0) {
+                                                var copiedFacet = {
+                                                        dimension: newFacet.dimension,
+                                                        id: newFacet.id,
+                                                        selectedItems: complementFacetItems
+                                                };
+                                                forcedSelection.facets.push(copiedFacet);
+                                            }
+                                        }
+                                    }
+    
+                                    //Set then next config from selected facets
+                                    newConfig.selection = forcedSelection;
                                 }
-
-                                //Set then next config from selected facets
-                                newConfig.selection = forcedSelection;
-                            }
-
-                            return newConfig;
-                        };
-
-                        squid_api.setBookmarkId(bookmarkId, forcedConfig, null);           
-                    });
+    
+                                return newConfig;
+                            };
+    
+                            squid_api.setBookmark(bookmark, forcedConfig, null);           
+                        });
+                    }
                 }
             }
 
 
     };
 
-    squid_api.controller.UserNavigation = controller;
+    squid_api.controller.Bookmark = Controller;
 
     return squid_api;
 }));

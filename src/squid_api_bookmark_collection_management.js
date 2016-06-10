@@ -67,13 +67,8 @@
 			}
 			//Callback to keep filters selection on Counter apps for ex
 			if (this.onChangeHandler) {
-				if (this.onChangeHandler.changeReportHandler) {
-					this.onChangeHandler.changeReportHandler(value ,this.collection);
-				} else {
-					//Legacy with older apps (Inkwell, Counter)
 					this.onChangeHandler(value ,this.collection);
 				}
-			}
 			else {
 				squid_api.setBookmarkId(value);
 				if (this.onSelect) {
