@@ -3389,6 +3389,9 @@ function program1(depth0,data) {
             me.edit.completers = [bouquetCompleter];
 
             this.edit.on("mousemove", function (e) {
+                if (e.editor.completer.getPopup().isOpen) {
+                    me.removeTooltip();
+                } else {
                     var position = e.getDocumentPosition();
                     if (e.editor.session.getAnnotations()) {
                         var annotations = e.editor.session.getAnnotations();
@@ -3473,6 +3476,7 @@ function program1(depth0,data) {
                             }
                         }
                     }
+                }
                 }
             );
         },
