@@ -688,7 +688,7 @@
                             ].join("");
                     }
                 },
-                identifierRegexps: [/[a-zA-Z_0-9\$\#\@\'\.\-\:\_]/]
+                identifierRegexps: [/[a-zA-Z_0-9\$\#\@\'\.\-\:\_\(]/]
             };
             langTools.addCompleter(bouquetCompleter);
             /* Incoherent behavior
