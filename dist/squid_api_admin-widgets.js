@@ -1307,7 +1307,6 @@ function program1(depth0,data) {
         },
 
         render: function() {
-            console.log("render CollectionManagementWidget "+this.type);
             this.jsonData = {
                 collectionLoaded : !this.collectionLoading,
                 collection : this.collection,
