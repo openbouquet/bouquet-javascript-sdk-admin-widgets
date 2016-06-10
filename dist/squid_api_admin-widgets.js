@@ -2035,9 +2035,9 @@ function program1(depth0,data) {
             },
 
             /**
-             * Remove the current domain id to get the full path up to the dimension
+             * Remove the current domain id to get only the relations path up to the the facet
              */
-            getSubRelationsFromFacet: function (id) {
+            getRelationPath: function (id) {
             	var splitted = id.split("@");
             	var result = '';
             	if (splitted.length > 3) {
@@ -2071,7 +2071,7 @@ function program1(depth0,data) {
                 if (facet.id === "__segments") {
                     facetName = facet.dimension.id.domainId;
                 } else if ((facet.id.split("@").length - 1) > 2){ //In case of relations, we use the relations path as name to deduplicate the same facet used through multiple paths
-                    facetName = this.getSubRelationsFromFacet(facet.id);
+                    facetName = this.getRelationPath(facet.id);
                 }
                 return facetName;
             },
