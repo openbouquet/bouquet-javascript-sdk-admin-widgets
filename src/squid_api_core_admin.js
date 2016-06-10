@@ -608,7 +608,7 @@
                                             meta: ea.valueType,
                                             className: ea.objectType.toUpperCase() + " ." + ea.valueType.toLowerCase()
                                         };
-                                    })));
+                                    })).sort(function(a,b){return a.name.localeCompare(b.name);}));
                                 }
                             );
                         } else {
@@ -630,7 +630,7 @@
                                                 meta: ea.valueType,
                                                 className: ea.objectType.toUpperCase() + " ." + ea.valueType.toLowerCase()
                                             };
-                                        })));
+                                        })).sort(function(a,b){return a.name.localeCompare(b.name);}));
                                     }
                                 );
                             });
@@ -677,7 +677,6 @@
                                 var wordRange = me.edit.getSession().getWordRange(position.row, position.column);
                                 var text = me.edit.session.getTextRange(wordRange);
                                 if (text.length > 0) {
-                                    console.log(text);
                                     //Avoid uncessary call
                                     if(text != me.previous_matched_word_tooltip){
                                         me.previous_matched_word_tooltip = text;
