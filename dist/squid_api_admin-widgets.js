@@ -2035,35 +2035,43 @@ function program1(depth0,data) {
             },
 
             /**
+             * Remove the current domain id to get the full path up to the dimension
+             */
+            getSubRelationsFromFacet: function (id) {
+            	var splitted = id.split("@");
+            	var result = '';
+            	if (splitted.length > 3) {
+	            	for (var i=2; i < splitted.length; i++) {
+	            		result = result + splitted[i];
+	            	}    
+            	}
+            	return result;
+            },
+
+            /**
              * Limitation: selected items from a config don't include the facet name, this is why we use oid in case the facet comes from a sub domain
              * @return a facet from its name or oid
              */
-            getFacetByName: function (facets, facetName, oid) {
+            findFacetByName: function (facets, facet) {
                 if (facets) {
                     for (var i=0; i<facets.length;i++) {
-                        if ((facets[i].id.split("@").length - 1) === 2 && facets[i].dimension.name === facetName) {   //Can compare dimension name only if not a lookup table as we don't have the facet name
-                            return facets[i];
-                        } else if (oid && facets[i].dimension.oid === oid) {
-                            return facets[i];
-                        } else if (facets[i].id === "__segments" && facets[i].dimension.id.domainId === facetName) {
+                    	if (this.normalyzeFacetName(facets[i]) === this.normalyzeFacetName(facet)) {
                             return facets[i];
                         }
                     }
                 }
             },
-
+            
             /**
              * @return name from the dimension of the facet as selected items from a config don't include the facet name
              */
             normalyzeFacetName: function (facet) {
                 var facetName = facet.dimension.name;
-                //Simplification of code
-                /*	if (facet.dimension.type === "CONTINUOUS" && facet.dimension.valueType === "DATE") {
-	    			facetName = "__Period__";
-	    		}*/
                 //Segments have to be handled at a domain level
                 if (facet.id === "__segments") {
                     facetName = facet.dimension.id.domainId;
+                } else if ((facet.id.split("@").length - 1) > 2){ //In case of multiple relations, we use the relations path as name to deduplicate the same facet used through multiple path
+                    facetName = this.getSubRelationsFromFacet(facet.id);
                 }
                 return facetName;
             },
@@ -2293,8 +2301,8 @@ function program1(depth0,data) {
                                         var selectedItems = [];
                                         var deletedItems = [];
 
-                                        var bookmarkFacet = me.getFacetByName(currentBookmark.get("config").selection.facets, facetName, availableFacet.dimension.oid);
-                                        facetForItems = me.getFacetByName(currentSelection.facets, facetName, availableFacet.dimension.oid);
+                                        var bookmarkFacet = me.findFacetByName(currentBookmark.get("config").selection.facets, availableFacet);
+                                        facetForItems = me.findFacetByName(currentSelection.facets, availableFacet);
 
                                         var availableItems = null;
                                         if (facetForItems && facetForItems.selectedItems) {
@@ -2360,7 +2368,7 @@ function program1(depth0,data) {
                                             }
                                             complementFacetItems = me.customAddedFacets.get(facetName);
                                             if (!complementFacetItems) {
-                                                var periodFacet = me.getFacetByName(newConfig.selection.facets, facetName, newFacet.dimension.oid); 
+                                                var periodFacet = me.findFacetByName(newConfig.selection.facets, newFacet); 
                                                 if (periodFacet) {
                                                     complementFacetItems = periodFacet.selectedItems;
                                                 }// when renaming a child dimension, the dimension name in the bookmark is not updated
@@ -2368,8 +2376,8 @@ function program1(depth0,data) {
                                         } else {
                                             var savedSelection = me.customAddedFacets.get(facetName);
                                             var deletedSelection = me.customDeletedFacets.get(facetName);
-                                            var bookmarkSelection = me.getFacetByName(newConfig.selection.facets, facetName, newFacet.dimension.oid); // when renaming a child dimension, the dimension name in the bookmark is not updated
-                                            var lastSelection = me.getFacetByName(savedNewConfig.selection.facets, facetName, newFacet.dimension.oid);
+                                            var bookmarkSelection = me.findFacetByName(newConfig.selection.facets, newFacet); // when renaming a child dimension, the dimension name in the bookmark is not updated
+                                            var lastSelection = me.findFacetByName(savedNewConfig.selection.facets, newFacet);
                                             facetForItems = null;
                                             if (newFacet.id === "__segments") {
                                                 facetForItems = me.getSegmentFacet(newFacets);
