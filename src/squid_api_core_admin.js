@@ -570,7 +570,7 @@
             if (this.value !== null) {
                 this.edit.setValue("" + this.value);
             }
-
+            this.edit.getSession().type=this.type;
             this.edit.getSession().setMode("ace/mode/bouquet");
 
 
@@ -587,6 +587,11 @@
                     if (prefix.length === 0) {
                         //By default look for ID
                         prefix = "";
+                    }
+                    if(prefix.endsWith(".")){
+                        me.prefix_value = prefix;
+                    }else{
+                        me.prefix_value = "";
                     }
                     squid_api.getSelectedProject().then(function (project) {
 
@@ -607,7 +612,7 @@
                                             name: ea.display,
                                             caption: caption_default,
                                             value: ea.suggestion,
-                                            snippet: ea.suggestion,
+                                            snippet: me.prefix_value+ea.suggestion,
                                             description: ea.description,
                                             score: ea.ranking,
                                             meta: ea.valueType,
@@ -633,7 +638,7 @@
                                                 name: ea.display,
                                                 caption: caption_default,
                                                 value: ea.suggestion,
-                                                snippet: ea.suggestion,
+                                                snippet: me.prefix_value+ea.suggestion,
                                                 description: ea.description,
                                                 score: ea.ranking,
                                                 meta: ea.valueType,
@@ -786,7 +791,11 @@
         type: 'dimensions'
     });
 
-    var domainExpressionEditor = AceExpressionEditor.extend({
+    var DomainDomainExpressionEditor = AceExpressionEditor.extend({
+        type: 'domains'
+    });
+
+    var domainExpressionEditor = DomainDomainExpressionEditor.extend({
         renderDialog: function () {
             var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/domains-suggestion";
             var data = {
