@@ -2070,7 +2070,7 @@ function program1(depth0,data) {
                 //Segments have to be handled at a domain level
                 if (facet.id === "__segments") {
                     facetName = facet.dimension.id.domainId;
-                } else if ((facet.id.split("@").length - 1) > 2){ //In case of multiple relations, we use the relations path as name to deduplicate the same facet used through multiple path
+                } else if ((facet.id.split("@").length - 1) > 2){ //In case of relations, we use the relations path as name to deduplicate the same facet used through multiple paths
                     facetName = this.getSubRelationsFromFacet(facet.id);
                 }
                 return facetName;
