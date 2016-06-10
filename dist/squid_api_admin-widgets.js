@@ -3213,6 +3213,23 @@ function program1(depth0,data) {
             });
         },
 
+        latest: function (a){
+            var max = 0;
+            var current = [];
+            a.forEach(function (item){
+                if(item.origin && item.origin.length==max){
+                    current.push(item);
+                }else if (item.origin && item.origin.length>max){
+                    max = item.origin.length;
+                    current = [];
+                    current.push(item);
+                }else if(!item.origin){
+                    current.push(item);
+                }
+            });
+            return current;
+        },
+
         updateTooltip: function (position, text) {
             //example with container creation via JS
             var div = document.getElementById('tooltip_0');
@@ -3277,7 +3294,7 @@ function program1(depth0,data) {
                         //By default look for ID
                         prefix = "";
                     }
-
+                    me.prefix = prefix;
                     squid_api.getSelectedProject().then(function (project) {
 
                         if (me.type === "relations" || me.type === "domains") {
@@ -3288,7 +3305,7 @@ function program1(depth0,data) {
                                 function (suggestionList) {
                                     //{"suggestions":[{"display":"POWER(Numeric n,Numeric exponent)","description":"Function that take two arguments: a number and an exponent","caption":"POWER(Numeric n,Numeric exponent)","suggestion":"POWER(${1:n},${2:p})","objectType":"FORMULA","valueType":"NUMERIC"}],"definitions":["POWER(${1:n},${2:p})"],"validateMessage":"failed to parse expression:\n---\nPOWE\n\n---\n at token 'POWE' \n caused by Encountered \"<EOF>\" at line 1, column 4.\nWas expecting:\n    \"(\" ...\n    ","filterIndex":0,"beginInsertPos":0,"endInsertPos":2,"filter":"POW"}
 
-                                    callback(null, me.uniq(suggestionList.suggestions.map(function (ea) {
+                                    callback(null, me.latest(me.uniq(suggestionList.suggestions.map(function (ea) {
                                         var caption_default = ea.caption;
                                         if (!ea.caption && ea.suggestion) {
                                             caption_default = ea.suggestion;
@@ -3315,9 +3332,10 @@ function program1(depth0,data) {
                                             description: ea.description,
                                             score: ea.ranking,
                                             meta: ea.valueType,
+                                            origin: me.prefix,
                                             className: ea.objectType.toUpperCase() + " ." + ea.valueType.toLowerCase()
                                         };
-                                    })).sort(function (a, b) {
+                                    }))).sort(function (a, b) {
                                         return a.name.localeCompare(b.name);
                                     }));
                                 }
@@ -3330,7 +3348,7 @@ function program1(depth0,data) {
 
                                     function (suggestionList) {
                                         //{"suggestions":[{"display":"POWER(Numeric n,Numeric exponent)","description":"Function that take two arguments: a number and an exponent","caption":"POWER(Numeric n,Numeric exponent)","suggestion":"POWER(${1:n},${2:p})","objectType":"FORMULA","valueType":"NUMERIC"}],"definitions":["POWER(${1:n},${2:p})"],"validateMessage":"failed to parse expression:\n---\nPOWE\n\n---\n at token 'POWE' \n caused by Encountered \"<EOF>\" at line 1, column 4.\nWas expecting:\n    \"(\" ...\n    ","filterIndex":0,"beginInsertPos":0,"endInsertPos":2,"filter":"POW"}
-                                        callback(null, me.uniq(suggestionList.suggestions.map(function (ea) {
+                                        callback(null, me.latest(me.uniq(suggestionList.suggestions.map(function (ea) {
                                             var caption_default = ea.caption;
                                             if (!ea.caption && ea.suggestion) {
                                                 caption_default = ea.suggestion;
@@ -3356,9 +3374,10 @@ function program1(depth0,data) {
                                                 description: ea.description,
                                                 score: ea.ranking,
                                                 meta: ea.valueType,
+                                                origin: me.prefix,
                                                 className: ea.objectType.toUpperCase() + " ." + ea.valueType.toLowerCase()
                                             };
-                                        })).sort(function (a, b) {
+                                        }))).sort(function (a, b) {
                                             return a.name.localeCompare(b.name);
                                         }));
                                     }
