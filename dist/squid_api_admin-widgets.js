@@ -3751,7 +3751,7 @@ function program1(depth0,data) {
                                     var addToArray = true;
                                     // don't allow dimension reselection if using a singleSelectIndex
                                     if (this.singleSelectIndex) {
-                                        for (d=0; d<availableArray.length; d++) {
+                                        for (var d=0; d<availableArray.length; d++) {
                                             if (d !== this.singleSelectIndex && availableArray[d] === facet.id) {
                                                 addToArray = false;
                                             }
