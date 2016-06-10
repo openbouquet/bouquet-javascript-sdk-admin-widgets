@@ -557,7 +557,7 @@
             }, 2000);
         },
 
-        removeTooltip: function(){
+        removeTooltip: function () {
             var div = document.getElementById('tooltip_0');
             if (div) {
                 div.remove();
@@ -570,7 +570,7 @@
             if (this.value !== null) {
                 this.edit.setValue("" + this.value);
             }
-            this.edit.getSession().type=this.type;
+            this.edit.getSession().type = this.type;
             this.edit.getSession().setMode("ace/mode/bouquet");
 
 
@@ -588,15 +588,11 @@
                         //By default look for ID
                         prefix = "";
                     }
-                    if(prefix.endsWith(".")){
-                        me.prefix_value = prefix;
-                    }else{
-                        me.prefix_value = "";
-                    }
+
                     squid_api.getSelectedProject().then(function (project) {
 
-                        if (me.type === null || me.type === "domains") {
-                            me.url = squid_api.apiURL + "/projects/" + project.id + "/domains-suggestion?access_token=" + squid_api.model.login.get("accessToken") + "&expression=" + encodeURIComponent(prefix);
+                        if (me.type === "relations" || me.type === "domains") {
+                            me.url = squid_api.apiURL + "/projects/" + project.id + "/" + me.type + "-suggestion?access_token=" + squid_api.model.login.get("accessToken") + "&expression=" + encodeURIComponent(prefix);
                             $.getJSON(
                                 me.url,
 
@@ -605,20 +601,36 @@
 
                                     callback(null, me.uniq(suggestionList.suggestions.map(function (ea) {
                                         var caption_default = ea.caption;
-                                        if(!ea.caption && ea.suggestion){
+                                        if (!ea.caption && ea.suggestion) {
                                             caption_default = ea.suggestion;
+                                        }
+                                        if(!suggestionList.prefix){
+                                            suggestionList.prefix = "";
+                                        }
+                                        var prefix_snippet = "";
+                                        if(suggestionList.beginInsertPos){
+                                            var cursor = me.edit.getSession().getSelection().getCursor();
+                                            //var range = new Range(cursor.row, 0, cursor.row, suggestionList.beginInsertPos);
+                                            var range = me.edit.getSession().getWordRange(cursor.row, 0);
+                                            range.start.row = cursor.row;
+                                            range.end.row = cursor.row;
+                                            range.start.column = 0;
+                                            range.end.column = suggestionList.beginInsertPos;
+                                            prefix_snippet  = suggestionList.prefix  + me.edit.getSession().getTextRange(range);
                                         }
                                         return {
                                             name: ea.display,
                                             caption: caption_default,
                                             value: ea.suggestion,
-                                            snippet: me.prefix_value+ea.suggestion,
+                                            snippet: prefix_snippet + ea.suggestion,
                                             description: ea.description,
                                             score: ea.ranking,
                                             meta: ea.valueType,
                                             className: ea.objectType.toUpperCase() + " ." + ea.valueType.toLowerCase()
                                         };
-                                    })).sort(function(a,b){return a.name.localeCompare(b.name);}));
+                                    })).sort(function (a, b) {
+                                        return a.name.localeCompare(b.name);
+                                    }));
                                 }
                             );
                         } else {
@@ -631,20 +643,35 @@
                                         //{"suggestions":[{"display":"POWER(Numeric n,Numeric exponent)","description":"Function that take two arguments: a number and an exponent","caption":"POWER(Numeric n,Numeric exponent)","suggestion":"POWER(${1:n},${2:p})","objectType":"FORMULA","valueType":"NUMERIC"}],"definitions":["POWER(${1:n},${2:p})"],"validateMessage":"failed to parse expression:\n---\nPOWE\n\n---\n at token 'POWE' \n caused by Encountered \"<EOF>\" at line 1, column 4.\nWas expecting:\n    \"(\" ...\n    ","filterIndex":0,"beginInsertPos":0,"endInsertPos":2,"filter":"POW"}
                                         callback(null, me.uniq(suggestionList.suggestions.map(function (ea) {
                                             var caption_default = ea.caption;
-                                            if(!ea.caption && ea.suggestion){
+                                            if (!ea.caption && ea.suggestion) {
                                                 caption_default = ea.suggestion;
+                                            }
+                                            if(!suggestionList.prefix){
+                                                suggestionList.prefix = "";
+                                            }
+                                            var prefix_snippet = "";
+                                            if(suggestionList.beginInsertPos){
+                                                var cursor = me.edit.getSession().getSelection().getCursor();
+                                                var range = me.edit.getSession().getWordRange(cursor.row, 0);
+                                                range.start.row = cursor.row;
+                                                range.end.row = cursor.row;
+                                                range.start.column = 0;
+                                                range.end.column = suggestionList.beginInsertPos;
+                                                prefix_snippet  = suggestionList.prefix  + me.edit.getSession().getTextRange(range);
                                             }
                                             return {
                                                 name: ea.display,
                                                 caption: caption_default,
                                                 value: ea.suggestion,
-                                                snippet: me.prefix_value+ea.suggestion,
+                                                snippet: prefix_snippet + ea.suggestion,
                                                 description: ea.description,
                                                 score: ea.ranking,
                                                 meta: ea.valueType,
                                                 className: ea.objectType.toUpperCase() + " ." + ea.valueType.toLowerCase()
                                             };
-                                        })).sort(function(a,b){return a.name.localeCompare(b.name);}));
+                                        })).sort(function (a, b) {
+                                            return a.name.localeCompare(b.name);
+                                        }));
                                     }
                                 );
                             });
@@ -665,10 +692,10 @@
             };
             langTools.addCompleter(bouquetCompleter);
             /* Incoherent behavior
-            this.edit.on("mousedown", function (e) {
-                e.editor.completer.autoInsert = false;
-                e.editor.completer.showPopup(e.editor);
-            });*/
+             this.edit.on("mousedown", function (e) {
+             e.editor.completer.autoInsert = false;
+             e.editor.completer.showPopup(e.editor);
+             });*/
             //Overriding the complters;
             me.edit.completers = [bouquetCompleter];
 
@@ -677,7 +704,7 @@
                     if (e.editor.session.getAnnotations()) {
                         var annotations = e.editor.session.getAnnotations();
                         if (position) {
-                            if (annotations && annotations.length>0) {
+                            if (annotations && annotations.length > 0) {
                                 annotations.forEach(function (annotation) {
                                     var text = annotation.text;
                                     if (text.length > 0) {
@@ -692,19 +719,21 @@
                                 var text = me.edit.session.getTextRange(wordRange);
                                 if (text.length > 0) {
                                     //Avoid uncessary call
-                                    if(text != me.previous_matched_word_tooltip){
+                                    if (text != me.previous_matched_word_tooltip) {
                                         me.previous_matched_word_tooltip = text;
                                         squid_api.getSelectedProject().then(function (project) {
 
-                                            if (me.type === null || me.type === "domains") {
-                                                me.url = squid_api.apiURL + "/projects/" + project.id + "/domains-suggestion?access_token=" + squid_api.model.login.get("accessToken") + "&expression=" + encodeURIComponent(text);
+                                            if (me.type === "relations" || me.type === "domains") {
+                                                me.url = squid_api.apiURL + "/projects/" + project.id + "/" + me.type + "-suggestion?access_token=" + squid_api.model.login.get("accessToken") + "&expression=" + encodeURIComponent(text);
                                                 $.getJSON(
                                                     me.url,
 
                                                     function (suggestionList) {
                                                         //{"suggestions":[{"display":"POWER(Numeric n,Numeric exponent)","description":"Function that take two arguments: a number and an exponent","caption":"POWER(Numeric n,Numeric exponent)","suggestion":"POWER(${1:n},${2:p})","objectType":"FORMULA","valueType":"NUMERIC"}],"definitions":["POWER(${1:n},${2:p})"],"validateMessage":"failed to parse expression:\n---\nPOWE\n\n---\n at token 'POWE' \n caused by Encountered \"<EOF>\" at line 1, column 4.\nWas expecting:\n    \"(\" ...\n    ","filterIndex":0,"beginInsertPos":0,"endInsertPos":2,"filter":"POW"}
-                                                        var best_match = me.uniq(suggestionList.suggestions).sort(function(a,b){return b.ranking- a.ranking;})[0];
-                                                        if(best_match) {
+                                                        var best_match = me.uniq(suggestionList.suggestions).sort(function (a, b) {
+                                                            return b.ranking - a.ranking;
+                                                        })[0];
+                                                        if (best_match) {
                                                             if (best_match.display.startsWith(text)) {
                                                                 var info = best_match.description;
                                                                 me.previous_matched_word_tooltip = info;
@@ -725,8 +754,10 @@
 
                                                         function (suggestionList) {
                                                             //{"suggestions":[{"display":"POWER(Numeric n,Numeric exponent)","description":"Function that take two arguments: a number and an exponent","caption":"POWER(Numeric n,Numeric exponent)","suggestion":"POWER(${1:n},${2:p})","objectType":"FORMULA","valueType":"NUMERIC"}],"definitions":["POWER(${1:n},${2:p})"],"validateMessage":"failed to parse expression:\n---\nPOWE\n\n---\n at token 'POWE' \n caused by Encountered \"<EOF>\" at line 1, column 4.\nWas expecting:\n    \"(\" ...\n    ","filterIndex":0,"beginInsertPos":0,"endInsertPos":2,"filter":"POW"}
-                                                            var best_match = me.uniq(suggestionList.suggestions).sort(function(a,b){return b.ranking- a.ranking;})[0];
-                                                            if(best_match) {
+                                                            var best_match = me.uniq(suggestionList.suggestions).sort(function (a, b) {
+                                                                return b.ranking - a.ranking;
+                                                            })[0];
+                                                            if (best_match) {
                                                                 if (best_match.display.startsWith(text)) {
                                                                     var info = best_match.description;
                                                                     me.previous_matched_word_tooltip = info;
@@ -742,8 +773,8 @@
                                                 });
                                             }
                                         });
-                                    }else{
-                                        if(me.previous_matched_info_tooltip) {
+                                    } else {
+                                        if (me.previous_matched_info_tooltip) {
                                             var pixelPosition = me.edit.renderer.textToScreenCoordinates(position);
                                             pixelPosition.pageY += me.edit.renderer.lineHeight;
                                             me.updateTooltip(pixelPosition, me.previous_matched_info_tooltip);
@@ -783,7 +814,7 @@
         template: _.template('<div id="expression-editor" style="height: 50px;"></div>', null, this.templateSettings)
     });
 
-    var MetricExpressionEditor = AceExpressionEditor.extend({
+    var MetricDomainExpressionEditor = AceExpressionEditor.extend({
         type: 'metrics'
     });
 
@@ -793,6 +824,10 @@
 
     var DomainDomainExpressionEditor = AceExpressionEditor.extend({
         type: 'domains'
+    });
+
+    var RelationDomainExpressionEditor = AceExpressionEditor.extend({
+        type: 'relations'
     });
 
     var domainExpressionEditor = DomainDomainExpressionEditor.extend({
@@ -820,7 +855,7 @@
 
         }
     });
-    var metricExpressionEditor = MetricExpressionEditor.extend({
+    var metricExpressionEditor = MetricDomainExpressionEditor.extend({
         renderDialog: function () {
             var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/domains/" + this.$el.parents("form").find(".id input[name='domainId']").val() + "/metrics-suggestion";
             var data = {
@@ -832,7 +867,7 @@
 
         }
     });
-    var relationExpressionEditor = baseExpressionEditor.extend({
+    var relationExpressionEditor = RelationDomainExpressionEditor.extend({
         renderDialog: function () {
             var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/relations-suggestion";
             var data = {
