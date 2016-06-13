@@ -414,7 +414,6 @@
         },
 
         render: function() {
-            console.log("render CollectionManagementWidget "+this.type);
             this.jsonData = {
                 collectionLoaded : !this.collectionLoading,
                 collection : this.collection,
