@@ -1,25 +1,34 @@
 (function (root, factory) {
-    root.squid_api.view.DimensionCollectionManagementWidget = factory(root.Backbone, root.squid_api);
+    root.squid_api.view.ColumnCollectionManagementWidget = factory(root.Backbone, root.squid_api);
 
 }(this, function (Backbone, squid_api) {
 
     var View = squid_api.view.BaseCollectionManagementWidget.extend({
-        type : "Dimension",
-        typeLabel : "Dimension",
-        typeLabelPlural : "Dimensions",
-        modelView : null,
-        collectionLoading : false,
-        configParentId : "project",
+        type : null,
+        typeLabel : null,
+        typeLabelPlural : null,
+        configParentId : "domain",
 
-        init : function() {
+        init : function(options) {
             var me = this;
+
+            if (options.type) {
+                this.type = options.type;
+            }
+
+            this.typeLabel = this.type;
+            this.typeLabelPlural = this.type + "s";
+
             this.modelView = squid_api.view.BaseModelManagementWidget;
         },
 
         loadCollection : function(parentId) {
+            var me = this;
             return squid_api.getCustomer().then(function(customer) {
-                return customer.get("projects").load(parentId).then(function(project) {
-                    return project.get("domains").load();
+                return customer.get("projects").load(me.config.get("project")).then(function(project) {
+                    return project.get("domains").load(parentId).then(function(domain) {
+                        return domain.get(me.typeLabelPlural.toLowerCase()).load();
+                    });
                 });
             });
         },
