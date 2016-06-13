@@ -12,8 +12,11 @@
         init : function(options) {
             var me = this;
 
-            if (options.type) {
-                this.type = options.type;
+            // set column type
+            if (options) {
+                if (options.type) {
+                    this.type = options.type;
+                }
             }
 
             this.typeLabel = this.type;

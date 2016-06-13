@@ -947,6 +947,7 @@ function program1(depth0,data) {
         cancelCallback : null,
         collectionLoading : false,
         afterRender : null,
+        modelViewEl : null,
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -974,6 +975,9 @@ function program1(depth0,data) {
                 }
                 if (options.template) {
                     this.template = options.template;
+                }
+                if (options.modelViewEl) {
+                    this.modelViewEl = options.modelViewEl;
                 }
             }
 
@@ -1337,7 +1341,12 @@ function program1(depth0,data) {
         },
 
         renderModelView: function(modelView) {
-            this.$el.html(modelView.el);
+            if (this.modelViewEl) {
+                $(this.modelViewEl).html(modelView.el);
+            } else {
+                this.$el.html(modelView.el);
+            }
+
             // focus on first element
             this.$el.find('input[type=text],textarea,select').filter(":visible:first").focus();
         },
@@ -2522,8 +2531,11 @@ function program1(depth0,data) {
         init : function(options) {
             var me = this;
 
-            if (options.type) {
-                this.type = options.type;
+            // set column type
+            if (options) {
+                if (options.type) {
+                    this.type = options.type;
+                }
             }
 
             this.typeLabel = this.type;

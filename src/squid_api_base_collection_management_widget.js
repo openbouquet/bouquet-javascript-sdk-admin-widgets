@@ -18,6 +18,7 @@
         cancelCallback : null,
         collectionLoading : false,
         afterRender : null,
+        modelViewEl : null,
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -45,6 +46,9 @@
                 }
                 if (options.template) {
                     this.template = options.template;
+                }
+                if (options.modelViewEl) {
+                    this.modelViewEl = options.modelViewEl;
                 }
             }
 
@@ -408,7 +412,12 @@
         },
 
         renderModelView: function(modelView) {
-            this.$el.html(modelView.el);
+            if (this.modelViewEl) {
+                $(this.modelViewEl).html(modelView.el);
+            } else {
+                this.$el.html(modelView.el);
+            }
+
             // focus on first element
             this.$el.find('input[type=text],textarea,select').filter(":visible:first").focus();
         },
