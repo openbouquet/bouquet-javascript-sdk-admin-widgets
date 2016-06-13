@@ -5137,11 +5137,13 @@ function program1(depth0,data) {
         init: function(options) {
             var me = this;
 
+            this.modelView = squid_api.view.RelationModelManagementWidget;
+
             // init the relations collection
             var projectId = this.config.get("project");
             if (projectId) {
                 this.modelValue = options.modelValue;
-                
+
                 this.loadCollection(options.modelValue).done(function(collection) {
                     me.collection = collection;
                     me.render();
