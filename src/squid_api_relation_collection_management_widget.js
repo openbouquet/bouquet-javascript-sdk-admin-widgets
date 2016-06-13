@@ -11,41 +11,15 @@
         template: template,
         configParentId : "domain",
 
-        initialize : function(options) {
-            this.config = squid_api.model.config;
-            this.status = squid_api.model.status;
-            this.modelView = squid_api.view.RelationModelManagementWidget;
-            this.modelValue = options.modelValue;
+        init: function(options) {
             var me = this;
-
-            if (options) {
-                if (options.type) {
-                    this.type = options.type;
-                }
-                if (options.comparator) {
-                    this.comparator = options.comparator;
-                } else {
-                    // default is : sort by alpha name and dynamic last
-                    this.comparator =  function(a, b) {
-                        var r = me.dynamicComparator(a,b);
-                        if (r === 0) {
-                            r = me.alphaNameComparator(a,b);
-                        }
-                        return r;
-                    };
-                }
-                if (options.cancelCallback) {
-                    this.cancelCallback = options.cancelCallback;
-                }
-                if (options.onSelect) {
-                    this.onSelect = options.onSelect;
-                }
-            }
 
             // init the relations collection
             var projectId = this.config.get("project");
             if (projectId) {
-                this.loadCollection(this.modelValue).done(function(collection) {
+                this.modelValue = options.modelValue;
+                
+                this.loadCollection(options.modelValue).done(function(collection) {
                     me.collection = collection;
                     me.render();
                 }).fail(function() {
