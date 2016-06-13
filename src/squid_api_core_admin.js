@@ -741,7 +741,7 @@
                                 var text = me.edit.session.getTextRange(wordRange);
                                 if (text.length > 0) {
                                     //Avoid uncessary call
-                                    if (text != me.previous_matched_word_tooltip) {
+                                    if (text.localeCompare(me.previous_matched_word_tooltip)!==0 && text.localeCompare("'")!==0 && text.length>2) {
                                         me.previous_matched_word_tooltip = text;
                                         squid_api.getSelectedProject().then(function (project) {
 
@@ -757,8 +757,13 @@
                                                         })[0];
                                                         if (best_match) {
                                                             if (best_match.display.startsWith(text)) {
-                                                                var info = best_match.description;
-                                                                me.previous_matched_word_tooltip = info;
+                                                                var info = best_match.objectType+":"+ best_match.valueType + "\n";
+                                                                if(best_match.description){
+                                                                    info += best_match.description;
+                                                                }
+                                                                me.previous_matched_word_tooltip = text;
+                                                                me.previous_matched_info_tooltip = info;
+
                                                                 if (info) {
                                                                     var pixelPosition = me.edit.renderer.textToScreenCoordinates(position);
                                                                     pixelPosition.pageY += me.edit.renderer.lineHeight;
@@ -781,8 +786,12 @@
                                                             })[0];
                                                             if (best_match) {
                                                                 if (best_match.display.startsWith(text)) {
-                                                                    var info = best_match.description;
-                                                                    me.previous_matched_word_tooltip = info;
+                                                                    var info = best_match.objectType+":"+ best_match.valueType + "\n";
+                                                                    if(best_match.description){
+                                                                        info += best_match.description;
+                                                                    }
+                                                                    me.previous_matched_word_tooltip = text;
+                                                                    me.previous_matched_info_tooltip = info;
                                                                     if (info) {
                                                                         var pixelPosition = me.edit.renderer.textToScreenCoordinates(position);
                                                                         pixelPosition.pageY += me.edit.renderer.lineHeight;

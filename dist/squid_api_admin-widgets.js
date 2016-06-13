@@ -559,6 +559,15 @@ function program5(depth0,data) {
   return buffer;
   });
 
+this["squid_api"]["template"]["squid_api_core_admin"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  
+
+
+  return "<script id=\"formTemplate\" type=\"text/html\">\n<script>var editor = ace.edit(\"editor\");</script>\n</script>\n<div id=\"editor\"></div>;\n\n";
+  });
+
 this["squid_api"]["template"]["squid_api_dimension_selector_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -619,6 +628,15 @@ function program8(depth0,data) {
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\r\n</select>\r\n";
   return buffer;
+  });
+
+this["squid_api"]["template"]["squid_api_editor_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  
+
+
+  return "<div class=\"squid-api-editor-view\">\n<div id=\"ace_editor\"></div>\n</div>\n";
   });
 
 this["squid_api"]["template"]["squid_api_metric_selector_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -3466,7 +3484,7 @@ function program1(depth0,data) {
                                 var text = me.edit.session.getTextRange(wordRange);
                                 if (text.length > 0) {
                                     //Avoid uncessary call
-                                    if (text != me.previous_matched_word_tooltip) {
+                                    if (text.localeCompare(me.previous_matched_word_tooltip)!==0 && text.localeCompare("'")!==0 && text.length>2) {
                                         me.previous_matched_word_tooltip = text;
                                         squid_api.getSelectedProject().then(function (project) {
 
@@ -3482,8 +3500,13 @@ function program1(depth0,data) {
                                                         })[0];
                                                         if (best_match) {
                                                             if (best_match.display.startsWith(text)) {
-                                                                var info = best_match.description;
-                                                                me.previous_matched_word_tooltip = info;
+                                                                var info = best_match.objectType+":"+ best_match.valueType + "\n";
+                                                                if(best_match.description){
+                                                                    info += best_match.description;
+                                                                }
+                                                                me.previous_matched_word_tooltip = text;
+                                                                me.previous_matched_info_tooltip = info;
+
                                                                 if (info) {
                                                                     var pixelPosition = me.edit.renderer.textToScreenCoordinates(position);
                                                                     pixelPosition.pageY += me.edit.renderer.lineHeight;
@@ -3506,8 +3529,12 @@ function program1(depth0,data) {
                                                             })[0];
                                                             if (best_match) {
                                                                 if (best_match.display.startsWith(text)) {
-                                                                    var info = best_match.description;
-                                                                    me.previous_matched_word_tooltip = info;
+                                                                    var info = best_match.objectType+":"+ best_match.valueType + "\n";
+                                                                    if(best_match.description){
+                                                                        info += best_match.description;
+                                                                    }
+                                                                    me.previous_matched_word_tooltip = text;
+                                                                    me.previous_matched_info_tooltip = info;
                                                                     if (info) {
                                                                         var pixelPosition = me.edit.renderer.textToScreenCoordinates(position);
                                                                         pixelPosition.pageY += me.edit.renderer.lineHeight;
@@ -4253,6 +4280,28 @@ function program1(depth0,data) {
         render : squid_api.view.CollectionSelectorUtils.renderButton
 
     });
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.Editor = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_editors_widget);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = Backbone.View.extend({
+
+        initialize: function() {
+            //this.editor = ace.edit("ace_editor");
+            this.editor = ace.edit("ace_editor");
+            this.editor.setTheme("ace/theme/monokai");
+            this.editor.getSession().setMode("ace/mode/javascript");
+        },
+        render: function() {
+            var me = this;
+            this.$el.html(this.template());
+        }
+    });
+
     return View;
 }));
 
