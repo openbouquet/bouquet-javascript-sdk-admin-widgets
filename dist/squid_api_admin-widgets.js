@@ -2542,6 +2542,10 @@ function program1(depth0,data) {
             this.typeLabelPlural = this.type + "s";
 
             this.modelView = squid_api.view.BaseModelManagementWidget;
+
+            if (this.type === "Dimension") {
+                this.modelView = squid_api.view.DimensionModelManagementWidget;
+            }
         },
 
         loadCollection : function(parentId) {
