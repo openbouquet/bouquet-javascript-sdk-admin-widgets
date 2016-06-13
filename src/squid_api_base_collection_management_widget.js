@@ -186,7 +186,7 @@
         },
 
         getSelectedModel : function(event) {
-            var id = $(event.target).parents('tr').data("attr");
+            var id = $(event.target).data("attr") || $(event.target).parents('tr').data("attr");
             var model = this.collection.get(id);
             return model;
         },
