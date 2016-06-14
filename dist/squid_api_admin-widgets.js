@@ -970,6 +970,9 @@ function program1(depth0,data) {
                 if (options.onSelect) {
                     this.onSelect = options.onSelect;
                 }
+                if (options.onEdit) {
+                    this.onEdit = options.onEdit;
+                }
                 if (options.afterRender) {
                     this.afterRender = options.afterRender;
                 }
@@ -1190,6 +1193,9 @@ function program1(depth0,data) {
                         me.render();
                     }
                 }));
+            }
+            if (this.onEdit) {
+                this.onEdit.call(event);
             }
         },
 
