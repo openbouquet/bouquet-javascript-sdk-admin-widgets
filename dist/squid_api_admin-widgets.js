@@ -226,7 +226,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (helper = helpers.modelDefinition) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.modelDefinition); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "-model-management squid-api-model-management\">\n\n</div>\n<div class=\"squid-api-model-management-footer\">\n  	<button type=\"button\" class=\"btn btn-default btn-cancel\">Cancel</button>\n	<button type=\"button\" class=\"btn btn-primary btn-save-form\">Save</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
+    + "-model-management squid-api-model-management\">\n\n</div>\n<div class=\"modal-footer\">\n  ";
+  if (helper = helpers.footerLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.footerLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n</div>\n<div class=\"squid-api-model-management-footer\">\n      <button type=\"button\" class=\"btn btn-default btn-cancel\">Cancel</button>\n    <button type=\"button\" class=\"btn btn-primary btn-save-form\">Save</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
   return buffer;
   });
 
@@ -1548,8 +1552,10 @@ function program1(depth0,data) {
             if (this.model.isNew()) {
                 jsonData.headerLabel = "Creating a new " + this.model.definition.toLowerCase();
             } else {
-                jsonData.headerLabel = "Editing " + this.model.definition.toLowerCase() + " with name " + this.model.get("name") + " <span data-clipboard-text='" + this.model.get("oid") + "' class='copy-id'>(" + this.model.get("oid") + "</span>)";
+                jsonData.headerLabel = "Editing " + this.model.definition.toLowerCase() + " " +this.model.get("name");
             }
+
+            jsonData.footerLabel = "<div class='object-id'><label>Object ID</label> <br /> <input data-clipboard-text='" + this.model.get("oid") + "' class='copy-id' value='" + this.model.get("oid") + "' /></div>";
 
             this.setSchema().then(function(schema) {
                 // create form

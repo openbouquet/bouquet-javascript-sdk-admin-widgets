@@ -132,8 +132,10 @@
             if (this.model.isNew()) {
                 jsonData.headerLabel = "Creating a new " + this.model.definition.toLowerCase();
             } else {
-                jsonData.headerLabel = "Editing " + this.model.definition.toLowerCase() + " with name " + this.model.get("name") + " <span data-clipboard-text='" + this.model.get("oid") + "' class='copy-id'>(" + this.model.get("oid") + "</span>)";
+                jsonData.headerLabel = "Editing " + this.model.definition.toLowerCase() + " " +this.model.get("name");
             }
+
+            jsonData.footerLabel = "<div class='object-id'><label>Object ID</label> <br /> <input data-clipboard-text='" + this.model.get("oid") + "' class='copy-id' value='" + this.model.get("oid") + "' /></div>";
 
             this.setSchema().then(function(schema) {
                 // create form
