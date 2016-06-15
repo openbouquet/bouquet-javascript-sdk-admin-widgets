@@ -4095,7 +4095,7 @@ function program1(depth0,data) {
                                 } else {
                                     var addToArray = true;
                                     // don't allow dimension reselection if using a singleSelectIndex
-                                    if (this.singleSelectIndex) {
+                                    if (this.singleSelectIndex || this.singleSelectIndex === 0) {
                                         var chosenArray = this.config.get(this.chosen);
                                         var index = _.indexOf(chosenArray, facet.id);
                                         if (index > -1 && index !== this.singleSelectIndex) {
