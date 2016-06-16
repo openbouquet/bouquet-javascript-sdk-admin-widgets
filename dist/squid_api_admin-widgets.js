@@ -4102,7 +4102,7 @@ function program1(depth0,data) {
                                             addToArray = false;
                                         }
                                     }
-                                    if (addToArray && (availableArray && (availableArray.indexOf(facet.id) > -1))) {
+                                    if (addToArray && (this.config.get(this.available) && (this.config.get(this.available).indexOf(facet.id) > -1))) {
                                         facetList.push(facet);
                                     }
                                 }
