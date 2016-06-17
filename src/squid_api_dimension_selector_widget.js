@@ -183,7 +183,9 @@
                                             addToArray = false;
                                         }
                                     }
-                                    if (addToArray && (this.config.get(this.available) && (this.config.get(this.available).indexOf(facet.id) > -1))) {
+                                    if (! this.config.get(this.available) && addToArray) {
+                                        facetList.push(facet);
+                                    } else if (addToArray && (this.config.get(this.available) && (this.config.get(this.available).indexOf(facet.id) > -1))) {
                                         facetList.push(facet);
                                     }
                                 }
