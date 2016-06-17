@@ -2267,146 +2267,151 @@ function program1(depth0,data) {
                             squid_api.setBookmark(bookmark, forcedConfig, attributes);
                         });
                     } else {
-                        //Get list of available facets for each domains
-                        $.when(oldFacets, newFacets).done(function(oldFacets, newFacets) {
-                            console.log("merge filters from bookmarks");
-                            var forcedConfig = function(newConfig) {
-                                newConfig.bookmark = bookmarkId;
-                                var facetName;
-                                var facetForItems;
-                                //Find bookmarks
-                                var currentBookmark = bookmark;
-                                if (currentBookmark && currentBookmark.id) {
-                                    me.savedAnalysesConfig.set(copyConfig.get("bookmark"), copyConfig.attributes);
-                                }
-    
-                                //Get the latest config used on the new bookmark used if any
-                                var savedNewConfig = me.savedAnalysesConfig.get(newBookmark.id);
-                                //In case it is the first bookmark selected
-                                if (!savedNewConfig || !savedNewConfig.selection) {
-                                    savedNewConfig = newConfig;
-                                }
-                                var forcedSelection = { "compareTo" : [], "facets" : []};
-                                var currentSelection = copyConfig.get("selection");
-    
-                                if (currentSelection && currentSelection.facets) {
-                                    //Save/update any facet selected
-                                    if (oldFacets) {
-                                        for (var k=0; k<oldFacets.length; k++) {
-                                            var availableFacet = oldFacets[k];
-                                            var existsInNewConfig = me.containsSelection(newFacets, availableFacet);
-                                            facetName = me.normalyzeFacetName(availableFacet);
-                                            var selectedItems = [];
-                                            var deletedItems = [];
-    
-                                        var bookmarkFacet = me.findFacetByName(currentBookmark.get("config").selection.facets, availableFacet);
-                                        facetForItems = me.findFacetByName(currentSelection.facets, availableFacet);
-    
-                                            var availableItems = null;
-                                            if (facetForItems && facetForItems.selectedItems) {
-                                                if (facetForItems.id === "__segments") {
-                                                    availableItems = me.getSegmentFacet(newFacets).items;
-                                                }
-                                                if (bookmarkFacet) {
-                                                    var diffItems = me.getCustomSelection(facetForItems.selectedItems, bookmarkFacet.selectedItems);   
-                                                    if (diffItems && diffItems.length>0) {
-                                                        selectedItems=diffItems;
-                                                    }		
-                                                    //Now we clean deleted items if segments as it is shared among bookmarks on same domain
-                                                    if (availableFacet.id === "__segments" && me.customDeletedFacets.get(facetName) && diffItems.length>0) {
-                                                        me.customDeletedFacets.set(facetName, me.cleanItems(me.customDeletedFacets.get(facetName), diffItems));
-                                                    }
-    
-                                                    diffItems = me.getCustomSelection(bookmarkFacet.selectedItems, facetForItems.selectedItems, availableItems);
-    
-                                                    //Now we copy back remaining deleted items if segments as it is shared among bookmarks on same domain
-                                                    if (availableFacet.id === "__segments" && me.customDeletedFacets.get(facetName)) {
-                                                        diffItems = diffItems.concat(me.customDeletedFacets.get(facetName));
-                                                    }
-    
-                                                    //No need for period as it is a single selection
-                                                    if ((availableFacet.dimension.type === "CONTINUOUS" && availableFacet.dimension.valueType === "DATE") === false) {
-                                                        if (diffItems && diffItems.length>0) {
-                                                            deletedItems=diffItems;
-                                                        }		
-                                                    }
-                                                } else {
-                                                    selectedItems = facetForItems.selectedItems;
-                                                }
+                        // get the previous Bookmark
+                        squid_api.getCustomer().then(function(customer) {
+                            customer.get("projects").load(copyConfig.get("project")).then(function(project) {
+                                project.get("bookmarks").load(copyConfig.get("bookmark")).done(function(previousBookmark) {
+     
+                                    //Get list of available facets for each domains
+                                    $.when(oldFacets, newFacets).done(function(oldFacets, newFacets) {
+                                        console.log("merge filters from bookmarks");
+                                        var forcedConfig = function(newConfig) {
+                                            newConfig.bookmark = bookmarkId;
+                                            var facetName;
+                                            var facetForItems;
+                                    
+                                            if (previousBookmark && previousBookmark.id) {
+                                                me.savedAnalysesConfig.set(copyConfig.get("bookmark"), copyConfig.attributes);
                                             }
-                                            if (selectedItems && selectedItems.length>0) {
-                                                me.customAddedFacets.set(facetName, selectedItems);
-                                            } else {
-                                                me.cleanCustomSelection(me.customAddedFacets, facetName, availableItems);
+                
+                                            //Get the latest config used on the new bookmark used if any
+                                            var savedNewConfig = me.savedAnalysesConfig.get(newBookmark.id);
+                                            //In case it is the first bookmark selected
+                                            if (!savedNewConfig || !savedNewConfig.selection) {
+                                                savedNewConfig = newConfig;
                                             }
-                                            if (deletedItems && deletedItems.length>0) {
-                                                me.customDeletedFacets.set(facetName, deletedItems);
-                                            } else if (me.customDeletedFacets.has(facetName)) {
-                                                me.cleanCustomSelection(me.customDeletedFacets, facetName, availableItems);
-                                            }
-                                        }
-                                    }
-    
-                                    //We add new selected facets on other dashboards
-                                    if (newFacets) {
-                                        for (var f=0; f<newFacets.length; f++) {
-                                            var newFacet = newFacets[f];
-                                            facetName = me.normalyzeFacetName(newFacet);
-                                            var complementFacetItems = null;
-                                            if (newFacet.dimension.type === "CONTINUOUS" && newFacet.dimension.valueType === "DATE") {
-                                                //For dates there is only one selection item
-                                                if (currentSelection.compareTo && currentSelection.compareTo.length === 1) {
-                                                    var savedNewCompare = $.extend(true, {}, newFacet);
-                                                    savedNewCompare.selectedItems = $.extend(true, [], currentSelection.compareTo[0].selectedItems);
-                                                    forcedSelection.compareTo.push(savedNewCompare);
-                                                } else {
-                                                    if (savedNewConfig.selection.compareTo) {
-                                                        forcedSelection.compareTo = $.extend(true, [], savedNewConfig.selection.compareTo);
+                                            var forcedSelection = { "compareTo" : [], "facets" : []};
+                                            var currentSelection = copyConfig.get("selection");
+                
+                                            if (currentSelection && currentSelection.facets) {
+                                                //Save/update any facet selected
+                                                if (oldFacets) {
+                                                    for (var k=0; k<oldFacets.length; k++) {
+                                                        var availableFacet = oldFacets[k];
+                                                        var existsInNewConfig = me.containsSelection(newFacets, availableFacet);
+                                                        facetName = me.normalyzeFacetName(availableFacet);
+                                                        var selectedItems = [];
+                                                        var deletedItems = [];
+                
+                                                    var bookmarkFacet = me.findFacetByName(previousBookmark.get("config").selection.facets, availableFacet);
+                                                    facetForItems = me.findFacetByName(currentSelection.facets, availableFacet);
+                
+                                                        var availableItems = null;
+                                                        if (facetForItems && facetForItems.selectedItems) {
+                                                            if (facetForItems.id === "__segments") {
+                                                                availableItems = me.getSegmentFacet(newFacets).items;
+                                                            }
+                                                            if (bookmarkFacet) {
+                                                                var diffItems = me.getCustomSelection(facetForItems.selectedItems, bookmarkFacet.selectedItems);   
+                                                                if (diffItems && diffItems.length>0) {
+                                                                    selectedItems=diffItems;
+                                                                }		
+                                                                //Now we clean deleted items if segments as it is shared among bookmarks on same domain
+                                                                if (availableFacet.id === "__segments" && me.customDeletedFacets.get(facetName) && diffItems.length>0) {
+                                                                    me.customDeletedFacets.set(facetName, me.cleanItems(me.customDeletedFacets.get(facetName), diffItems));
+                                                                }
+                
+                                                                diffItems = me.getCustomSelection(bookmarkFacet.selectedItems, facetForItems.selectedItems, availableItems);
+                
+                                                                //Now we copy back remaining deleted items if segments as it is shared among bookmarks on same domain
+                                                                if (availableFacet.id === "__segments" && me.customDeletedFacets.get(facetName)) {
+                                                                    diffItems = diffItems.concat(me.customDeletedFacets.get(facetName));
+                                                                }
+                
+                                                                //No need for period as it is a single selection
+                                                                if ((availableFacet.dimension.type === "CONTINUOUS" && availableFacet.dimension.valueType === "DATE") === false) {
+                                                                    if (diffItems && diffItems.length>0) {
+                                                                        deletedItems=diffItems;
+                                                                    }		
+                                                                }
+                                                            } else {
+                                                                selectedItems = facetForItems.selectedItems;
+                                                            }
+                                                        }
+                                                        if (selectedItems && selectedItems.length>0) {
+                                                            me.customAddedFacets.set(facetName, selectedItems);
+                                                        } else {
+                                                            me.cleanCustomSelection(me.customAddedFacets, facetName, availableItems);
+                                                        }
+                                                        if (deletedItems && deletedItems.length>0) {
+                                                            me.customDeletedFacets.set(facetName, deletedItems);
+                                                        } else if (me.customDeletedFacets.has(facetName)) {
+                                                            me.cleanCustomSelection(me.customDeletedFacets, facetName, availableItems);
+                                                        }
                                                     }
                                                 }
-                                                complementFacetItems = me.customAddedFacets.get(facetName);
-                                                if (!complementFacetItems) {
-                                                var periodFacet = me.findFacetByName(newConfig.selection.facets, newFacet); 
-                                                    if (periodFacet) {
-                                                        complementFacetItems = periodFacet.selectedItems;
-                                                    }// when renaming a child dimension, the dimension name in the bookmark is not updated
+                
+                                                //We add new selected facets on other dashboards
+                                                if (newFacets) {
+                                                    for (var f=0; f<newFacets.length; f++) {
+                                                        var newFacet = newFacets[f];
+                                                        facetName = me.normalyzeFacetName(newFacet);
+                                                        var complementFacetItems = null;
+                                                        if (newFacet.dimension.type === "CONTINUOUS" && newFacet.dimension.valueType === "DATE") {
+                                                            //For dates there is only one selection item
+                                                            if (currentSelection.compareTo && currentSelection.compareTo.length === 1) {
+                                                                var savedNewCompare = $.extend(true, {}, newFacet);
+                                                                savedNewCompare.selectedItems = $.extend(true, [], currentSelection.compareTo[0].selectedItems);
+                                                                forcedSelection.compareTo.push(savedNewCompare);
+                                                            } else {
+                                                                if (savedNewConfig.selection.compareTo) {
+                                                                    forcedSelection.compareTo = $.extend(true, [], savedNewConfig.selection.compareTo);
+                                                                }
+                                                            }
+                                                            complementFacetItems = me.customAddedFacets.get(facetName);
+                                                            if (!complementFacetItems) {
+                                                            var periodFacet = me.findFacetByName(newConfig.selection.facets, newFacet); 
+                                                                if (periodFacet) {
+                                                                    complementFacetItems = periodFacet.selectedItems;
+                                                                }// when renaming a child dimension, the dimension name in the bookmark is not updated
+                                                            }
+                                                        } else {
+                                                            var savedSelection = me.customAddedFacets.get(facetName);
+                                                            var deletedSelection = me.customDeletedFacets.get(facetName);
+                                                        var bookmarkSelection = me.findFacetByName(newConfig.selection.facets, newFacet); // when renaming a child dimension, the dimension name in the bookmark is not updated
+                                                        var lastSelection = me.findFacetByName(savedNewConfig.selection.facets, newFacet);
+                                                            facetForItems = null;
+                                                            if (newFacet.id === "__segments") {
+                                                                facetForItems = me.getSegmentFacet(newFacets);
+                                                            }
+                                                            complementFacetItems = me.mergeSelection(savedSelection, lastSelection, facetForItems, bookmarkSelection, deletedSelection);
+                                                        }
+                                                        if (complementFacetItems && complementFacetItems.length>0) {
+                                                            var copiedFacet = {
+                                                                    dimension: newFacet.dimension,
+                                                                    id: newFacet.id,
+                                                                    selectedItems: complementFacetItems
+                                                            };
+                                                            forcedSelection.facets.push(copiedFacet);
+                                                        }
+                                                    }
                                                 }
-                                            } else {
-                                                var savedSelection = me.customAddedFacets.get(facetName);
-                                                var deletedSelection = me.customDeletedFacets.get(facetName);
-                                            var bookmarkSelection = me.findFacetByName(newConfig.selection.facets, newFacet); // when renaming a child dimension, the dimension name in the bookmark is not updated
-                                            var lastSelection = me.findFacetByName(savedNewConfig.selection.facets, newFacet);
-                                                facetForItems = null;
-                                                if (newFacet.id === "__segments") {
-                                                    facetForItems = me.getSegmentFacet(newFacets);
-                                                }
-                                                complementFacetItems = me.mergeSelection(savedSelection, lastSelection, facetForItems, bookmarkSelection, deletedSelection);
+                
+                                                //Set then next config from selected facets
+                                                newConfig.selection = forcedSelection;
                                             }
-                                            if (complementFacetItems && complementFacetItems.length>0) {
-                                                var copiedFacet = {
-                                                        dimension: newFacet.dimension,
-                                                        id: newFacet.id,
-                                                        selectedItems: complementFacetItems
-                                                };
-                                                forcedSelection.facets.push(copiedFacet);
-                                            }
-                                        }
-                                    }
-    
-                                    //Set then next config from selected facets
-                                    newConfig.selection = forcedSelection;
-                                }
-    
-                                return newConfig;
-                            };
-    
-                            squid_api.setBookmark(bookmark, forcedConfig, null);           
+                
+                                            return newConfig;
+                                        };
+                
+                                        squid_api.setBookmark(bookmark, forcedConfig, null);           
+                                    });
+                                });
+                            });
                         });
                     }
                 }
             }
-
-
     };
 
     squid_api.controller.Bookmark = Controller;
