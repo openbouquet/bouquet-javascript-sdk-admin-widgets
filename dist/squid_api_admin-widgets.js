@@ -1689,7 +1689,6 @@ function program1(depth0,data) {
             var listHtml = $(this.template(filteredCollection)).find(".list").last().html();
             this.$el.find(".list").last().html(listHtml);
 
-            // this.bookmarkFolderStateCheck();
             if (text.length > 0) {
                 this.templateWidgets("open");
             } else {
@@ -1808,38 +1807,15 @@ function program1(depth0,data) {
             }
             return name;
         },
-        bookmarkFolderStateSet: function(item, action) {
-            var project = this.config.get("project");
-            var bookmarkFolderState = $.extend(true, {}, this.config.get("bookmarkFolderState"));
-            if (action == "show") {
-                if (bookmarkFolderState) {
-                    bookmarkFolderState[project] = item;
-                } else {
-                    var obj = {};
-                    obj[project] = item;
-                    bookmarkFolderState = obj;
-                }
-            } else if (action == "hidden") {
-                if (bookmarkFolderState) {
-                    delete bookmarkFolderState[project];
-                }
-            }
-            this.config.set("bookmarkFolderState", bookmarkFolderState);
-        },
-        bookmarkFolderStateCheck: function() {
-            var bookmarkFolderState = this.config.get("bookmarkFolderState");
-            var project = this.config.get("project");
-            // open folder if stored in config
-            if (bookmarkFolderState) {
-                if (bookmarkFolderState[project]) {
-                    this.$el.find("#" + bookmarkFolderState[project]).collapse('toggle');
-                }
+        bookmarkFolderState: function(item) {
+            if (item) {
+                this.$el.find("#bookmark-collapse-" + item).collapse('toggle');
             }
         },
         render: function(activePath) {
             console.log("render CollectionManagementWidget "+this.type);
             var project = this.config.get("project");
-            var bookmarkFolderState = this.config.get("bookmarkFolderState");
+            var currentBookmark = this.config.get("bookmark");
 
             this.jsonData = {
                 collectionLoaded : !this.collectionLoading,
@@ -1956,15 +1932,14 @@ function program1(depth0,data) {
                                     if (activePath === collection[x].path.value) {
                                         collection[x].active = true;
                                     }
+                                    if (currentBookmark === bookmark.oid) {
+                                        collection[x].currentBookmarkInside = true;
+                                    }
                                     collection[x].bookmarks.push(bookmark);
                                 }
                             }
                         }
                     }
-                }
-
-                if (_.where(collection, {active: true}).length === 0 && collection.length > 0) {
-                    collection[0].active = true;
                 }
 
                 // sort bookmarks by label
@@ -1998,8 +1973,14 @@ function program1(depth0,data) {
 
             this.$el.find("input.search").focus();
 
-            this.bookmarkFolderStateCheck();
-            this.templateWidgets();
+            if (this.jsonData.collection) {
+                // if no active collection, open the parent folder of currently selected bookmark
+                if (! activePath) {
+                    var indexToOpen = _.indexOf(_.pluck(this.jsonData.collection, 'currentBookmarkInside'), true);
+                    this.bookmarkFolderState(indexToOpen);
+                }
+                this.templateWidgets();
+            }
 
             return this;
         },
@@ -2011,16 +1992,6 @@ function program1(depth0,data) {
                     trigger: "hover"
                 });
             }
-            // accordion & events
-            this.$el.find(".collapse").on('hidden.bs.collapse', { context: this }, function (event) {
-                var item = $(this).attr("id");
-                event.data.context.bookmarkFolderStateSet(item, "hidden");
-            });
-            this.$el.find(".collapse").on('show.bs.collapse', { context: this }, function (event) {
-                var item = $(this).attr("id");
-                event.data.context.bookmarkFolderStateSet(item, "show");
-            });
-
             if (collapseState == "open") {
                 var folders = this.$el.find(".collapse");
                 for (var i=0; i<folders.length; i++) {
