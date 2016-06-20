@@ -376,6 +376,9 @@
                     var textB = b.path.value.replace(/\//g, '').replace(/ /g, '').toUpperCase();
                     return (textA > textB) ? 1 : (textA < textB) ? -1 : 0;
                 });
+                if (_.where(collection, {active: true}).length === 0 && collection.length > 0) {
+                    collection[0].active = true;
+                }
                 this.jsonData.collection = collection;
                 console.log(paths);
             }
