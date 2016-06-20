@@ -1808,7 +1808,7 @@ function program1(depth0,data) {
             return name;
         },
         bookmarkFolderState: function(item) {
-            if (item) {
+            if (item || item === 0) {
                 this.$el.find("#bookmark-collapse-" + item).collapse('toggle');
             }
         },
@@ -1977,6 +1977,10 @@ function program1(depth0,data) {
                 // if no active collection, open the parent folder of currently selected bookmark
                 if (! activePath) {
                     var indexToOpen = _.indexOf(_.pluck(this.jsonData.collection, 'currentBookmarkInside'), true);
+                    if (indexToOpen === -1) {
+                        indexToOpen = 0;
+                    }
+                    this.jsonData.collection[0].active = true;
                     this.bookmarkFolderState(indexToOpen);
                 }
                 this.templateWidgets();
