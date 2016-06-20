@@ -2110,8 +2110,12 @@ function program1(depth0,data) {
 		 containsSelection: function (a, obj) {
 			 var i = a.length;
 			 while (i--) {
-				 if (a[i].id === obj.id || a[i].name === obj.name) {
-					 return true;
+				 if (!a[i].name && !obj.name) {
+					 if (a[i].id === obj.id) {
+						return true;
+					 }
+				 } else if (a[i].name === obj.name) {
+	 				return true;			 
 				 }
 			 }
 			 return false;
@@ -2179,7 +2183,9 @@ function program1(depth0,data) {
 
 			 //remove recently deleted items if any
 			 for (var f=0; f<toAdd.length; f++) {
-				 if (!deletedSelection || Controller.containsSelection(deletedSelection, toAdd[f]) === false) {
+				 if (!deletedSelection) {
+					 segments.push(toAdd[f]);					 
+				 } else if (Controller.containsSelection(deletedSelection, toAdd[f]) === false) {
 					 segments.push(toAdd[f]);			
 				 }
 			 }
