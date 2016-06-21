@@ -226,7 +226,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (helper = helpers.modelDefinition) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.modelDefinition); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "-model-management squid-api-model-management\">\n\n</div>\n<div class=\"squid-api-model-management-footer\">\n  	<button type=\"button\" class=\"btn btn-default btn-cancel\">Cancel</button>\n	<button type=\"button\" class=\"btn btn-primary btn-save-form\">Save</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
+    + "-model-management squid-api-model-management\">\n\n</div>\n<div class=\"modal-footer\">\n  ";
+  if (helper = helpers.footerLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.footerLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n</div>\n<div class=\"squid-api-model-management-footer\">\n      <button type=\"button\" class=\"btn btn-default btn-cancel\">Cancel</button>\n    <button type=\"button\" class=\"btn btn-primary btn-save-form\">Save</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
   return buffer;
   });
 
@@ -970,6 +974,9 @@ function program1(depth0,data) {
                 if (options.onSelect) {
                     this.onSelect = options.onSelect;
                 }
+                if (options.onEdit) {
+                    this.onEdit = options.onEdit;
+                }
                 if (options.afterRender) {
                     this.afterRender = options.afterRender;
                 }
@@ -1190,6 +1197,9 @@ function program1(depth0,data) {
                         me.render();
                     }
                 }));
+            }
+            if (this.onEdit) {
+                this.onEdit.call(event);
             }
         },
 
@@ -1542,8 +1552,10 @@ function program1(depth0,data) {
             if (this.model.isNew()) {
                 jsonData.headerLabel = "Creating a new " + this.model.definition.toLowerCase();
             } else {
-                jsonData.headerLabel = "Editing " + this.model.definition.toLowerCase() + " with name " + this.model.get("name") + " <span data-clipboard-text='" + this.model.get("oid") + "' class='copy-id'>(" + this.model.get("oid") + "</span>)";
+                jsonData.headerLabel = "Editing " + this.model.definition.toLowerCase() + " " +this.model.get("name");
             }
+
+            jsonData.footerLabel = "<div class='object-id'><label>Object ID</label> <br /> <input data-clipboard-text='" + this.model.get("oid") + "' class='copy-id' value='" + this.model.get("oid") + "' /></div>";
 
             this.setSchema().then(function(schema) {
                 // create form
@@ -1677,7 +1689,6 @@ function program1(depth0,data) {
             var listHtml = $(this.template(filteredCollection)).find(".list").last().html();
             this.$el.find(".list").last().html(listHtml);
 
-            // this.bookmarkFolderStateCheck();
             if (text.length > 0) {
                 this.templateWidgets("open");
             } else {
@@ -1796,38 +1807,15 @@ function program1(depth0,data) {
             }
             return name;
         },
-        bookmarkFolderStateSet: function(item, action) {
-            var project = this.config.get("project");
-            var bookmarkFolderState = $.extend(true, {}, this.config.get("bookmarkFolderState"));
-            if (action == "show") {
-                if (bookmarkFolderState) {
-                    bookmarkFolderState[project] = item;
-                } else {
-                    var obj = {};
-                    obj[project] = item;
-                    bookmarkFolderState = obj;
-                }
-            } else if (action == "hidden") {
-                if (bookmarkFolderState) {
-                    delete bookmarkFolderState[project];
-                }
-            }
-            this.config.set("bookmarkFolderState", bookmarkFolderState);
-        },
-        bookmarkFolderStateCheck: function() {
-            var bookmarkFolderState = this.config.get("bookmarkFolderState");
-            var project = this.config.get("project");
-            // open folder if stored in config
-            if (bookmarkFolderState) {
-                if (bookmarkFolderState[project]) {
-                    this.$el.find("#" + bookmarkFolderState[project]).collapse('toggle');
-                }
+        bookmarkFolderState: function(item) {
+            if (item || item === 0) {
+                this.$el.find("#bookmark-collapse-" + item).collapse('toggle');
             }
         },
         render: function(activePath) {
             console.log("render CollectionManagementWidget "+this.type);
             var project = this.config.get("project");
-            var bookmarkFolderState = this.config.get("bookmarkFolderState");
+            var currentBookmark = this.config.get("bookmark");
 
             this.jsonData = {
                 collectionLoaded : !this.collectionLoading,
@@ -1944,15 +1932,14 @@ function program1(depth0,data) {
                                     if (activePath === collection[x].path.value) {
                                         collection[x].active = true;
                                     }
+                                    if (currentBookmark === bookmark.oid) {
+                                        collection[x].currentBookmarkInside = true;
+                                    }
                                     collection[x].bookmarks.push(bookmark);
                                 }
                             }
                         }
                     }
-                }
-
-                if (_.where(collection, {active: true}).length === 0 && collection.length > 0) {
-                    collection[0].active = true;
                 }
 
                 // sort bookmarks by label
@@ -1976,6 +1963,9 @@ function program1(depth0,data) {
                     var textB = b.path.value.replace(/\//g, '').replace(/ /g, '').toUpperCase();
                     return (textA > textB) ? 1 : (textA < textB) ? -1 : 0;
                 });
+                if (_.where(collection, {active: true}).length === 0 && collection.length > 0) {
+                    collection[0].active = true;
+                }
                 this.jsonData.collection = collection;
                 console.log(paths);
             }
@@ -1986,8 +1976,17 @@ function program1(depth0,data) {
 
             this.$el.find("input.search").focus();
 
-            this.bookmarkFolderStateCheck();
-            this.templateWidgets();
+            if (this.jsonData.collection) {
+                // if no active collection, open the parent folder of currently selected bookmark
+                if (! activePath) {
+                    var indexToOpen = _.indexOf(_.pluck(this.jsonData.collection, 'currentBookmarkInside'), true);
+                    if (indexToOpen === -1) {
+                        indexToOpen = 0;
+                    }
+                    this.bookmarkFolderState(indexToOpen);
+                }
+                this.templateWidgets();
+            }
 
             return this;
         },
@@ -1999,16 +1998,6 @@ function program1(depth0,data) {
                     trigger: "hover"
                 });
             }
-            // accordion & events
-            this.$el.find(".collapse").on('hidden.bs.collapse', { context: this }, function (event) {
-                var item = $(this).attr("id");
-                event.data.context.bookmarkFolderStateSet(item, "hidden");
-            });
-            this.$el.find(".collapse").on('show.bs.collapse', { context: this }, function (event) {
-                var item = $(this).attr("id");
-                event.data.context.bookmarkFolderStateSet(item, "show");
-            });
-
             if (collapseState == "open") {
                 var folders = this.$el.find(".collapse");
                 for (var i=0; i<folders.length; i++) {
@@ -4083,14 +4072,16 @@ function program1(depth0,data) {
                                 } else {
                                     var addToArray = true;
                                     // don't allow dimension reselection if using a singleSelectIndex
-                                    if (this.singleSelectIndex) {
+                                    if (this.singleSelectIndex || this.singleSelectIndex === 0) {
                                         var chosenArray = this.config.get(this.chosen);
                                         var index = _.indexOf(chosenArray, facet.id);
                                         if (index > -1 && index !== this.singleSelectIndex) {
                                             addToArray = false;
                                         }
                                     }
-                                    if (addToArray && (availableArray && (availableArray.indexOf(facet.id) > -1))) {
+                                    if (! this.config.get(this.available) && addToArray) {
+                                        facetList.push(facet);
+                                    } else if (addToArray && (this.config.get(this.available) && (this.config.get(this.available).indexOf(facet.id) > -1))) {
                                         facetList.push(facet);
                                     }
                                 }

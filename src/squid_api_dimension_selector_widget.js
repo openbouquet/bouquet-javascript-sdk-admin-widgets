@@ -176,14 +176,16 @@
                                 } else {
                                     var addToArray = true;
                                     // don't allow dimension reselection if using a singleSelectIndex
-                                    if (this.singleSelectIndex) {
+                                    if (this.singleSelectIndex || this.singleSelectIndex === 0) {
                                         var chosenArray = this.config.get(this.chosen);
                                         var index = _.indexOf(chosenArray, facet.id);
                                         if (index > -1 && index !== this.singleSelectIndex) {
                                             addToArray = false;
                                         }
                                     }
-                                    if (addToArray && (availableArray && (availableArray.indexOf(facet.id) > -1))) {
+                                    if (! this.config.get(this.available) && addToArray) {
+                                        facetList.push(facet);
+                                    } else if (addToArray && (this.config.get(this.available) && (this.config.get(this.available).indexOf(facet.id) > -1))) {
                                         facetList.push(facet);
                                     }
                                 }

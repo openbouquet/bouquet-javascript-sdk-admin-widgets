@@ -41,6 +41,9 @@
                 if (options.onSelect) {
                     this.onSelect = options.onSelect;
                 }
+                if (options.onEdit) {
+                    this.onEdit = options.onEdit;
+                }
                 if (options.afterRender) {
                     this.afterRender = options.afterRender;
                 }
@@ -261,6 +264,9 @@
                         me.render();
                     }
                 }));
+            }
+            if (this.onEdit) {
+                this.onEdit.call(event);
             }
         },
 
