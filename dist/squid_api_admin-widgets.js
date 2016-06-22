@@ -4229,8 +4229,10 @@ function program1(depth0,data) {
             var selected = false;
             var dimensions = this.config.get(this.chosen);
             if (this.singleSelect === true) {
-                if (dimensions[this.singleSelectIndex] === facet.id) {
-                    selected = true;
+                if (dimensions) {
+                    if (dimensions[this.singleSelectIndex] === facet.id) {
+                        selected = true;
+                    }
                 }
             } else {
                 if (dimensions) {
