@@ -3907,7 +3907,7 @@ function program1(depth0,data) {
         selected : "selectedDimensions",
         afterRender : null,
         singleSelect : false,
-        singleSelectIndex : 0,
+        singleSelectIndex : null,
         configurationEnabled : false,
         updateMultiQuantity : null,
 
@@ -3944,7 +3944,7 @@ function program1(depth0,data) {
                 if (options.singleSelect) {
                     this.singleSelect = options.singleSelect;
                 }
-                if (options.singleSelectIndex) {
+                if (options.singleSelectIndex || options.singleSelectIndex === 0) {
                     this.singleSelectIndex = options.singleSelectIndex;
                 }
                 if (options.updateMultiQuantity) {
@@ -4346,7 +4346,13 @@ function program1(depth0,data) {
         
         template : template,
         
-        render : squid_api.view.CollectionSelectorUtils.renderButton
+        render : function() {
+            squid_api.view.CollectionSelectorUtils.renderButton.call(this);
+            
+            if (this.afterRender) {
+            	this.afterRender.call(this);
+            }
+        }
 
     });
     return View;
@@ -5114,6 +5120,10 @@ function program1(depth0,data) {
         
         render : function() {
             squid_api.view.CollectionSelectorUtils.renderButton.call(this);
+            
+            if (this.afterRender) {
+            	this.afterRender.call(this);
+            }
         }
 
     });
