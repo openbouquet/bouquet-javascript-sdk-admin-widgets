@@ -1447,6 +1447,9 @@ function program1(depth0,data) {
             if (options.onSave) {
                 this.onSave = options.onSave;
             }
+            if (options.openModelCallback) {
+                this.openModelCallback = options.openModelCallback;
+            }
             if (options.comparator) {
                 this.comparator = options.comparator;
             } else {
@@ -1482,6 +1485,11 @@ function program1(depth0,data) {
                 // reset parent view if cancel button clicked
                 if (this.cancelCallback) {
                     this.cancelCallback.call();
+                }
+            },
+            "click .open-model": function() {
+                if (this.openModelCallback) {
+                    this.openModelCallback(this);
                 }
             },
             "click .btn-save-form" : function() {
