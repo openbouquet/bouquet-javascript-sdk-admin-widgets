@@ -131,6 +131,10 @@
             // to be overridden from other model management widgets
         },
 
+        beforeRender: function() {
+            // to be overridden from other model management widgets
+        },
+
         render: function() {
             var me = this;
             var jsonData = {modelDefinition : "unknown"};
@@ -149,6 +153,8 @@
             jsonData.footerLabel = "<div class='object-id'><label>Object ID</label> <br /> <input data-clipboard-text='" + this.model.get("oid") + "' class='copy-id' value='" + this.model.get("oid") + "' /></div>";
 
             this.setSchema().then(function(schema) {
+                me.beforeRender();
+
                 // create form
                 me.formContent = new Backbone.Form({
                     schema: schema,

@@ -22,6 +22,70 @@
                     data[x] = null;
                 }
             }
+
+            data = this.cardinalityManipulate(data);
+
+            return data;
+        },
+
+        beforeRender: function() {
+            var leftCardinality = this.model.get("leftCardinality");
+            var rightCardinality = this.model.get("rightCardinality");
+
+            if (leftCardinality === "MANY" && rightCardinality === "ZERO_OR_ONE") {
+                this.model.set("cardinality", "many to zero or one");
+            }
+            if (leftCardinality === "ZERO_OR_ONE" && rightCardinality === "MANY") {
+                this.model.set("cardinality", "zero or one to many");
+            }
+            if (leftCardinality === "ONE" && rightCardinality === "ONE") {
+                this.model.set("cardinality", "one to one");
+            }
+            if (leftCardinality === "ONE" && rightCardinality === "MANY") {
+                this.model.set("cardinality", "one to many");
+            }
+            if (leftCardinality === "MANY" && rightCardinality === "ONE") {
+                this.model.set("cardinality", "many to one");
+            }
+            if (leftCardinality === "ZERO_OR_ONE" && rightCardinality === "ONE") {
+                this.model.set("cardinality", "zero or one to one");
+            }
+            if (leftCardinality === "ONE" && rightCardinality === "ZERO_OR_ONE") {
+                this.model.set("cardinality", "one to zero or one");
+            }
+        },
+
+        cardinalityManipulate: function(data) {
+            var cardinality = data.cardinality;
+            if (cardinality === "many to zero or one") {
+                data.leftCardinality = "MANY";
+                data.rightCardinality = "ZERO_OR_ONE";
+            }
+            if (cardinality === "zero or one to many") {
+                data.leftCardinality = "ZERO_OR_ONE";
+                data.rightCardinality = "MANY";
+            }
+            if (cardinality === "one to one") {
+                data.leftCardinality = "ONE";
+                data.rightCardinality = "ONE";
+            }
+            if (cardinality === "one to many") {
+                data.leftCardinality = "ONE";
+                data.rightCardinality = "MANY";
+            }
+            if (cardinality === "many to one") {
+                data.leftCardinality = "MANY";
+                data.rightCardinality = "ONE";
+            }
+            if (cardinality === "zero or one to one") {
+                data.leftCardinality = "ZERO_OR_ONE";
+                data.rightCardinality = "ONE";
+            }
+            if (cardinality === "one to zero or one") {
+                data.leftCardinality = "ONE";
+                data.rightCardinality = "ZERO_OR_ONE";
+            }
+            delete data.cardinality;
             return data;
         },
 
