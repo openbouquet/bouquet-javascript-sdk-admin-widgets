@@ -1551,6 +1551,10 @@ function program1(depth0,data) {
             // to be overridden from other model management widgets
         },
 
+        beforeRender: function() {
+            // to be overridden from other model management widgets
+        },
+
         render: function() {
             var me = this;
             var jsonData = {modelDefinition : "unknown"};
@@ -1569,6 +1573,8 @@ function program1(depth0,data) {
             jsonData.footerLabel = "<div class='object-id'><label>Object ID</label> <br /> <input data-clipboard-text='" + this.model.get("oid") + "' class='copy-id' value='" + this.model.get("oid") + "' /></div>";
 
             this.setSchema().then(function(schema) {
+                me.beforeRender();
+
                 // create form
                 me.formContent = new Backbone.Form({
                     schema: schema,
@@ -3402,9 +3408,21 @@ function program1(depth0,data) {
             "editorClass": "hidden",
             "fieldClass": "id"
         },
+        "leftName": {
+            "type": "Text",
+            "editorClass": "form-control",
+            "fieldClass": "leftName",
+            "title": "Name"
+        },
+        "description": {
+            "type": "Text",
+            "editorClass": "form-control",
+            "title": "Description"
+        },
         "leftId": {
             "title": " ",
             "type": "Object",
+            "editorClass": "hidden",
             "subSchema": {
                 "projectId": {
                     "options": [],
@@ -3415,23 +3433,11 @@ function program1(depth0,data) {
                 "domainId": {
                     "options": [],
                     "type": "Select",
-                    "editorClass": "form-control",
-                    "title": "Left Domain"
+                    "editorClass": "hidden",
+                    "title": " "
                 }
             },
             "fieldClass": "leftId"
-        },
-        "leftCardinality": {
-            "type": "Select",
-            "editorClass": "form-control",
-            "options": ["ZERO_OR_ONE", "ONE", "MANY"],
-            "fieldClass": "leftCardinality"
-        },
-        "rightCardinality": {
-            "type": "Select",
-            "editorClass": "form-control",
-            "options": ["ZERO_OR_ONE", "ONE", "MANY"],
-            "fieldClass": "rightCardinality"
         },
         "rightId": {
             "title": " ",
@@ -3447,20 +3453,23 @@ function program1(depth0,data) {
                     "options": [],
                     "type": "Select",
                     "editorClass": "form-control",
-                    "title": "Right Domain"
+                    "title": "Related To"
                 }
             },
             "fieldClass": "rightId"
         },
-        "leftName": {
-            "type": "Text",
+        "cardinality": {
+            "type": "Select",
             "editorClass": "form-control",
-            "fieldClass": "leftName"
+            "options": ["many to zero or one", "zero or one to many", "one to one", "one to many", "many to one", "zero or one to one", "one to zero or one"],
+            "title": "Cardinality",
+            "fieldClass": "cardinality"
         },
         "rightName": {
             "type": "Text",
             "editorClass": "form-control",
-            "fieldClass": "rightName"
+            "fieldClass": "rightName",
+            "title": "Reverse Name"
         },
         "joinExpression": {
             "title": " ",
@@ -5827,6 +5836,70 @@ function program1(depth0,data) {
                     data[x] = null;
                 }
             }
+
+            data = this.cardinalityManipulate(data);
+
+            return data;
+        },
+
+        beforeRender: function() {
+            var leftCardinality = this.model.get("leftCardinality");
+            var rightCardinality = this.model.get("rightCardinality");
+
+            if (leftCardinality === "MANY" && rightCardinality === "ZERO_OR_ONE") {
+                this.model.set("cardinality", "many to zero or one");
+            }
+            if (leftCardinality === "ZERO_OR_ONE" && rightCardinality === "MANY") {
+                this.model.set("cardinality", "zero or one to many");
+            }
+            if (leftCardinality === "ONE" && rightCardinality === "ONE") {
+                this.model.set("cardinality", "one to one");
+            }
+            if (leftCardinality === "ONE" && rightCardinality === "MANY") {
+                this.model.set("cardinality", "one to many");
+            }
+            if (leftCardinality === "MANY" && rightCardinality === "ONE") {
+                this.model.set("cardinality", "many to one");
+            }
+            if (leftCardinality === "ZERO_OR_ONE" && rightCardinality === "ONE") {
+                this.model.set("cardinality", "zero or one to one");
+            }
+            if (leftCardinality === "ONE" && rightCardinality === "ZERO_OR_ONE") {
+                this.model.set("cardinality", "one to zero or one");
+            }
+        },
+
+        cardinalityManipulate: function(data) {
+            var cardinality = data.cardinality;
+            if (cardinality === "many to zero or one") {
+                data.leftCardinality = "MANY";
+                data.rightCardinality = "ZERO_OR_ONE";
+            }
+            if (cardinality === "zero or one to many") {
+                data.leftCardinality = "ZERO_OR_ONE";
+                data.rightCardinality = "MANY";
+            }
+            if (cardinality === "one to one") {
+                data.leftCardinality = "ONE";
+                data.rightCardinality = "ONE";
+            }
+            if (cardinality === "one to many") {
+                data.leftCardinality = "ONE";
+                data.rightCardinality = "MANY";
+            }
+            if (cardinality === "many to one") {
+                data.leftCardinality = "MANY";
+                data.rightCardinality = "ONE";
+            }
+            if (cardinality === "zero or one to one") {
+                data.leftCardinality = "ZERO_OR_ONE";
+                data.rightCardinality = "ONE";
+            }
+            if (cardinality === "one to zero or one") {
+                data.leftCardinality = "ONE";
+                data.rightCardinality = "ZERO_OR_ONE";
+            }
+            delete data.cardinality;
             return data;
         },
 
