@@ -94,6 +94,9 @@
                             if (me.onSave) {
                                 me.onSave(model);
                             }
+
+                            me.$el.find(".btn-save-form").fadeOut();
+
                             me.status.set("message", "Sucessfully saved");
                         },
                         error: function(xhr) {
@@ -154,6 +157,19 @@
 
                 // append save buttons
                 me.$el.html(me.template(jsonData));
+
+                // expression editor to be updated
+                // me.originalFormContent = me.formContent.getValue();
+
+                me.formContent.on("change", function() {
+                    var saveBtn = me.$el.find(".btn-save-form");
+                    saveBtn.fadeIn();
+                    // if (me.formContent.getValue() !== me.originalFormContent) {
+                    //     saveBtn.fadeIn();
+                    // } else {
+                    //     saveBtn.fadeOut();
+                    // }
+                });
 
                 // place the form into a backbone view
                 me.$el.find(".modal-body").html(me.formContent.el);
