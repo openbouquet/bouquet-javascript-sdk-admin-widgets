@@ -4058,11 +4058,13 @@ function program1(depth0,data) {
                         if (position) {
                             if (annotations && annotations.length > 0) {
                                 annotations.forEach(function (annotation) {
-                                    var text = annotation.text;
-                                    if (text.length > 0) {
-                                        var pixelPosition = me.edit.renderer.textToScreenCoordinates(position);
-                                        pixelPosition.pageY += me.edit.renderer.lineHeight;
-                                        me.updateTooltip(pixelPosition, text);
+                                    if(annotation.type != "error" && annotation.type != "warning"){ //already present
+                                        var text = annotation.text;
+                                        if (text.length > 0) {
+                                            var pixelPosition = me.edit.renderer.textToScreenCoordinates(position);
+                                            pixelPosition.pageY += me.edit.renderer.lineHeight;
+                                            me.updateTooltip(pixelPosition, text);
+                                        }
                                     }
                                 });
                             } else {
