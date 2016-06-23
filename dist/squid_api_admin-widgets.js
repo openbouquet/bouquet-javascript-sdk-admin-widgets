@@ -3255,7 +3255,7 @@ function program1(depth0,data) {
                 this.edit.setValue(""+this.value);
             }
             this.edit.getSession().setMode("ace/mode/bouquet");
-
+            this.edit.setOption("showPrintMargin", false);
             var me = this;
             var langTools = ace.require("ace/ext/language_tools");
             this.edit.setOptions({enableBasicAutocompletion: true, enableLiveAutocompletion:false, enableSnippets:true});
@@ -3351,7 +3351,7 @@ function program1(depth0,data) {
             console.log("perform");
         }
     }, {
-        template: _.template('<div id="expression-editor" style="height: 50px;"></div>', null, this.templateSettings)
+        template: _.template('<div id="expression-editor" style="height: 200px;"></div>', null, this.templateSettings)
     });
 
     var MetricExpressionEditor = AceExpressionEditor.extend({
