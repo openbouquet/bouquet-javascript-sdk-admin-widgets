@@ -3970,8 +3970,8 @@ function program1(depth0,data) {
                                             var range = me.edit.getSession().getWordRange(cursor.row, 0);
                                             range.start.row = cursor.row;
                                             range.end.row = cursor.row;
-                                            range.start.column = 0;
-                                            range.end.column = suggestionList.beginInsertPos;
+                                            range.start.column = cursor.column - suggestionList.filterIndex;
+                                            range.end.column = cursor.column;
                                             prefix_snippet  = suggestionList.prefix  + me.edit.getSession().getTextRange(range);
                                         }
                                         return {
@@ -4012,8 +4012,9 @@ function program1(depth0,data) {
                                                 var range = me.edit.getSession().getWordRange(cursor.row, 0);
                                                 range.start.row = cursor.row;
                                                 range.end.row = cursor.row;
-                                                range.start.column = 0;
-                                                range.end.column = suggestionList.beginInsertPos;
+                                                range.start.column = cursor.column - suggestionList.filterIndex;
+                                                range.end.column = cursor.column;
+                                                // + (suggestionList.beginInsertPos - suggestionList.filterIndex) ;
                                                 prefix_snippet  = suggestionList.prefix  + me.edit.getSession().getTextRange(range);
                                             }
                                             return {
