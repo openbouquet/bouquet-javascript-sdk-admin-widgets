@@ -73,9 +73,21 @@
             "editorClass": "hidden",
             "fieldClass": "id"
         },
+        "leftName": {
+            "type": "Text",
+            "editorClass": "form-control",
+            "fieldClass": "leftName",
+            "title": "Name"
+        },
+        "description": {
+            "type": "Text",
+            "editorClass": "form-control",
+            "title": "Description"
+        },
         "leftId": {
             "title": " ",
             "type": "Object",
+            "editorClass": "hidden",
             "subSchema": {
                 "projectId": {
                     "options": [],
@@ -86,23 +98,11 @@
                 "domainId": {
                     "options": [],
                     "type": "Select",
-                    "editorClass": "form-control",
-                    "title": "Left Domain"
+                    "editorClass": "hidden",
+                    "title": " "
                 }
             },
             "fieldClass": "leftId"
-        },
-        "leftCardinality": {
-            "type": "Select",
-            "editorClass": "form-control",
-            "options": ["ZERO_OR_ONE", "ONE", "MANY"],
-            "fieldClass": "leftCardinality"
-        },
-        "rightCardinality": {
-            "type": "Select",
-            "editorClass": "form-control",
-            "options": ["ZERO_OR_ONE", "ONE", "MANY"],
-            "fieldClass": "rightCardinality"
         },
         "rightId": {
             "title": " ",
@@ -118,20 +118,23 @@
                     "options": [],
                     "type": "Select",
                     "editorClass": "form-control",
-                    "title": "Right Domain"
+                    "title": "Related To"
                 }
             },
             "fieldClass": "rightId"
         },
-        "leftName": {
-            "type": "Text",
+        "cardinality": {
+            "type": "Select",
             "editorClass": "form-control",
-            "fieldClass": "leftName"
+            "options": ["many to zero or one", "zero or one to many", "one to one", "one to many", "many to one", "zero or one to one", "one to zero or one"],
+            "title": "Cardinality",
+            "fieldClass": "cardinality"
         },
         "rightName": {
             "type": "Text",
             "editorClass": "form-control",
-            "fieldClass": "rightName"
+            "fieldClass": "rightName",
+            "title": "Reverse Name"
         },
         "joinExpression": {
             "title": " ",
@@ -590,6 +593,7 @@
             this.edit.getSession().type = this.type;
             this.edit.getSession().setMode("ace/mode/bouquet");
 
+            this.edit.setOption("showPrintMargin", false);
 
             var langTools = ace.require("ace/ext/language_tools");
             this.edit.setOptions({
@@ -631,8 +635,8 @@
                                             var range = me.edit.getSession().getWordRange(cursor.row, 0);
                                             range.start.row = cursor.row;
                                             range.end.row = cursor.row;
-                                            range.start.column = 0;
-                                            range.end.column = suggestionList.beginInsertPos;
+                                            range.start.column = cursor.column - suggestionList.filterIndex;
+                                            range.end.column = cursor.column;
                                             prefix_snippet  = suggestionList.prefix  + me.edit.getSession().getTextRange(range);
                                         }
                                         return {
@@ -673,8 +677,9 @@
                                                 var range = me.edit.getSession().getWordRange(cursor.row, 0);
                                                 range.start.row = cursor.row;
                                                 range.end.row = cursor.row;
-                                                range.start.column = 0;
-                                                range.end.column = suggestionList.beginInsertPos;
+                                                range.start.column = cursor.column - suggestionList.filterIndex;
+                                                range.end.column = cursor.column;
+                                                // + (suggestionList.beginInsertPos - suggestionList.filterIndex) ;
                                                 prefix_snippet  = suggestionList.prefix  + me.edit.getSession().getTextRange(range);
                                             }
                                             return {
@@ -728,11 +733,13 @@
                         if (position) {
                             if (annotations && annotations.length > 0) {
                                 annotations.forEach(function (annotation) {
-                                    var text = annotation.text;
-                                    if (text.length > 0) {
-                                        var pixelPosition = me.edit.renderer.textToScreenCoordinates(position);
-                                        pixelPosition.pageY += me.edit.renderer.lineHeight;
-                                        me.updateTooltip(pixelPosition, text);
+                                    if(annotation.type != "error" && annotation.type != "warning"){ //already present
+                                        var text = annotation.text;
+                                        if (text.length > 0) {
+                                            var pixelPosition = me.edit.renderer.textToScreenCoordinates(position);
+                                            pixelPosition.pageY += me.edit.renderer.lineHeight;
+                                            me.updateTooltip(pixelPosition, text);
+                                        }
                                     }
                                 });
                             } else {
@@ -843,7 +850,7 @@
             console.log("perform");
         }
     }, {
-        template: _.template('<div id="expression-editor" style="height: 50px;"></div>', null, this.templateSettings)
+        template: _.template('<div id="expression-editor" style="height: 200px;"></div>', null, this.templateSettings)
     });
 
     var MetricDomainExpressionEditor = AceExpressionEditor.extend({

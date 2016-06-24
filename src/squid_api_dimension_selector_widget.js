@@ -11,7 +11,7 @@
         selected : "selectedDimensions",
         afterRender : null,
         singleSelect : false,
-        singleSelectIndex : 0,
+        singleSelectIndex : null,
         configurationEnabled : false,
         updateMultiQuantity : null,
 
@@ -48,7 +48,7 @@
                 if (options.singleSelect) {
                     this.singleSelect = options.singleSelect;
                 }
-                if (options.singleSelectIndex) {
+                if (options.singleSelectIndex || options.singleSelectIndex === 0) {
                     this.singleSelectIndex = options.singleSelectIndex;
                 }
                 if (options.updateMultiQuantity) {
@@ -333,8 +333,10 @@
             var selected = false;
             var dimensions = this.config.get(this.chosen);
             if (this.singleSelect === true) {
-                if (dimensions[this.singleSelectIndex] === facet.id) {
-                    selected = true;
+                if (dimensions) {
+                    if (dimensions[this.singleSelectIndex] === facet.id) {
+                        selected = true;
+                    }
                 }
             } else {
                 if (dimensions) {

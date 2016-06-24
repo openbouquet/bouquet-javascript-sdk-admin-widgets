@@ -230,7 +230,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (helper = helpers.footerLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.footerLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</div>\n<div class=\"squid-api-model-management-footer\">\n      <button type=\"button\" class=\"btn btn-default btn-cancel\">Cancel</button>\n    <button type=\"button\" class=\"btn btn-primary btn-save-form\">Save</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
+  buffer += "\n</div>\n<div class=\"squid-api-model-management-footer\">\n      <button type=\"button\" class=\"btn btn-default btn-cancel\">Cancel</button>\n    <button type=\"button\" style=\"display: none;\" class=\"btn btn-primary btn-save-form\">Save</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
   return buffer;
   });
 
@@ -1448,6 +1448,9 @@ function program1(depth0,data) {
             if (options.onSave) {
                 this.onSave = options.onSave;
             }
+            if (options.openModelCallback) {
+                this.openModelCallback = options.openModelCallback;
+            }
             if (options.comparator) {
                 this.comparator = options.comparator;
             } else {
@@ -1485,6 +1488,11 @@ function program1(depth0,data) {
                     this.cancelCallback.call();
                 }
             },
+            "click .open-model": function() {
+                if (this.openModelCallback) {
+                    this.openModelCallback(this);
+                }
+            },
             "click .btn-save-form" : function() {
                 var me = this;
                 var error = this.formContent.validate();
@@ -1507,6 +1515,9 @@ function program1(depth0,data) {
                             if (me.onSave) {
                                 me.onSave(model);
                             }
+
+                            me.$el.find(".btn-save-form").fadeOut();
+
                             me.status.set("message", "Sucessfully saved");
                         },
                         error: function(xhr) {
@@ -1541,6 +1552,10 @@ function program1(depth0,data) {
             // to be overridden from other model management widgets
         },
 
+        beforeRender: function() {
+            // to be overridden from other model management widgets
+        },
+
         render: function() {
             var me = this;
             var jsonData = {modelDefinition : "unknown"};
@@ -1559,6 +1574,8 @@ function program1(depth0,data) {
             jsonData.footerLabel = "<div class='object-id'><label>Object ID</label> <br /> <input data-clipboard-text='" + this.model.get("oid") + "' class='copy-id' value='" + this.model.get("oid") + "' /></div>";
 
             this.setSchema().then(function(schema) {
+                me.beforeRender();
+
                 // create form
                 me.formContent = new Backbone.Form({
                     schema: schema,
@@ -1567,6 +1584,19 @@ function program1(depth0,data) {
 
                 // append save buttons
                 me.$el.html(me.template(jsonData));
+
+                // expression editor to be updated
+                // me.originalFormContent = me.formContent.getValue();
+
+                me.formContent.on("change", function() {
+                    var saveBtn = me.$el.find(".btn-save-form");
+                    saveBtn.fadeIn();
+                    // if (me.formContent.getValue() !== me.originalFormContent) {
+                    //     saveBtn.fadeIn();
+                    // } else {
+                    //     saveBtn.fadeOut();
+                    // }
+                });
 
                 // place the form into a backbone view
                 me.$el.find(".modal-body").html(me.formContent.el);
@@ -1587,7 +1617,7 @@ function program1(depth0,data) {
 }));
 
 (function (root, factory) {
-    root.squid_api.view.BookmarkCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_bookmark_collection_management_widget);
+	root.squid_api.view.BookmarkCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_bookmark_collection_management_widget);
 
 }(this, function (Backbone, squid_api, template) {
 
@@ -1690,7 +1720,6 @@ function program1(depth0,data) {
             var listHtml = $(this.template(filteredCollection)).find(".list").last().html();
             this.$el.find(".list").last().html(listHtml);
 
-            // this.bookmarkFolderStateCheck();
             if (text.length > 0) {
                 this.templateWidgets("open");
             } else {
@@ -1809,38 +1838,15 @@ function program1(depth0,data) {
             }
             return name;
         },
-        bookmarkFolderStateSet: function(item, action) {
-            var project = this.config.get("project");
-            var bookmarkFolderState = $.extend(true, {}, this.config.get("bookmarkFolderState"));
-            if (action == "show") {
-                if (bookmarkFolderState) {
-                    bookmarkFolderState[project] = item;
-                } else {
-                    var obj = {};
-                    obj[project] = item;
-                    bookmarkFolderState = obj;
-                }
-            } else if (action == "hidden") {
-                if (bookmarkFolderState) {
-                    delete bookmarkFolderState[project];
-                }
-            }
-            this.config.set("bookmarkFolderState", bookmarkFolderState);
-        },
-        bookmarkFolderStateCheck: function() {
-            var bookmarkFolderState = this.config.get("bookmarkFolderState");
-            var project = this.config.get("project");
-            // open folder if stored in config
-            if (bookmarkFolderState) {
-                if (bookmarkFolderState[project]) {
-                    this.$el.find("#" + bookmarkFolderState[project]).collapse('toggle');
-                }
+        bookmarkFolderState: function(item) {
+            if (item || item === 0) {
+                this.$el.find("#bookmark-collapse-" + item).collapse('toggle');
             }
         },
         render: function(activePath) {
             console.log("render CollectionManagementWidget "+this.type);
             var project = this.config.get("project");
-            var bookmarkFolderState = this.config.get("bookmarkFolderState");
+            var currentBookmark = this.config.get("bookmark");
 
             this.jsonData = {
                 collectionLoaded : !this.collectionLoading,
@@ -1957,15 +1963,14 @@ function program1(depth0,data) {
                                     if (activePath === collection[x].path.value) {
                                         collection[x].active = true;
                                     }
+                                    if (currentBookmark === bookmark.oid) {
+                                        collection[x].currentBookmarkInside = true;
+                                    }
                                     collection[x].bookmarks.push(bookmark);
                                 }
                             }
                         }
                     }
-                }
-
-                if (_.where(collection, {active: true}).length === 0 && collection.length > 0) {
-                    collection[0].active = true;
                 }
 
                 // sort bookmarks by label
@@ -1989,6 +1994,9 @@ function program1(depth0,data) {
                     var textB = b.path.value.replace(/\//g, '').replace(/ /g, '').toUpperCase();
                     return (textA > textB) ? 1 : (textA < textB) ? -1 : 0;
                 });
+                if (_.where(collection, {active: true}).length === 0 && collection.length > 0) {
+                    collection[0].active = true;
+                }
                 this.jsonData.collection = collection;
                 console.log(paths);
             }
@@ -1999,8 +2007,17 @@ function program1(depth0,data) {
 
             this.$el.find("input.search").focus();
 
-            this.bookmarkFolderStateCheck();
-            this.templateWidgets();
+            if (this.jsonData.collection) {
+                // if no active collection, open the parent folder of currently selected bookmark
+                if (! activePath) {
+                    var indexToOpen = _.indexOf(_.pluck(this.jsonData.collection, 'currentBookmarkInside'), true);
+                    if (indexToOpen === -1) {
+                        indexToOpen = 0;
+                    }
+                    this.bookmarkFolderState(indexToOpen);
+                }
+                this.templateWidgets();
+            }
 
             return this;
         },
@@ -2012,16 +2029,6 @@ function program1(depth0,data) {
                     trigger: "hover"
                 });
             }
-            // accordion & events
-            this.$el.find(".collapse").on('hidden.bs.collapse', { context: this }, function (event) {
-                var item = $(this).attr("id");
-                event.data.context.bookmarkFolderStateSet(item, "hidden");
-            });
-            this.$el.find(".collapse").on('show.bs.collapse', { context: this }, function (event) {
-                var item = $(this).attr("id");
-                event.data.context.bookmarkFolderStateSet(item, "show");
-            });
-
             if (collapseState == "open") {
                 var folders = this.$el.find(".collapse");
                 for (var i=0; i<folders.length; i++) {
@@ -2034,6 +2041,501 @@ function program1(depth0,data) {
     });
 
     return View;
+}));
+
+/*! Squid Core API Bookmark Controller V1.0 */
+(function (root, factory) {
+	if (typeof define === 'function' && define.amd) {
+		// AMD.
+		define(['Backbone', '_', 'squid_api'], factory);
+	} else {
+		factory(root.Backbone, _, root.squid_api);
+	}
+}(this, function (Backbone, _, squid_api) {
+
+	// Enhance Squid API controller
+	var Controller = {
+
+		savedAnalysesConfig: new Map(),
+		customAddedFacets: new Map(),
+		customDeletedFacets: new Map(),
+
+		/**
+		 * Function allowing to reset the whole user navigation (for ex when changing the project)
+		 */
+		resetAll: function() {
+			Controller.savedAnalysesConfig = new Map();
+			Controller.customAddedFacets = new Map();
+			Controller.customDeletedFacets = new Map();
+		},
+
+		/**
+		 * @return available facets from a domain
+		 */
+		loadFacets: function (projectId, domainId) {
+			var dfd = new $.Deferred();
+			if (domainId) {
+				var filters = new squid_api.model.FiltersJob();
+				filters.set("id", {
+					"projectId": projectId
+				});
+				filters.set("engineVersion", "2");
+				filters.setDomainIds([domainId]);
+
+				console.log("compute (initFilters)");
+				squid_api.controller.facetjob.compute(filters).then(function() {
+					// search for time facets
+					var sel = filters.get("selection");
+					var facets;
+					if (sel && sel.facets) {
+						facets=  sel.facets;
+					}
+					dfd.resolve(facets);
+				});
+			} else {
+				dfd.resolve();
+			}
+			return dfd;
+		},
+
+		/**
+		 * @return the facet related to segments
+		 */
+		getSegmentFacet: function (facets) {
+			if (facets) {
+				for (var i=0; i<facets.length;i++) {
+					if (facets[i].id === "__segments") {
+						return facets[i];
+					}
+				}
+			}
+		},
+
+		/**
+		 * Remove the current domain id to get only the relations path up to the the facet
+		 */
+		getRelationPath: function (id) {
+			var splitted = id.split("@");
+			var result = '';
+			if (splitted.length > 3) {
+				for (var i=2; i < splitted.length; i++) {
+					result = result + splitted[i];
+				}    
+			}
+			return result;
+		},
+
+		/**
+		 * Limitation: selected items from a config don't include the facet name, this is why we use oid in case the facet comes from a sub domain
+		 * @return a facet from its name or oid
+		 */
+		findFacetByName: function (facets, facet) {
+			if (facets) {
+				for (var i=0; i<facets.length;i++) {
+					if (Controller.normalyzeFacetName(facets[i]) === Controller.normalyzeFacetName(facet)) {
+						return facets[i];
+					}
+				}
+			}
+		},
+
+		/**
+		 * @return name from the dimension of the facet as selected items from a config don't include the facet name
+		 */
+		normalyzeFacetName: function (facet) {
+			var facetName = facet.name;
+			//Segments have to be handled at a domain level
+			if (facet.id === "__segments") {
+				facetName = facet.dimension.id.domainId;
+			//} else if ((facet.id.split("@").length - 1) > 2){ //In case of relations, we use the relations path as name to deduplicate the same facet used through multiple paths
+			//	facetName = this.getRelationPath(facet.id);
+			} else if (facetName === false) {
+				facetName = facet.dimension.name;
+			}
+			return facetName;
+		},
+		
+		/**
+		 * @return a custom selection of items (not defined in a reference such as a bookmark)
+		 */
+		getCustomSelection: function (currentItems, referenceItems, availableItems) {
+			var segmentItems = [];
+			if (currentItems) {
+				for (var i=0; i<currentItems.length; i++) {
+					var item = currentItems[i];
+					var add=true;
+					if (referenceItems) {
+						for (var j=0; j<referenceItems.length; j++) {
+							var referenceItem = referenceItems[j];
+							if (item.type && referenceItem.type && item.type === referenceItem.type && item.id && referenceItem.id && item.id === referenceItem.id) {
+								add=false;
+							}
+						}
+					}
+					if (add) {
+						if (availableItems) {
+							if (Controller.containsSelection(availableItems,item)) {
+								segmentItems.push(item);
+							}
+						} else {
+							segmentItems.push(item);
+						}
+					}
+				}
+			}
+			return segmentItems;
+		},
+
+		/**
+		 * @return if an item is contained in an array through ids or names
+		 */
+		 containsSelection: function (a, obj) {
+			 var i = a.length;
+			 while (i--) {
+				 if (!a[i].name && !obj.name) {
+					 if (a[i].id === obj.id) {
+						return true;
+					 }
+				 } else if (a[i].name === obj.name) {
+	 				return true;			 
+				 }
+			 }
+			 return false;
+		 },
+
+		 /**
+		  * Remove/clean from a custom selection items 
+		  * Remove an facet when no more custom items are present
+		  * the commented code is an attempt to strengthen with all available items from the facet if they can be sent
+		  * @param customSelections: array of all custom selection facets
+		  * @param facetName: the facet name to look at
+		  * @param availableItems: the list of all available items from the facet
+		  */
+		 cleanCustomSelection: function(customSelections, facetName, availableItems) {
+			 if (customSelections.has(facetName)) {
+				 /*					if (availableItems) {
+					cleanedItems = Controller.cleanItems(customSelections.get(facetName), availableItems);
+					if (cleanedItems && cleanedItems.length>=1) {
+						customSelections.set(facetName, cleanedItems);
+					} else {
+						customSelections.delete(facetName);
+					}
+				} else {
+				  */						
+				 customSelections.delete(facetName);
+				 /*					}
+				  */				
+			 }
+		 },
+
+		 /**
+		  * Build a clean list of custom items (not present in the list of all available items from the facet
+		  * @param items: the list of items to consider
+		  * @param availableItems: the list of all available items from the facet
+		  */
+		 cleanItems: function(items, availableItems) {
+			 var cleanedItems = [];
+			 for (var i=0; i<items.length; i++) {
+				 if (Controller.containsSelection(availableItems, items[i]) === false) {
+					 cleanedItems.push(items[i]);
+				 }
+			 }
+			 return cleanedItems;
+		 },
+
+		 /**
+		  * Merge several list of items into a new list, used to define the new selection from user's interaction
+		  * @param savedSelection: custom items selected by the user
+		  * @param forcedSelection: last selection known on the same bookmark
+		  * @param facetForItems: list of facet's item (optional) for strengthening 
+		  * @param bookmarkSelection: selected items defined in the bookmark
+		  * @param deletedSelection: custom items recently deleted by the user
+		  * @return the merged list of selected items
+		  */
+		 mergeSelection: function (savedSelection, forcedSelection, facetForItems, bookmarkSelection, deletedSelection) {
+			 var segments = [];
+			 var toAdd = [];
+
+			 //Define starting point depending if the user has already used or not the bookmark
+			 if (forcedSelection && savedSelection) {
+				 toAdd = segments.concat(forcedSelection.selectedItems);
+			 } else if (bookmarkSelection && bookmarkSelection.selectedItems){
+				 toAdd  = segments.concat(bookmarkSelection.selectedItems);
+			 }
+
+			 //remove recently deleted items if any
+			 for (var f=0; f<toAdd.length; f++) {
+				 if (!deletedSelection) {
+					 segments.push(toAdd[f]);					 
+				 } else if (Controller.containsSelection(deletedSelection, toAdd[f]) === false) {
+					 segments.push(toAdd[f]);			
+				 }
+			 }
+
+			 //Apply custom items if possible
+			 if (savedSelection) {
+				 for (var i=0; i<savedSelection.length; i++) {
+					 var segment = savedSelection[i];
+					 var add = true;
+					 //Do we remove because it is already in the forced config?
+					 if (forcedSelection) {
+						 for (var j=0; j<forcedSelection.selectedItems.length; j++) {
+							 if (segment.value && forcedSelection.selectedItems[j].value && segment.value === forcedSelection.selectedItems[j].value) {
+								 add=false;
+							 }
+						 }
+					 }
+					 //Do we remove because it is not all segments from the domain (strengthen)
+					 if (add === true) {
+						 var addItem = false;
+						 if (facetForItems) {
+							 for (var k=0; k<facetForItems.items.length; k++) {
+								 if (segment.value && facetForItems.items[k].value && segment.value === facetForItems.items[k].value) {
+									 addItem=true;
+									 segment = facetForItems.items[k];
+								 }
+							 }
+						 } else {
+							 //Items not provided (because list too long), set true as default
+							 addItem=true;
+						 }
+						 add = addItem;
+					 }
+					 //Do we remove because it is a segment defined in the bookmark?
+					 if (add === true) {
+						 if (bookmarkSelection) {
+							 for (var l=0; l<bookmarkSelection.selectedItems.length; l++) {
+								 if (segment.value && bookmarkSelection.selectedItems[l].value && segment.value === bookmarkSelection.selectedItems[l].value) {
+									 add=false;
+								 }
+							 }
+						 }
+					 }
+					 if (add === true) {
+						 segments.push(segment);
+					 }
+				 }
+			 }
+			 return segments;
+		 },
+		 	 
+		/**
+		 * Setup the facet name in selected items from the domain facets
+		 */
+		 addNameToSelectedFacets: function(domainFacets, selectedFacets) {
+			 for (var i=0; i<selectedFacets.length; i++) {
+				 selectedFacets[i].name = Controller.getSelectedFacetName(domainFacets, selectedFacets[i]);
+			 }
+		 },
+		 
+		/**
+		 * return the facet name from the domain'facet itself instead of the selection
+		 */
+		getSelectedFacetName: function(facets, selectedFacet) {
+			for (var j=0; j<facets.length; j++) {
+				if (facets[j].id === selectedFacet.id) {
+					return facets[j].name;
+				}
+			}
+		},
+
+
+		 /**
+		  * Handle the construction of the new configuration when switching from one bookmark to another one, applying filters change operated by the user
+		  * @param bookmarkId
+		  * @param bookmarksCollection
+		  * @returns the new configuration
+		  */
+		 setBookmarkAction: function(bookmark, forcedConfig, attributes) {
+			 if (!squid_api.model.config.get("bookmark")) {
+				 // first time opening a bookmark
+				 squid_api.setBookmark(bookmark, forcedConfig, attributes);
+			 } else {
+				 var me = Controller;
+				 var bookmarkId = bookmark.id;
+				 var config = squid_api.model.config;
+				 var copyConfig = $.extend(true, {}, config);
+
+				 var oldFacets = Controller.loadFacets(copyConfig.get("project"), copyConfig.get("domain"));
+				 var newBookmark = bookmark;
+				 var newFacets = Controller.loadFacets(copyConfig.get("project"), newBookmark.get("config").domain);
+
+				 var cleanedItems;
+				 if (squid_api.model.config.get("bookmark") === bookmarkId) {
+					 // force bookmark reset
+					 $.when(oldFacets).done(function(oldFacets)  {
+						 if (oldFacets) {
+							 for (var k=0; k<oldFacets.length; k++) {
+								 var availableFacet = oldFacets[k];
+								 var facetName = me.normalyzeFacetName(availableFacet);
+								 var availableItems = null;
+								 if (availableFacet.id === "__segments") {
+									 availableItems = availableFacet.items;
+								 }
+								 me.cleanCustomSelection(me.customAddedFacets, facetName, availableItems);
+								 me.cleanCustomSelection(me.customDeletedFacets, facetName, availableItems);
+							 }
+						 }
+						 squid_api.setBookmark(bookmark, forcedConfig, attributes);
+					 });
+				 } else {
+					 // get the previous Bookmark
+					 squid_api.getCustomer().then(function(customer) {
+						 customer.get("projects").load(copyConfig.get("project")).then(function(project) {
+							 project.get("bookmarks").load(copyConfig.get("bookmark")).done(function(previousBookmark) {
+
+								 //Get list of available facets for each domains
+								 $.when(oldFacets, newFacets).done(function(oldFacets, newFacets) {
+									 console.log("merge filters from bookmarks");
+									 var forcedConfig = function(newConfig) {
+										 newConfig.bookmark = bookmarkId;
+										 me.addNameToSelectedFacets(newFacets, newConfig.selection.facets);
+										 var oldSelection = copyConfig.get("selection");
+										 if (oldSelection && oldSelection.facets)  {
+											 me.addNameToSelectedFacets(oldFacets, oldSelection.facets);
+										 }
+										 var facetName;
+										 var facetForItems;
+
+										 if (previousBookmark && previousBookmark.id) {
+											 me.savedAnalysesConfig.set(copyConfig.get("bookmark"), copyConfig.attributes);
+										 }
+
+										 //Get the latest config used on the new bookmark used if any
+										 var savedNewConfig = me.savedAnalysesConfig.get(newBookmark.id);
+										 //In case it is the first bookmark selected
+										 if (!savedNewConfig || !savedNewConfig.selection) {
+											 savedNewConfig = newConfig;
+										 }
+										 var forcedSelection = { "compareTo" : [], "facets" : []};
+
+										 if (oldSelection && oldSelection.facets) {
+											 //Save/update any facet selected
+											 if (oldFacets) {
+												 //We put back the names in the selected items from the domain's facets
+												 me.addNameToSelectedFacets(oldFacets, previousBookmark.get("config").selection.facets);
+
+												 for (var k=0; k<oldFacets.length; k++) {
+													 var availableFacet = oldFacets[k];
+													 var existsInNewConfig = me.containsSelection(newFacets, availableFacet);
+													 facetName = me.normalyzeFacetName(availableFacet);
+													 var selectedItems = [];
+													 var deletedItems = [];
+
+													 var bookmarkFacet = me.findFacetByName(previousBookmark.get("config").selection.facets, availableFacet);
+													 facetForItems = me.findFacetByName(oldSelection.facets, availableFacet);
+
+													 var availableItems = null;
+													 if (facetForItems && facetForItems.selectedItems) {
+														 if (facetForItems.id === "__segments") {
+															 availableItems = me.getSegmentFacet(newFacets).items;
+														 }
+														 if (bookmarkFacet) {
+															 var diffItems = me.getCustomSelection(facetForItems.selectedItems, bookmarkFacet.selectedItems);   
+															 if (diffItems && diffItems.length>0) {
+																 selectedItems=diffItems;
+															 }		
+															 //Now we clean deleted items if segments as it is shared among bookmarks on same domain
+															 if (availableFacet.id === "__segments" && me.customDeletedFacets.get(facetName) && diffItems.length>0) {
+																 me.customDeletedFacets.set(facetName, me.cleanItems(me.customDeletedFacets.get(facetName), diffItems));
+															 }
+
+															 diffItems = me.getCustomSelection(bookmarkFacet.selectedItems, facetForItems.selectedItems, availableItems);
+
+															 //Now we copy back remaining deleted items if segments as it is shared among bookmarks on same domain
+															 if (availableFacet.id === "__segments" && me.customDeletedFacets.get(facetName)) {
+																 diffItems = diffItems.concat(me.customDeletedFacets.get(facetName));
+															 }
+
+															 //No need for period as it is a single selection
+															 if ((availableFacet.dimension.type === "CONTINUOUS" && availableFacet.dimension.valueType === "DATE") === false) {
+																 if (diffItems && diffItems.length>0) {
+																	 deletedItems=diffItems;
+																 }		
+															 }
+														 } else {
+															 selectedItems = facetForItems.selectedItems;
+														 }
+													 }
+													 if (selectedItems && selectedItems.length>0) {
+														 me.customAddedFacets.set(facetName, selectedItems);
+													 } else {
+														 me.cleanCustomSelection(me.customAddedFacets, facetName, availableItems);
+													 }
+													 if (deletedItems && deletedItems.length>0) {
+														 me.customDeletedFacets.set(facetName, deletedItems);
+													 } else if (me.customDeletedFacets.has(facetName)) {
+														 me.cleanCustomSelection(me.customDeletedFacets, facetName, availableItems);
+													 }
+												 }
+											 }
+
+											 //We add new selected facets on other dashboards
+											 if (newFacets) {
+												 for (var f=0; f<newFacets.length; f++) {
+													 var newFacet = newFacets[f];
+													 facetName = me.normalyzeFacetName(newFacet);
+													 var complementFacetItems = null;
+													 if (newFacet.dimension.type === "CONTINUOUS" && newFacet.dimension.valueType === "DATE") {
+														 //For dates there is only one selection item
+														 if (oldSelection.compareTo && oldSelection.compareTo.length === 1) {
+															 var savedNewCompare = $.extend(true, {}, newFacet);
+															 savedNewCompare.selectedItems = $.extend(true, [], oldSelection.compareTo[0].selectedItems);
+															 forcedSelection.compareTo.push(savedNewCompare);
+														 } else {
+															 if (savedNewConfig.selection.compareTo) {
+																 forcedSelection.compareTo = $.extend(true, [], savedNewConfig.selection.compareTo);
+															 }
+														 }
+														 complementFacetItems = me.customAddedFacets.get(facetName);
+														 if (!complementFacetItems) {
+															 var periodFacet = me.findFacetByName(newConfig.selection.facets, newFacet); 
+															 if (periodFacet) {
+																 complementFacetItems = periodFacet.selectedItems;
+															 }// when renaming a child dimension, the dimension name in the bookmark is not updated
+														 }
+													 } else {
+														 var savedSelection = me.customAddedFacets.get(facetName);
+														 var deletedSelection = me.customDeletedFacets.get(facetName);
+														 var bookmarkSelection = me.findFacetByName(newConfig.selection.facets, newFacet); // when renaming a child dimension, the dimension name in the bookmark is not updated
+														 var lastSelection = me.findFacetByName(savedNewConfig.selection.facets, newFacet);
+														 facetForItems = null;
+														 if (newFacet.id === "__segments") {
+															 facetForItems = me.getSegmentFacet(newFacets);
+														 }
+														 complementFacetItems = me.mergeSelection(savedSelection, lastSelection, facetForItems, bookmarkSelection, deletedSelection);
+													 }
+													 if (complementFacetItems && complementFacetItems.length>0) {
+														 var copiedFacet = {
+																 dimension: newFacet.dimension,
+																 id: newFacet.id,
+																 selectedItems: complementFacetItems
+														 };
+														 forcedSelection.facets.push(copiedFacet);
+													 }
+												 }
+											 }
+
+											 //Set then next config from selected facets
+											 newConfig.selection = forcedSelection;
+										 }
+
+										 return newConfig;
+									 };
+
+									 squid_api.setBookmark(bookmark, forcedConfig, null);           
+								 });
+							 });
+						 });
+					 });
+				 }
+			 }
+		 }
+	};
+
+	squid_api.controller.Bookmark = Controller;
+
+	return squid_api;
 }));
 
 (function (root, factory) {
@@ -2907,9 +3409,21 @@ function program1(depth0,data) {
             "editorClass": "hidden",
             "fieldClass": "id"
         },
+        "leftName": {
+            "type": "Text",
+            "editorClass": "form-control",
+            "fieldClass": "leftName",
+            "title": "Name"
+        },
+        "description": {
+            "type": "Text",
+            "editorClass": "form-control",
+            "title": "Description"
+        },
         "leftId": {
             "title": " ",
             "type": "Object",
+            "editorClass": "hidden",
             "subSchema": {
                 "projectId": {
                     "options": [],
@@ -2920,23 +3434,11 @@ function program1(depth0,data) {
                 "domainId": {
                     "options": [],
                     "type": "Select",
-                    "editorClass": "form-control",
-                    "title": "Left Domain"
+                    "editorClass": "hidden",
+                    "title": " "
                 }
             },
             "fieldClass": "leftId"
-        },
-        "leftCardinality": {
-            "type": "Select",
-            "editorClass": "form-control",
-            "options": ["ZERO_OR_ONE", "ONE", "MANY"],
-            "fieldClass": "leftCardinality"
-        },
-        "rightCardinality": {
-            "type": "Select",
-            "editorClass": "form-control",
-            "options": ["ZERO_OR_ONE", "ONE", "MANY"],
-            "fieldClass": "rightCardinality"
         },
         "rightId": {
             "title": " ",
@@ -2952,20 +3454,23 @@ function program1(depth0,data) {
                     "options": [],
                     "type": "Select",
                     "editorClass": "form-control",
-                    "title": "Right Domain"
+                    "title": "Related To"
                 }
             },
             "fieldClass": "rightId"
         },
-        "leftName": {
-            "type": "Text",
+        "cardinality": {
+            "type": "Select",
             "editorClass": "form-control",
-            "fieldClass": "leftName"
+            "options": ["many to zero or one", "zero or one to many", "one to one", "one to many", "many to one", "zero or one to one", "one to zero or one"],
+            "title": "Cardinality",
+            "fieldClass": "cardinality"
         },
         "rightName": {
             "type": "Text",
             "editorClass": "form-control",
-            "fieldClass": "rightName"
+            "fieldClass": "rightName",
+            "title": "Reverse Name"
         },
         "joinExpression": {
             "title": " ",
@@ -3424,6 +3929,7 @@ function program1(depth0,data) {
             this.edit.getSession().type = this.type;
             this.edit.getSession().setMode("ace/mode/bouquet");
 
+            this.edit.setOption("showPrintMargin", false);
 
             var langTools = ace.require("ace/ext/language_tools");
             this.edit.setOptions({
@@ -3465,8 +3971,8 @@ function program1(depth0,data) {
                                             var range = me.edit.getSession().getWordRange(cursor.row, 0);
                                             range.start.row = cursor.row;
                                             range.end.row = cursor.row;
-                                            range.start.column = 0;
-                                            range.end.column = suggestionList.beginInsertPos;
+                                            range.start.column = cursor.column - suggestionList.filterIndex;
+                                            range.end.column = cursor.column;
                                             prefix_snippet  = suggestionList.prefix  + me.edit.getSession().getTextRange(range);
                                         }
                                         return {
@@ -3507,8 +4013,9 @@ function program1(depth0,data) {
                                                 var range = me.edit.getSession().getWordRange(cursor.row, 0);
                                                 range.start.row = cursor.row;
                                                 range.end.row = cursor.row;
-                                                range.start.column = 0;
-                                                range.end.column = suggestionList.beginInsertPos;
+                                                range.start.column = cursor.column - suggestionList.filterIndex;
+                                                range.end.column = cursor.column;
+                                                // + (suggestionList.beginInsertPos - suggestionList.filterIndex) ;
                                                 prefix_snippet  = suggestionList.prefix  + me.edit.getSession().getTextRange(range);
                                             }
                                             return {
@@ -3562,11 +4069,13 @@ function program1(depth0,data) {
                         if (position) {
                             if (annotations && annotations.length > 0) {
                                 annotations.forEach(function (annotation) {
-                                    var text = annotation.text;
-                                    if (text.length > 0) {
-                                        var pixelPosition = me.edit.renderer.textToScreenCoordinates(position);
-                                        pixelPosition.pageY += me.edit.renderer.lineHeight;
-                                        me.updateTooltip(pixelPosition, text);
+                                    if(annotation.type != "error" && annotation.type != "warning"){ //already present
+                                        var text = annotation.text;
+                                        if (text.length > 0) {
+                                            var pixelPosition = me.edit.renderer.textToScreenCoordinates(position);
+                                            pixelPosition.pageY += me.edit.renderer.lineHeight;
+                                            me.updateTooltip(pixelPosition, text);
+                                        }
                                     }
                                 });
                             } else {
@@ -3677,7 +4186,7 @@ function program1(depth0,data) {
             console.log("perform");
         }
     }, {
-        template: _.template('<div id="expression-editor" style="height: 50px;"></div>', null, this.templateSettings)
+        template: _.template('<div id="expression-editor" style="height: 200px;"></div>', null, this.templateSettings)
     });
 
     var MetricDomainExpressionEditor = AceExpressionEditor.extend({
@@ -3931,7 +4440,7 @@ function program1(depth0,data) {
         selected : "selectedDimensions",
         afterRender : null,
         singleSelect : false,
-        singleSelectIndex : 0,
+        singleSelectIndex : null,
         configurationEnabled : false,
         updateMultiQuantity : null,
 
@@ -3968,7 +4477,7 @@ function program1(depth0,data) {
                 if (options.singleSelect) {
                     this.singleSelect = options.singleSelect;
                 }
-                if (options.singleSelectIndex) {
+                if (options.singleSelectIndex || options.singleSelectIndex === 0) {
                     this.singleSelectIndex = options.singleSelectIndex;
                 }
                 if (options.updateMultiQuantity) {
@@ -4253,8 +4762,10 @@ function program1(depth0,data) {
             var selected = false;
             var dimensions = this.config.get(this.chosen);
             if (this.singleSelect === true) {
-                if (dimensions[this.singleSelectIndex] === facet.id) {
-                    selected = true;
+                if (dimensions) {
+                    if (dimensions[this.singleSelectIndex] === facet.id) {
+                        selected = true;
+                    }
                 }
             } else {
                 if (dimensions) {
@@ -4370,7 +4881,13 @@ function program1(depth0,data) {
         
         template : template,
         
-        render : squid_api.view.CollectionSelectorUtils.renderButton
+        render : function() {
+            squid_api.view.CollectionSelectorUtils.renderButton.call(this);
+            
+            if (this.afterRender) {
+            	this.afterRender.call(this);
+            }
+        }
 
     });
     return View;
@@ -5138,6 +5655,10 @@ function program1(depth0,data) {
         
         render : function() {
             squid_api.view.CollectionSelectorUtils.renderButton.call(this);
+            
+            if (this.afterRender) {
+            	this.afterRender.call(this);
+            }
         }
 
     });
@@ -5317,6 +5838,70 @@ function program1(depth0,data) {
                     data[x] = null;
                 }
             }
+
+            data = this.cardinalityManipulate(data);
+
+            return data;
+        },
+
+        beforeRender: function() {
+            var leftCardinality = this.model.get("leftCardinality");
+            var rightCardinality = this.model.get("rightCardinality");
+
+            if (leftCardinality === "MANY" && rightCardinality === "ZERO_OR_ONE") {
+                this.model.set("cardinality", "many to zero or one");
+            }
+            if (leftCardinality === "ZERO_OR_ONE" && rightCardinality === "MANY") {
+                this.model.set("cardinality", "zero or one to many");
+            }
+            if (leftCardinality === "ONE" && rightCardinality === "ONE") {
+                this.model.set("cardinality", "one to one");
+            }
+            if (leftCardinality === "ONE" && rightCardinality === "MANY") {
+                this.model.set("cardinality", "one to many");
+            }
+            if (leftCardinality === "MANY" && rightCardinality === "ONE") {
+                this.model.set("cardinality", "many to one");
+            }
+            if (leftCardinality === "ZERO_OR_ONE" && rightCardinality === "ONE") {
+                this.model.set("cardinality", "zero or one to one");
+            }
+            if (leftCardinality === "ONE" && rightCardinality === "ZERO_OR_ONE") {
+                this.model.set("cardinality", "one to zero or one");
+            }
+        },
+
+        cardinalityManipulate: function(data) {
+            var cardinality = data.cardinality;
+            if (cardinality === "many to zero or one") {
+                data.leftCardinality = "MANY";
+                data.rightCardinality = "ZERO_OR_ONE";
+            }
+            if (cardinality === "zero or one to many") {
+                data.leftCardinality = "ZERO_OR_ONE";
+                data.rightCardinality = "MANY";
+            }
+            if (cardinality === "one to one") {
+                data.leftCardinality = "ONE";
+                data.rightCardinality = "ONE";
+            }
+            if (cardinality === "one to many") {
+                data.leftCardinality = "ONE";
+                data.rightCardinality = "MANY";
+            }
+            if (cardinality === "many to one") {
+                data.leftCardinality = "MANY";
+                data.rightCardinality = "ONE";
+            }
+            if (cardinality === "zero or one to one") {
+                data.leftCardinality = "ZERO_OR_ONE";
+                data.rightCardinality = "ONE";
+            }
+            if (cardinality === "one to zero or one") {
+                data.leftCardinality = "ONE";
+                data.rightCardinality = "ZERO_OR_ONE";
+            }
+            delete data.cardinality;
             return data;
         },
 

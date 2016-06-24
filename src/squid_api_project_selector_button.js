@@ -9,6 +9,10 @@
         
         render : function() {
             squid_api.view.CollectionSelectorUtils.renderButton.call(this);
+            
+            if (this.afterRender) {
+            	this.afterRender.call(this);
+            }
         }
 
     });

@@ -27,6 +27,9 @@
             if (options.onSave) {
                 this.onSave = options.onSave;
             }
+            if (options.openModelCallback) {
+                this.openModelCallback = options.openModelCallback;
+            }
             if (options.comparator) {
                 this.comparator = options.comparator;
             } else {
@@ -64,6 +67,11 @@
                     this.cancelCallback.call();
                 }
             },
+            "click .open-model": function() {
+                if (this.openModelCallback) {
+                    this.openModelCallback(this);
+                }
+            },
             "click .btn-save-form" : function() {
                 var me = this;
                 var error = this.formContent.validate();
@@ -86,6 +94,9 @@
                             if (me.onSave) {
                                 me.onSave(model);
                             }
+
+                            me.$el.find(".btn-save-form").fadeOut();
+
                             me.status.set("message", "Sucessfully saved");
                         },
                         error: function(xhr) {
@@ -120,6 +131,10 @@
             // to be overridden from other model management widgets
         },
 
+        beforeRender: function() {
+            // to be overridden from other model management widgets
+        },
+
         render: function() {
             var me = this;
             var jsonData = {modelDefinition : "unknown"};
@@ -138,6 +153,8 @@
             jsonData.footerLabel = "<div class='object-id'><label>Object ID</label> <br /> <input data-clipboard-text='" + this.model.get("oid") + "' class='copy-id' value='" + this.model.get("oid") + "' /></div>";
 
             this.setSchema().then(function(schema) {
+                me.beforeRender();
+
                 // create form
                 me.formContent = new Backbone.Form({
                     schema: schema,
@@ -146,6 +163,19 @@
 
                 // append save buttons
                 me.$el.html(me.template(jsonData));
+
+                // expression editor to be updated
+                // me.originalFormContent = me.formContent.getValue();
+
+                me.formContent.on("change", function() {
+                    var saveBtn = me.$el.find(".btn-save-form");
+                    saveBtn.fadeIn();
+                    // if (me.formContent.getValue() !== me.originalFormContent) {
+                    //     saveBtn.fadeIn();
+                    // } else {
+                    //     saveBtn.fadeOut();
+                    // }
+                });
 
                 // place the form into a backbone view
                 me.$el.find(".modal-body").html(me.formContent.el);
