@@ -3449,7 +3449,8 @@ function program1(depth0,data) {
         "description": {
             "type": "Text",
             "editorClass": "form-control",
-            "title": "Description"
+            "title": "Description",
+            "fieldClass": "description",
         },
         "leftId": {
             "title": " ",

@@ -114,7 +114,8 @@
         "description": {
             "type": "Text",
             "editorClass": "form-control",
-            "title": "Description"
+            "title": "Description",
+            "fieldClass": "description",
         },
         "leftId": {
             "title": " ",
