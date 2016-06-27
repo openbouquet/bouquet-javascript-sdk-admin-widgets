@@ -931,12 +931,12 @@ div.object-id input[disabled] {
 .squid-api-relation-model-management .id {
     display: none;
 }
-.squid-api-relation-model-management .leftName, .squid-api-relation-model-management .rightName {
-    width: 100%;
+.squid-api-relation-model-management .leftName, .squid-api-relation-model-management .cardinality, .squid-api-relation-model-management .rightName {
+    width: 33%;
     float: left;
 }
-.squid-api-relation-model-management .rightId, .squid-api-relation-model-management .cardinality {
-	width: 50%;
+.squid-api-relation-model-management .rightId, .squid-api-relation-model-management .description {
+	width: 100%;
 	float: left;
 }
 .squid-api-relation-model-management fieldset > div {

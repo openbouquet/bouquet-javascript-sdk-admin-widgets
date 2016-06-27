@@ -3408,11 +3408,43 @@ function program1(depth0,data) {
             "editorClass": "hidden",
             "fieldClass": "id"
         },
+        "rightId": {
+            "title": " ",
+            "type": "Object",
+            "subSchema": {
+                "projectId": {
+                    "options": [],
+                    "type": "Text",
+                    "title": " ",
+                    "editorClass": "hidden"
+                },
+                "domainId": {
+                    "options": [],
+                    "type": "Select",
+                    "editorClass": "form-control",
+                    "title": "Related With"
+                }
+            },
+            "fieldClass": "rightId"
+        },
         "leftName": {
             "type": "Text",
             "editorClass": "form-control",
             "fieldClass": "leftName",
-            "title": "Name"
+            "title": " "
+        },
+        "cardinality": {
+            "type": "Select",
+            "editorClass": "form-control",
+            "options": ["many to zero or one", "zero or one to many", "one to one", "one to many", "many to one", "zero or one to one", "one to zero or one"],
+            "title": " ",
+            "fieldClass": "cardinality"
+        },
+        "rightName": {
+            "type": "Text",
+            "editorClass": "form-control",
+            "fieldClass": "rightName",
+            "title": " "
         },
         "description": {
             "type": "Text",
@@ -3438,38 +3470,6 @@ function program1(depth0,data) {
                 }
             },
             "fieldClass": "leftId"
-        },
-        "rightId": {
-            "title": " ",
-            "type": "Object",
-            "subSchema": {
-                "projectId": {
-                    "options": [],
-                    "type": "Text",
-                    "title": " ",
-                    "editorClass": "hidden"
-                },
-                "domainId": {
-                    "options": [],
-                    "type": "Select",
-                    "editorClass": "form-control",
-                    "title": "Related To"
-                }
-            },
-            "fieldClass": "rightId"
-        },
-        "cardinality": {
-            "type": "Select",
-            "editorClass": "form-control",
-            "options": ["many to zero or one", "zero or one to many", "one to one", "one to many", "many to one", "zero or one to one", "one to zero or one"],
-            "title": "Cardinality",
-            "fieldClass": "cardinality"
-        },
-        "rightName": {
-            "type": "Text",
-            "editorClass": "form-control",
-            "fieldClass": "rightName",
-            "title": "Reverse Name"
         },
         "joinExpression": {
             "title": " ",
@@ -5958,6 +5958,27 @@ function program1(depth0,data) {
             this.config.trigger("change:selection");
         },
         formEvents: function() {
+            var me = this;
+
+            // set base values
+            if (this.model.isNew()) {
+                // automatically populate leftId
+                this.formContent.fields.leftId.setValue({
+                    "projectId": this.config.get("project"),
+                    "domainId": this.config.get("domain")
+                });
+                // automatically populate rightId
+                this.formContent.fields.rightId.setValue({
+                    "projectId": this.config.get("project"),
+                    "domainId" : this.formContent.fields.rightId.schema.subSchema.domainId.options[0].val
+                });
+                // auto select default form fields
+                this.formContent.fields.leftName.setValue(this.formContent.fields.leftId.getValue().domainId);
+                this.formContent.fields.rightName.setValue(this.formContent.fields.rightId.getValue().domainId);
+                this.formContent.fields.cardinality.setValue(this.formContent.fields.cardinality.schema.options[0]);
+            }
+
+            // additional events
             this.formContent.on('leftId:change', function(form) {
                 var rightText = form.$el.find(".leftId").find("select option:selected").text();
                 form.$el.find(".leftName input").val(rightText);

@@ -138,6 +138,27 @@
             this.config.trigger("change:selection");
         },
         formEvents: function() {
+            var me = this;
+
+            // set base values
+            if (this.model.isNew()) {
+                // automatically populate leftId
+                this.formContent.fields.leftId.setValue({
+                    "projectId": this.config.get("project"),
+                    "domainId": this.config.get("domain")
+                });
+                // automatically populate rightId
+                this.formContent.fields.rightId.setValue({
+                    "projectId": this.config.get("project"),
+                    "domainId" : this.formContent.fields.rightId.schema.subSchema.domainId.options[0].val
+                });
+                // auto select default form fields
+                this.formContent.fields.leftName.setValue(this.formContent.fields.leftId.getValue().domainId);
+                this.formContent.fields.rightName.setValue(this.formContent.fields.rightId.getValue().domainId);
+                this.formContent.fields.cardinality.setValue(this.formContent.fields.cardinality.schema.options[0]);
+            }
+
+            // additional events
             this.formContent.on('leftId:change', function(form) {
                 var rightText = form.$el.find(".leftId").find("select option:selected").text();
                 form.$el.find(".leftName input").val(rightText);

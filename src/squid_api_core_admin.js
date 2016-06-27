@@ -73,11 +73,43 @@
             "editorClass": "hidden",
             "fieldClass": "id"
         },
+        "rightId": {
+            "title": " ",
+            "type": "Object",
+            "subSchema": {
+                "projectId": {
+                    "options": [],
+                    "type": "Text",
+                    "title": " ",
+                    "editorClass": "hidden"
+                },
+                "domainId": {
+                    "options": [],
+                    "type": "Select",
+                    "editorClass": "form-control",
+                    "title": "Related With"
+                }
+            },
+            "fieldClass": "rightId"
+        },
         "leftName": {
             "type": "Text",
             "editorClass": "form-control",
             "fieldClass": "leftName",
-            "title": "Name"
+            "title": " "
+        },
+        "cardinality": {
+            "type": "Select",
+            "editorClass": "form-control",
+            "options": ["many to zero or one", "zero or one to many", "one to one", "one to many", "many to one", "zero or one to one", "one to zero or one"],
+            "title": " ",
+            "fieldClass": "cardinality"
+        },
+        "rightName": {
+            "type": "Text",
+            "editorClass": "form-control",
+            "fieldClass": "rightName",
+            "title": " "
         },
         "description": {
             "type": "Text",
@@ -103,38 +135,6 @@
                 }
             },
             "fieldClass": "leftId"
-        },
-        "rightId": {
-            "title": " ",
-            "type": "Object",
-            "subSchema": {
-                "projectId": {
-                    "options": [],
-                    "type": "Text",
-                    "title": " ",
-                    "editorClass": "hidden"
-                },
-                "domainId": {
-                    "options": [],
-                    "type": "Select",
-                    "editorClass": "form-control",
-                    "title": "Related To"
-                }
-            },
-            "fieldClass": "rightId"
-        },
-        "cardinality": {
-            "type": "Select",
-            "editorClass": "form-control",
-            "options": ["many to zero or one", "zero or one to many", "one to one", "one to many", "many to one", "zero or one to one", "one to zero or one"],
-            "title": "Cardinality",
-            "fieldClass": "cardinality"
-        },
-        "rightName": {
-            "type": "Text",
-            "editorClass": "form-control",
-            "fieldClass": "rightName",
-            "title": "Reverse Name"
         },
         "joinExpression": {
             "title": " ",
