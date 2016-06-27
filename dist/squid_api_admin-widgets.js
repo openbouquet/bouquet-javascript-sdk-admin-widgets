@@ -951,6 +951,7 @@ function program1(depth0,data) {
         cancelCallback : null,
         collectionLoading : false,
         afterRender : null,
+        onFormContentsChange: null,
         modelViewEl : null,
 
         initialize: function(options) {
@@ -967,6 +968,9 @@ function program1(depth0,data) {
                 } else {
                     // default sorting
                     this.comparator =  squid_api.utils.defaultComparator;
+                }
+                if (options.onFormContentsChange) {
+                    this.onFormContentsChange = options.onFormContentsChange;
                 }
                 if (options.cancelCallback) {
                     this.cancelCallback = options.cancelCallback;
@@ -1147,6 +1151,7 @@ function program1(depth0,data) {
                 cancelCallback : function() {
                     me.render();
                 },
+                onFormContentsChange: this.onFormContentsChange,
                 onSave : function(model) {
                     me.collection.add(model);
                     // call any super onSave
@@ -1194,6 +1199,7 @@ function program1(depth0,data) {
                 });
                 this.renderModelView(new this.modelView({
                     model : model,
+                    onFormContentsChange: this.onFormContentsChange,
                     cancelCallback : function() {
                         me.render();
                     }
@@ -1428,6 +1434,7 @@ function program1(depth0,data) {
 
         model : null,
         collectionPluralLabel : null,
+        onFormContentsChange: null,
 
         initialize: function(options) {
             this.status = squid_api.model.status;
@@ -1450,6 +1457,9 @@ function program1(depth0,data) {
             }
             if (options.openModelCallback) {
                 this.openModelCallback = options.openModelCallback;
+            }
+            if (options.onFormContentsChange) {
+                this.onFormContentsChange = options.onFormContentsChange;
             }
             if (options.comparator) {
                 this.comparator = options.comparator;
@@ -1591,6 +1601,11 @@ function program1(depth0,data) {
                 me.formContent.on("change", function() {
                     var saveBtn = me.$el.find(".btn-save-form");
                     saveBtn.fadeIn();
+
+                    if (me.onFormContentsChange) {
+                        me.onFormContentsChange.call(me);
+                    }
+
                     // if (me.formContent.getValue() !== me.originalFormContent) {
                     //     saveBtn.fadeIn();
                     // } else {

@@ -18,6 +18,7 @@
         cancelCallback : null,
         collectionLoading : false,
         afterRender : null,
+        onFormContentsChange: null,
         modelViewEl : null,
 
         initialize: function(options) {
@@ -34,6 +35,9 @@
                 } else {
                     // default sorting
                     this.comparator =  squid_api.utils.defaultComparator;
+                }
+                if (options.onFormContentsChange) {
+                    this.onFormContentsChange = options.onFormContentsChange;
                 }
                 if (options.cancelCallback) {
                     this.cancelCallback = options.cancelCallback;
@@ -214,6 +218,7 @@
                 cancelCallback : function() {
                     me.render();
                 },
+                onFormContentsChange: this.onFormContentsChange,
                 onSave : function(model) {
                     me.collection.add(model);
                     // call any super onSave
@@ -261,6 +266,7 @@
                 });
                 this.renderModelView(new this.modelView({
                     model : model,
+                    onFormContentsChange: this.onFormContentsChange,
                     cancelCallback : function() {
                         me.render();
                     }

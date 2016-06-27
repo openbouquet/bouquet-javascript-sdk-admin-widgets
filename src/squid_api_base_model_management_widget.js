@@ -7,6 +7,7 @@
 
         model : null,
         collectionPluralLabel : null,
+        onFormContentsChange: null,
 
         initialize: function(options) {
             this.status = squid_api.model.status;
@@ -29,6 +30,9 @@
             }
             if (options.openModelCallback) {
                 this.openModelCallback = options.openModelCallback;
+            }
+            if (options.onFormContentsChange) {
+                this.onFormContentsChange = options.onFormContentsChange;
             }
             if (options.comparator) {
                 this.comparator = options.comparator;
@@ -170,6 +174,11 @@
                 me.formContent.on("change", function() {
                     var saveBtn = me.$el.find(".btn-save-form");
                     saveBtn.fadeIn();
+
+                    if (me.onFormContentsChange) {
+                        me.onFormContentsChange.call(me);
+                    }
+
                     // if (me.formContent.getValue() !== me.originalFormContent) {
                     //     saveBtn.fadeIn();
                     // } else {
