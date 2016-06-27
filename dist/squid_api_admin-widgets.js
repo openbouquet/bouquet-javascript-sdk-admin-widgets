@@ -5756,8 +5756,12 @@ function program1(depth0,data) {
             var filteredModels = [];
             for (i=0; i<this.collection.size(); i++) {
                 if (this.collection.at(i).get("leftId") && this.collection.at(i).get("rightId")) {
+                    var collection = this.collection.at(i);
+                    if (this.collection.at(i).get("rightId").domainId == this.modelValue) {
+                        collection.set("isRight", true);
+                    }
                     if (this.collection.at(i).get("leftId").domainId == this.modelValue || this.collection.at(i).get("rightId").domainId == this.modelValue) {
-                        filteredModels.push(this.collection.at(i));
+                        filteredModels.push(collection);
                     }
                 }
             }
@@ -5768,6 +5772,7 @@ function program1(depth0,data) {
                 obj.leftName = filteredModels[ix].get("leftName");
                 obj.rightName = filteredModels[ix].get("rightName");
                 obj.roles = this.getModelRoles(filteredModels[ix]);
+                obj.isRight = filteredModels[ix].get("isRight");
 
                 // set cardinality booleans for handlebar display
                 var leftCardinality = filteredModels[ix].get("leftCardinality");
