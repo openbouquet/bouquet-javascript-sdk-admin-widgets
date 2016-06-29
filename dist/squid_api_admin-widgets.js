@@ -1080,6 +1080,7 @@ function program1(depth0,data) {
                     me.render();
                     me.listenTo(me.selectedModel, "change", me.render);
                 }).fail(function() {
+                    console.error("setSelectedModel - model not found : "+modelId+" in collection "+me.collection);
                     me.render();
                 });
             } else {
