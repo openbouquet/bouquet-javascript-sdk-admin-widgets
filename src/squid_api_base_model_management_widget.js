@@ -8,6 +8,7 @@
         model : null,
         collectionPluralLabel : null,
         onFormContentsChange: null,
+        afterRenderCallback: null,
 
         initialize: function(options) {
             this.status = squid_api.model.status;
@@ -30,6 +31,9 @@
             }
             if (options.openModelCallback) {
                 this.openModelCallback = options.openModelCallback;
+            }
+            if (options.afterRenderCallback) {
+                this.afterRenderCallback = options.afterRenderCallback;
             }
             if (options.onFormContentsChange) {
                 this.onFormContentsChange = options.onFormContentsChange;
@@ -194,6 +198,10 @@
 
                 // after render handler
                 me.afterRender();
+
+                if (me.afterRenderCallback) {
+                    me.afterRenderCallback(me);
+                }
             });
 
             return this;
