@@ -2403,7 +2403,9 @@ function program1(depth0,data) {
                                     $.when(oldFacets, newFacets).done(function(oldFacets, newFacets) {
                                         console.log("merge filters from bookmarks");
                                         var forcedConfig = function(newConfig) {
+                                            newConfig.project = project.get("oid");
                                             newConfig.bookmark = bookmarkId;
+                                            
                                             me.addNameToSelectedFacets(newFacets, newConfig.selection.facets);
                                             var oldSelection = copyConfig.get("selection");
                                             if (oldSelection && oldSelection.facets)  {
