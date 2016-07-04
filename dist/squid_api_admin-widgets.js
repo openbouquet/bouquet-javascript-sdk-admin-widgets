@@ -230,7 +230,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (helper = helpers.footerLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.footerLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</div>\n<div class=\"squid-api-model-management-footer\">\n      <button type=\"button\" class=\"btn btn-default btn-cancel\">Cancel</button>\n    <button type=\"button\" style=\"display: none;\" class=\"btn btn-primary btn-save-form\">Save</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
+  buffer += "\n</div>\n<div class=\"squid-api-model-management-footer\">\n      <button type=\"button\" class=\"btn btn-default btn-cancel-form\">Cancel</button>\n    <button type=\"button\" style=\"display: none;\" class=\"btn btn-primary btn-save-form\">Save</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
   return buffer;
   });
 
@@ -1496,12 +1496,6 @@ function program1(depth0,data) {
         },
 
         events: {
-            "click .btn-cancel": function() {
-                // reset parent view if cancel button clicked
-                if (this.cancelCallback) {
-                    this.cancelCallback.call();
-                }
-            },
             "click .open-model": function() {
                 if (this.openModelCallback) {
                     this.openModelCallback(this);
@@ -1530,6 +1524,7 @@ function program1(depth0,data) {
                                 me.onSave(model);
                             }
 
+                            me.$el.find(".btn-cancel-form").fadeOut();
                             me.$el.find(".btn-save-form").fadeOut();
 
                             me.status.set("message", "Sucessfully saved");
@@ -1539,6 +1534,16 @@ function program1(depth0,data) {
                         }
                     });
                 }
+            },
+            "click .btn-cancel-form": function() {
+                this.formContent.render();
+                this.$el.find(".modal-body").html(this.formContent.el);
+                // reset parent view if cancel button clicked
+                if (this.cancelCallback) {
+                    this.cancelCallback.call();
+                }
+                this.$el.find(".btn-cancel-form").fadeOut();
+                this.$el.find(".btn-save-form").fadeOut();
             },
             "click .copy-id": function() {
                 var clipboard = new Clipboard(".copy-id");
@@ -1604,7 +1609,9 @@ function program1(depth0,data) {
 
                 me.formContent.on("change", function() {
                     var saveBtn = me.$el.find(".btn-save-form");
+                    var cancelBtn = me.$el.find(".btn-cancel-form");
                     saveBtn.fadeIn();
+                    cancelBtn.fadeIn();
 
                     if (me.onFormContentsChange) {
                         me.onFormContentsChange.call(me);
