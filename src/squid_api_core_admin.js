@@ -194,7 +194,7 @@
             "editorClass": " ",
             "options": [{
                 "val": "CATEGORICAL",
-                "label": "Indexed"
+                "label": "Use as a filter"
             }, {
                 "val": "CONTINUOUS",
                 "label": "Period"

@@ -3567,7 +3567,7 @@ function program1(depth0,data) {
             "editorClass": " ",
             "options": [{
                 "val": "CATEGORICAL",
-                "label": "Indexed"
+                "label": "Use as a filter"
             }, {
                 "val": "CONTINUOUS",
                 "label": "Period"
