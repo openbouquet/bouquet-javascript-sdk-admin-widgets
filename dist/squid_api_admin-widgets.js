@@ -4300,12 +4300,36 @@ function program1(depth0,data) {
         }
     });
 
+    
+    var multiSelect = Backbone.Form.editors.Select.extend ({
+    
+        render: function() {
+      
+            this.setOptions(this.schema.options);
+            var config = this.schema.config || {};
+
+            var elem = this;
+            setTimeout(function() {
+                elem.$el.prop('multiple', true);
+                elem.$el.multiselect({
+                    enableFiltering: true,
+                    enableFullValueFiltering: true,
+                    includeSelectAllOption: true,
+                    maxHeight: 500
+                });
+            }, 0);
+
+            return this;
+        }
+    });
+
     // Register custom editors
     Backbone.Form.editors.DomainExpressionEditor = domainExpressionEditor;
     Backbone.Form.editors.DimensionExpressionEditor = dimensionExpressionEditor;
     Backbone.Form.editors.MetricExpressionEditor = metricExpressionEditor;
     Backbone.Form.editors.RelationExpressionEditor = relationExpressionEditor;
     Backbone.Form.editors.DbCheckConnection = dbCheckConnection;
+    Backbone.Form.editors.MultiSelect = multiSelect;
 }));
 
 (function (root, factory) {
