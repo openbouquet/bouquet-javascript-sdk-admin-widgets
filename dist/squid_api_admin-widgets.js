@@ -2438,6 +2438,11 @@ function program1(depth0,data) {
                                             //In case it is the first bookmark selected
                                             if (!savedNewConfig || !savedNewConfig.selection) {
                                                 savedNewConfig = newConfig;
+                                            } else {
+                                            	//V3 compatibility: initialize dimensions, metrics & order by from last saved state for the same bookmark
+                                            	newConfig.chosenDimensions = savedNewConfig.chosenDimensions;
+                                            	newConfig.chosenMetrics = savedNewConfig.chosenMetrics;
+                                            	newConfig.orderBy = savedNewConfig.orderBy;
                                             }
                                             var forcedSelection = { "compareTo" : [], "facets" : []};
 
