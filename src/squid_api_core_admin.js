@@ -499,6 +499,12 @@
         previous_matched_word_tooltip: null,
         previous_matched_info_tooltip: null,
 
+        events: {
+            "keyup":function() {
+                this.trigger('change', this);
+            }
+        },
+
         initialize: function (options) {
             // Call parent constructor
             Backbone.Form.editors.Base.prototype.initialize.call(this, options);
