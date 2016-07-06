@@ -209,6 +209,10 @@
                 if (me.afterRenderCallback) {
                     me.afterRenderCallback(me);
                 }
+
+                if (me.model.isNew()) {
+                    me.$el.find(".object-id").hide();
+                }
             });
 
             return this;

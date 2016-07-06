@@ -929,9 +929,29 @@
 
     
     var multiSelect = Backbone.Form.editors.Select.extend ({
+
+        setValue: function(value) {
+            if (this.model.isNew()) {
+                this.value = value;
+                this.$el.val(value);
+            }
+
+            // construct data
+            var arr = [];
+            if (value) {
+                for (var i=0; i<value.length; i++) {
+                    value[i].selected = true;
+                    arr.push(value[i]);
+                }
+            }
+            if (! this.model.isNew()) {
+                this.value = arr;
+                this.$el.val(arr);
+            }
+        },
     
         render: function() {
-      
+            var me = this;
             this.setOptions(this.schema.options);
             var config = this.schema.config || {};
 
@@ -944,6 +964,9 @@
                     includeSelectAllOption: true,
                     maxHeight: 500
                 });
+                if (! me.model.isNew()) {
+                    elem.$el.multiselect("dataprovider", me.value);
+                }
             }, 0);
 
             return this;
