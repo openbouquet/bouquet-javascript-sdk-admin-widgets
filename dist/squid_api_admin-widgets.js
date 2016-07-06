@@ -1594,7 +1594,7 @@ function program1(depth0,data) {
 
             this.setSchema().then(function(schema) {
                 me.beforeRender();
-                console.log(schema);
+
                 // create form
                 me.formContent = new Backbone.Form({
                     schema: schema,
@@ -4306,26 +4306,6 @@ function program1(depth0,data) {
 
     
     var multiSelect = Backbone.Form.editors.Select.extend ({
-
-        setValue: function(value) {
-            if (this.model.isNew()) {
-                this.value = value;
-                this.$el.val(value);
-            }
-
-            // construct data
-            var arr = [];
-            if (value) {
-                for (var i=0; i<value.length; i++) {
-                    value[i].selected = true;
-                    arr.push(value[i]);
-                }
-            }
-            if (! this.model.isNew()) {
-                this.value = arr;
-                this.$el.val(arr);
-            }
-        },
     
         render: function() {
             var me = this;
@@ -4341,9 +4321,7 @@ function program1(depth0,data) {
                     includeSelectAllOption: true,
                     maxHeight: 500
                 });
-                if (! me.model.isNew()) {
-                    elem.$el.multiselect("dataprovider", me.value);
-                }
+                elem.$el.multiselect("dataprovider", me.value);
             }, 0);
 
             return this;
