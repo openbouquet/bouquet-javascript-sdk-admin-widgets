@@ -1668,6 +1668,7 @@ function program1(depth0,data) {
         filteredOids: null,
         onChangeHandler : null,
         descriptionHover : null,
+        returnPaths: null,
         hierarchialList: null,
 
         init : function(options) {
@@ -1677,6 +1678,9 @@ function program1(depth0,data) {
             if (options.headerText) {
                 this.headerText = options.headerText;
             }
+            if (options.config) {
+                this.config = options.config;
+            }
             if (options.filteredPaths) {
                 this.filteredPaths = options.filteredPaths;
             }
@@ -1685,6 +1689,9 @@ function program1(depth0,data) {
             }
             if (options.onChangeHandler) {
                 this.onChangeHandler = options.onChangeHandler;
+            }
+            if (options.returnPaths) {
+                this.returnPaths = options.returnPaths;
             }
             if (options.descriptionHover) {
                 this.descriptionHover = options.descriptionHover;
@@ -2032,7 +2039,9 @@ function program1(depth0,data) {
                     collection[0].active = true;
                 }
                 this.jsonData.collection = collection;
-                console.log(paths);
+                if (this.returnPaths) {
+                    this.returnPaths.call(paths);
+                }
             }
 
             // render template
