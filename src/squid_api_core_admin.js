@@ -92,6 +92,25 @@
             },
             "fieldClass": "rightId"
         },
+        "leftId": {
+            "title": " ",
+            "type": "Object",
+            "subSchema": {
+                "projectId": {
+                    "options": [],
+                    "type": "Text",
+                    "title": " ",
+                    "editorClass": "hidden"
+                },
+                "domainId": {
+                    "options": [],
+                    "type": "Select",
+                    "editorClass": "form-control",
+                    "title": "Related With Left"
+                }
+            },
+            "fieldClass": "leftId"
+        },
         "leftName": {
             "type": "Text",
             "editorClass": "form-control",
@@ -116,26 +135,6 @@
             "editorClass": "form-control",
             "title": "Description",
             "fieldClass": "description",
-        },
-        "leftId": {
-            "title": " ",
-            "type": "Object",
-            "editorClass": "hidden",
-            "subSchema": {
-                "projectId": {
-                    "options": [],
-                    "type": "Text",
-                    "title": " ",
-                    "editorClass": "hidden"
-                },
-                "domainId": {
-                    "options": [],
-                    "type": "Select",
-                    "editorClass": "hidden",
-                    "title": " "
-                }
-            },
-            "fieldClass": "leftId"
         },
         "joinExpression": {
             "title": " ",

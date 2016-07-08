@@ -3478,6 +3478,25 @@ function program1(depth0,data) {
             },
             "fieldClass": "rightId"
         },
+        "leftId": {
+            "title": " ",
+            "type": "Object",
+            "subSchema": {
+                "projectId": {
+                    "options": [],
+                    "type": "Text",
+                    "title": " ",
+                    "editorClass": "hidden"
+                },
+                "domainId": {
+                    "options": [],
+                    "type": "Select",
+                    "editorClass": "form-control",
+                    "title": "Related With Left"
+                }
+            },
+            "fieldClass": "leftId"
+        },
         "leftName": {
             "type": "Text",
             "editorClass": "form-control",
@@ -3502,26 +3521,6 @@ function program1(depth0,data) {
             "editorClass": "form-control",
             "title": "Description",
             "fieldClass": "description",
-        },
-        "leftId": {
-            "title": " ",
-            "type": "Object",
-            "editorClass": "hidden",
-            "subSchema": {
-                "projectId": {
-                    "options": [],
-                    "type": "Text",
-                    "title": " ",
-                    "editorClass": "hidden"
-                },
-                "domainId": {
-                    "options": [],
-                    "type": "Select",
-                    "editorClass": "hidden",
-                    "title": " "
-                }
-            },
-            "fieldClass": "leftId"
         },
         "joinExpression": {
             "title": " ",
@@ -5955,6 +5954,16 @@ function program1(depth0,data) {
             }
             if (leftCardinality === "ONE" && rightCardinality === "ZERO_OR_ONE") {
                 this.model.set("cardinality", "one to zero or one");
+            }
+        },
+
+        afterRender: function() {
+            var currentDomain = this.config.get("domain");
+            if (this.formContent.getValue("rightId").domainId === currentDomain) {
+                this.formContent.fields.leftId.$el.show();
+                this.formContent.fields.rightId.$el.hide();
+            } else {
+                this.formContent.fields.leftId.$el.hide();
             }
         },
 

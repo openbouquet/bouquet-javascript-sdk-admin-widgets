@@ -946,7 +946,7 @@ div.object-id input[disabled] {
 	width: 100%;
 	float: left;
 }
-.squid-api-relation-model-management .rightId {
+.squid-api-relation-model-management .rightId, .squid-api-relation-model-management .leftId  {
 	width: 33%;
 	float: left;
 	clear: both;
