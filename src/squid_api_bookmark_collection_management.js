@@ -16,6 +16,7 @@
         filteredOids: null,
         onChangeHandler : null,
         descriptionHover : null,
+        returnPaths: null,
         hierarchialList: null,
 
         init : function(options) {
@@ -25,6 +26,9 @@
             if (options.headerText) {
                 this.headerText = options.headerText;
             }
+            if (options.config) {
+                this.config = options.config;
+            }
             if (options.filteredPaths) {
                 this.filteredPaths = options.filteredPaths;
             }
@@ -33,6 +37,9 @@
             }
             if (options.onChangeHandler) {
                 this.onChangeHandler = options.onChangeHandler;
+            }
+            if (options.returnPaths) {
+                this.returnPaths = options.returnPaths;
             }
             if (options.descriptionHover) {
                 this.descriptionHover = options.descriptionHover;
@@ -380,7 +387,9 @@
                     collection[0].active = true;
                 }
                 this.jsonData.collection = collection;
-                console.log(paths);
+                if (this.returnPaths) {
+                    this.returnPaths.call(paths);
+                }
             }
 
             // render template

@@ -92,6 +92,25 @@
             },
             "fieldClass": "rightId"
         },
+        "leftId": {
+            "title": " ",
+            "type": "Object",
+            "subSchema": {
+                "projectId": {
+                    "options": [],
+                    "type": "Text",
+                    "title": " ",
+                    "editorClass": "hidden"
+                },
+                "domainId": {
+                    "options": [],
+                    "type": "Select",
+                    "editorClass": "form-control",
+                    "title": "Related With Left"
+                }
+            },
+            "fieldClass": "leftId"
+        },
         "leftName": {
             "type": "Text",
             "editorClass": "form-control",
@@ -116,26 +135,6 @@
             "editorClass": "form-control",
             "title": "Description",
             "fieldClass": "description",
-        },
-        "leftId": {
-            "title": " ",
-            "type": "Object",
-            "editorClass": "hidden",
-            "subSchema": {
-                "projectId": {
-                    "options": [],
-                    "type": "Text",
-                    "title": " ",
-                    "editorClass": "hidden"
-                },
-                "domainId": {
-                    "options": [],
-                    "type": "Select",
-                    "editorClass": "hidden",
-                    "title": " "
-                }
-            },
-            "fieldClass": "leftId"
         },
         "joinExpression": {
             "title": " ",
@@ -194,7 +193,7 @@
             "editorClass": " ",
             "options": [{
                 "val": "CATEGORICAL",
-                "label": "Indexed"
+                "label": "Use as a filter"
             }, {
                 "val": "CONTINUOUS",
                 "label": "Period"
@@ -498,6 +497,12 @@
         type: null,
         previous_matched_word_tooltip: null,
         previous_matched_info_tooltip: null,
+
+        events: {
+            "keyup":function() {
+                this.trigger('change', this);
+            }
+        },
 
         initialize: function (options) {
             // Call parent constructor
@@ -921,10 +926,35 @@
         }
     });
 
+    
+    var multiSelect = Backbone.Form.editors.Select.extend ({
+    
+        render: function() {
+            var me = this;
+            this.setOptions(this.schema.options);
+            var config = this.schema.config || {};
+
+            var elem = this;
+            setTimeout(function() {
+                elem.$el.prop('multiple', true);
+                elem.$el.multiselect({
+                    enableFiltering: true,
+                    enableFullValueFiltering: true,
+                    includeSelectAllOption: true,
+                    maxHeight: 500
+                });
+                elem.$el.multiselect("dataprovider", me.value);
+            }, 0);
+
+            return this;
+        }
+    });
+
     // Register custom editors
     Backbone.Form.editors.DomainExpressionEditor = domainExpressionEditor;
     Backbone.Form.editors.DimensionExpressionEditor = dimensionExpressionEditor;
     Backbone.Form.editors.MetricExpressionEditor = metricExpressionEditor;
     Backbone.Form.editors.RelationExpressionEditor = relationExpressionEditor;
     Backbone.Form.editors.DbCheckConnection = dbCheckConnection;
+    Backbone.Form.editors.MultiSelect = multiSelect;
 }));

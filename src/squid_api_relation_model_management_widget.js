@@ -55,6 +55,16 @@
             }
         },
 
+        afterRender: function() {
+            var currentDomain = this.config.get("domain");
+            if (this.formContent.getValue("rightId").domainId === currentDomain) {
+                this.formContent.fields.leftId.$el.show();
+                this.formContent.fields.rightId.$el.hide();
+            } else {
+                this.formContent.fields.leftId.$el.hide();
+            }
+        },
+
         cardinalityManipulate: function(data) {
             var cardinality = data.cardinality;
             if (cardinality === "many to zero or one") {

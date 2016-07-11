@@ -230,7 +230,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (helper = helpers.footerLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.footerLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</div>\n<div class=\"squid-api-model-management-footer\">\n      <button type=\"button\" class=\"btn btn-default btn-cancel\">Cancel</button>\n    <button type=\"button\" style=\"display: none;\" class=\"btn btn-primary btn-save-form\">Save</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
+  buffer += "\n</div>\n<div class=\"squid-api-model-management-footer\">\n      <button type=\"button\" class=\"btn btn-default btn-cancel-form\">Cancel</button>\n    <button type=\"button\" style=\"display: none;\" class=\"btn btn-primary btn-save-form\">Save</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
   return buffer;
   });
 
@@ -1496,12 +1496,6 @@ function program1(depth0,data) {
         },
 
         events: {
-            "click .btn-cancel": function() {
-                // reset parent view if cancel button clicked
-                if (this.cancelCallback) {
-                    this.cancelCallback.call();
-                }
-            },
             "click .open-model": function() {
                 if (this.openModelCallback) {
                     this.openModelCallback(this);
@@ -1539,6 +1533,7 @@ function program1(depth0,data) {
                                 me.onSave(model);
                             }
 
+                            me.$el.find(".btn-cancel-form").fadeOut();
                             me.$el.find(".btn-save-form").fadeOut();
 
                             me.status.set("message", "Sucessfully saved");
@@ -1548,6 +1543,16 @@ function program1(depth0,data) {
                         }
                     });
                 }
+            },
+            "click .btn-cancel-form": function() {
+                this.formContent.render();
+                this.$el.find(".modal-body").html(this.formContent.el);
+                // reset parent view if cancel button clicked
+                if (this.cancelCallback) {
+                    this.cancelCallback.call();
+                }
+                this.$el.find(".btn-cancel-form").fadeOut();
+                this.$el.find(".btn-save-form").fadeOut();
             },
             "click .copy-id": function() {
                 var clipboard = new Clipboard(".copy-id");
@@ -1613,7 +1618,9 @@ function program1(depth0,data) {
 
                 me.formContent.on("change", function() {
                     var saveBtn = me.$el.find(".btn-save-form");
+                    var cancelBtn = me.$el.find(".btn-cancel-form");
                     saveBtn.fadeIn();
+                    cancelBtn.fadeIn();
 
                     if (me.onFormContentsChange) {
                         me.onFormContentsChange.call(me);
@@ -1637,6 +1644,10 @@ function program1(depth0,data) {
 
                 if (me.afterRenderCallback) {
                     me.afterRenderCallback(me);
+                }
+
+                if (me.model.isNew()) {
+                    me.$el.find(".object-id").hide();
                 }
             });
 
@@ -1666,6 +1677,7 @@ function program1(depth0,data) {
         filteredOids: null,
         onChangeHandler : null,
         descriptionHover : null,
+        returnPaths: null,
         hierarchialList: null,
 
         init : function(options) {
@@ -1675,6 +1687,9 @@ function program1(depth0,data) {
             if (options.headerText) {
                 this.headerText = options.headerText;
             }
+            if (options.config) {
+                this.config = options.config;
+            }
             if (options.filteredPaths) {
                 this.filteredPaths = options.filteredPaths;
             }
@@ -1683,6 +1698,9 @@ function program1(depth0,data) {
             }
             if (options.onChangeHandler) {
                 this.onChangeHandler = options.onChangeHandler;
+            }
+            if (options.returnPaths) {
+                this.returnPaths = options.returnPaths;
             }
             if (options.descriptionHover) {
                 this.descriptionHover = options.descriptionHover;
@@ -2030,7 +2048,9 @@ function program1(depth0,data) {
                     collection[0].active = true;
                 }
                 this.jsonData.collection = collection;
-                console.log(paths);
+                if (this.returnPaths) {
+                    this.returnPaths.call(paths);
+                }
             }
 
             // render template
@@ -2440,6 +2460,11 @@ function program1(depth0,data) {
                                             //In case it is the first bookmark selected
                                             if (!savedNewConfig || !savedNewConfig.selection) {
                                                 savedNewConfig = newConfig;
+                                            } else {
+                                            	//V3 compatibility: initialize dimensions, metrics & order by from last saved state for the same bookmark
+                                            	newConfig.chosenDimensions = savedNewConfig.chosenDimensions;
+                                            	newConfig.chosenMetrics = savedNewConfig.chosenMetrics;
+                                            	newConfig.orderBy = savedNewConfig.orderBy;
                                             }
                                             var forcedSelection = { "compareTo" : [], "facets" : []};
 
@@ -3462,6 +3487,25 @@ function program1(depth0,data) {
             },
             "fieldClass": "rightId"
         },
+        "leftId": {
+            "title": " ",
+            "type": "Object",
+            "subSchema": {
+                "projectId": {
+                    "options": [],
+                    "type": "Text",
+                    "title": " ",
+                    "editorClass": "hidden"
+                },
+                "domainId": {
+                    "options": [],
+                    "type": "Select",
+                    "editorClass": "form-control",
+                    "title": "Related With Left"
+                }
+            },
+            "fieldClass": "leftId"
+        },
         "leftName": {
             "type": "Text",
             "editorClass": "form-control",
@@ -3486,26 +3530,6 @@ function program1(depth0,data) {
             "editorClass": "form-control",
             "title": "Description",
             "fieldClass": "description",
-        },
-        "leftId": {
-            "title": " ",
-            "type": "Object",
-            "editorClass": "hidden",
-            "subSchema": {
-                "projectId": {
-                    "options": [],
-                    "type": "Text",
-                    "title": " ",
-                    "editorClass": "hidden"
-                },
-                "domainId": {
-                    "options": [],
-                    "type": "Select",
-                    "editorClass": "hidden",
-                    "title": " "
-                }
-            },
-            "fieldClass": "leftId"
         },
         "joinExpression": {
             "title": " ",
@@ -3564,7 +3588,7 @@ function program1(depth0,data) {
             "editorClass": " ",
             "options": [{
                 "val": "CATEGORICAL",
-                "label": "Indexed"
+                "label": "Use as a filter"
             }, {
                 "val": "CONTINUOUS",
                 "label": "Period"
@@ -3868,6 +3892,12 @@ function program1(depth0,data) {
         type: null,
         previous_matched_word_tooltip: null,
         previous_matched_info_tooltip: null,
+
+        events: {
+            "keyup":function() {
+                this.trigger('change', this);
+            }
+        },
 
         initialize: function (options) {
             // Call parent constructor
@@ -4291,12 +4321,37 @@ function program1(depth0,data) {
         }
     });
 
+    
+    var multiSelect = Backbone.Form.editors.Select.extend ({
+    
+        render: function() {
+            var me = this;
+            this.setOptions(this.schema.options);
+            var config = this.schema.config || {};
+
+            var elem = this;
+            setTimeout(function() {
+                elem.$el.prop('multiple', true);
+                elem.$el.multiselect({
+                    enableFiltering: true,
+                    enableFullValueFiltering: true,
+                    includeSelectAllOption: true,
+                    maxHeight: 500
+                });
+                elem.$el.multiselect("dataprovider", me.value);
+            }, 0);
+
+            return this;
+        }
+    });
+
     // Register custom editors
     Backbone.Form.editors.DomainExpressionEditor = domainExpressionEditor;
     Backbone.Form.editors.DimensionExpressionEditor = dimensionExpressionEditor;
     Backbone.Form.editors.MetricExpressionEditor = metricExpressionEditor;
     Backbone.Form.editors.RelationExpressionEditor = relationExpressionEditor;
     Backbone.Form.editors.DbCheckConnection = dbCheckConnection;
+    Backbone.Form.editors.MultiSelect = multiSelect;
 }));
 
 (function (root, factory) {
@@ -5908,6 +5963,16 @@ function program1(depth0,data) {
             }
             if (leftCardinality === "ONE" && rightCardinality === "ZERO_OR_ONE") {
                 this.model.set("cardinality", "one to zero or one");
+            }
+        },
+
+        afterRender: function() {
+            var currentDomain = this.config.get("domain");
+            if (this.formContent.getValue("rightId").domainId === currentDomain) {
+                this.formContent.fields.leftId.$el.show();
+                this.formContent.fields.rightId.$el.hide();
+            } else {
+                this.formContent.fields.leftId.$el.hide();
             }
         },
 
