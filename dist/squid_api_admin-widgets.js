@@ -1516,9 +1516,18 @@ function program1(depth0,data) {
 
                     // for any custom model manipulation before save
                     data = this.customDataManipulation(data);
+                    
+                    // prevent from saving children collections
+                    var modelClone = this.model.clone();
+                    var children = this.model.get("_children");
+                    if (children) {
+                        for (var i=0; i<children.length; i++) {
+                            modelClone.set(children[i], []);
+                        }
+                    }
 
                     // save model
-                    this.model.save(data, {
+                    modelClone.save(data, {
                         wait: true,
                         success: function(model) {
                             // status update
