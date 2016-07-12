@@ -4006,6 +4006,11 @@ function program1(depth0,data) {
 
                         if (me.type === "relations" || me.type === "domains") {
                             me.url = squid_api.apiURL + "/projects/" + project.id + "/" + me.type + "-suggestion?access_token=" + squid_api.model.login.get("accessToken") + "&expression=" + encodeURIComponent(prefix);
+                            if (me.type === "relations") {
+                                var leftId = me.$el.parents(".squid-api-relation-model-management").find(".leftId").find("select").val();
+                                var rightId = me.$el.parents(".squid-api-relation-model-management").find(".rightId").find("select").val();
+                                me.url += "&leftDomainId=" + leftId + "&rightDomainId=" + rightId;
+                            }
                             $.getJSON(
                                 me.url,
 
