@@ -1436,6 +1436,7 @@ function program1(depth0,data) {
         collectionPluralLabel : null,
         onFormContentsChange: null,
         afterRenderCallback: null,
+        externalCollection: null,
 
         initialize: function(options) {
             this.status = squid_api.model.status;
@@ -1464,6 +1465,9 @@ function program1(depth0,data) {
             }
             if (options.onFormContentsChange) {
                 this.onFormContentsChange = options.onFormContentsChange;
+            }
+            if (options.externalCollection) {
+                this.externalCollection = options.externalCollection;
             }
             if (options.comparator) {
                 this.comparator = options.comparator;
@@ -1528,6 +1532,13 @@ function program1(depth0,data) {
                             if (me.cancelCallback) {
                                 me.cancelCallback.call();
                             }
+
+                            // allow an externalCollection to be updated
+                            if (me.externalCollection) {
+                                me.externalCollection.collection.set(model,{remove: false});
+                                me.externalCollection.collection.trigger('sync');
+                            }
+
                             // call once saved
                             if (me.onSave) {
                                 me.onSave(model);
