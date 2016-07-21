@@ -108,8 +108,13 @@
 
                             // allow an externalCollection to be updated
                             if (me.externalCollection) {
-                                me.externalCollection.collection.set(model,{remove: false});
-                                me.externalCollection.collection.trigger('sync');
+                                if (model.isNew()) {
+                                    me.externalCollection.collection.add(model);
+                                    me.externalCollection.collection.trigger('add');
+                                } else {
+                                    me.externalCollection.collection.set(model,{remove: false});
+                                    me.externalCollection.collection.trigger('sync');
+                                }
                             }
 
                             // call once saved
