@@ -12,6 +12,7 @@
         onChangeHandler : null,
         filterBy : null,
         buttonText : null,
+        displayAll : null,
         customView : null,
 
         init: function(options) {
@@ -43,6 +44,9 @@
                 }
                 if (options.customView) {
                     this.customView = options.customView;
+                }
+                if (options.displayAll) {
+                    this.displayAll = options.displayAll;
                 }
                 if (options.buttonText) {
                     this.buttonText = options.buttonText;
@@ -112,7 +116,7 @@
 
                     // check dynamic rules
                     var add = false;
-                    if ((domain.get("dynamic") === true) || (item.get("dynamic") === false)) {
+                    if ((this.displayAll) || (domain.get("dynamic") === true) || (item.get("dynamic") === false)) {
                         if (this.filterBy) {
                             if (_.contains(this.filterBy, item.get("oid"))) {
                                 add = true;
