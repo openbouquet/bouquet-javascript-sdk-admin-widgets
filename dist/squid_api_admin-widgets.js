@@ -5260,14 +5260,12 @@ function program1(depth0,data) {
 
                     // check dynamic rules
                     var add = false;
-                    if ((this.displayAll) || (domain.get("dynamic") === true) || (item.get("dynamic") === false)) {
-                        if (this.filterBy) {
-                            if (_.contains(this.filterBy, item.get("oid"))) {
-                                add = true;
-                            }
-                        } else {
+                    if (this.filterBy) {
+                        if (_.contains(this.filterBy, item.get("oid"))) {
                             add = true;
                         }
+                    } else {
+                        add = true;
                     }
 
                     if ((add === true) && (this.available || this.chosen)) {
