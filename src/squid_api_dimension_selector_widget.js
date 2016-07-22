@@ -10,7 +10,6 @@
         chosen : "chosenDimensions",
         selected : "selectedDimensions",
         afterRender : null,
-        displayAll : null,
         singleSelect : false,
         singleSelectIndex : null,
         configurationEnabled : false,
@@ -42,9 +41,6 @@
                 }
                 if (options.dimensionIndex !== null) {
                     this.dimensionIndex = options.dimensionIndex;
-                }
-                if (options.displayAll) {
-                    this.displayAll = options.displayAll;
                 }
                 if (options.afterRender) {
                     this.afterRender = options.afterRender;
@@ -94,31 +90,7 @@
                 this.events = squid_api.view.CollectionSelectorUtils.events;
             }
 
-            if (this.displayAll) {
-                this.listenTo(this.config,"change:domain", this.fetchCollection);
-            }
             this.listenTo(this.status,"change:status", this.enable);
-        },
-
-        fetchCollection: function() {
-            var me = this;
-            this.loadCollection().done(function(collection) {
-                me.dimensionCollection = collection;
-                me.render();
-            }).fail(function() {
-                console.error("Error Fetching Dimensions");
-            });
-        },
-
-        loadCollection : function(parentId) {
-            var me = this;
-            return squid_api.getCustomer().then(function(customer) {
-                return customer.get("projects").load(squid_api.model.config.get("project")).then(function(project) {
-                    return project.get("domains").load(squid_api.model.config.get("domain")).then(function(domain) {
-                        return domain.get("dimensions").load();
-                    });
-                });
-            });
         },
 
         enableDisplay: function() {
@@ -253,37 +225,6 @@
                 // check if empty
                 if (jsonData.options.length === 0) {
                     jsonData.empty = true;
-                }
-
-                if (this.displayAll) {
-                    if (this.dimensionCollection) {
-                        var dims = this.dimensionCollection.models;
-                        for (var d=0; d<dims.length; d++) {
-                            var model = this.dimensionCollection.at(d);
-                            var found = false;
-                            for(var c=0; c<selection.facets.length; c++) {
-                                if (selection.facets[c].dimension.oid == model.get("oid")) {
-                                    found = true;
-                                    break;
-                                }
-                            }
-                            if (! found) {
-                                jsonData.options.push({
-                                    "label" : model.get("name"),
-                                    "value" : "@'" + this.config.get("domain") + ".@'" + model.get("oid") + "'",
-                                    "selected" : this.isChosen(model),
-                                    "error" : model.get("error")
-                                });
-                            }    
-                        }
-                    }
-
-                    // ordering
-                    jsonData.options.sort(function(a, b){
-                        if(a.label < b.label) return -1;
-                        if(a.label > b.label) return 1;
-                        return 0;
-                    });
                 }
 
                 this.renderView(jsonData);
