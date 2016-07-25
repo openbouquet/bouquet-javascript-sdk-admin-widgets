@@ -6111,7 +6111,7 @@ function program1(depth0,data) {
                 // automatically populate rightId
                 this.formContent.fields.rightId.setValue({
                     "projectId": this.config.get("project"),
-                    "domainId" : this.formContent.fields.rightId.schema.subSchema.domainId.options[0].val
+                    "domainId" : this.domainList[0].val
                 });
                 // auto select default form fields
                 this.formContent.fields.leftName.setValue(this.formContent.fields.leftId.getValue().domainId);
@@ -6177,10 +6177,11 @@ function program1(depth0,data) {
                                     currentRightDomain.push(obj);
                                 }
                             }  
-                        } 
+                        }
 
                         schema.leftId.subSchema.domainId.options = currentLeftDomain;
                         schema.rightId.subSchema.domainId.options = currentRightDomain;
+
                         me.domainList = domainList.sort(me.comparator);
 
                         dfd.resolve(schema);
