@@ -150,7 +150,7 @@
         },
 
         updateDomains: function(e) {
-            if ($(e.currentTarget).find("option").length === 1) {
+            if ($(e.currentTarget).find("option").length <= 1) {
                 var optionsAsString = "";
                 for(var i=0; i<this.domainList.length; i++) {
                     if (this.domainList[i].val !== $(e.currentTarget).val()) {
