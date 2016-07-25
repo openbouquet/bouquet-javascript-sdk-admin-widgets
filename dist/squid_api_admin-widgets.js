@@ -6074,10 +6074,10 @@ function program1(depth0,data) {
 
                 }
             },
-            "click .rightId select" : function(e) {
+            "mouseover .rightId select" : function(e) {
                 this.updateDomains(e);
             },
-            "click .leftId select" : function(e) {
+            "mouseover .leftId select" : function(e) {
                 this.updateDomains(e);
             }
         },
