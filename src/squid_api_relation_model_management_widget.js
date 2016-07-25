@@ -140,6 +140,24 @@
                     });
 
                 }
+            },
+            "click .rightId select" : function(e) {
+                this.updateDomains(e);
+            },
+            "click .leftId select" : function(e) {
+                this.updateDomains(e);
+            }
+        },
+
+        updateDomains: function(e) {
+            if ($(e.currentTarget).find("option").length === 1) {
+                var optionsAsString = "";
+                for(var i=0; i<this.domainList.length; i++) {
+                    if (this.domainList[i].val !== $(e.currentTarget).val()) {
+                        optionsAsString += "<option value='" + this.domainList[i].val + "'>" + this.domainList[i].label + "</option>";
+                    } 
+                }
+                $(e.currentTarget).append(optionsAsString);
             }
         },
 
@@ -199,22 +217,45 @@
             squid_api.getCustomer().then(function(customer) {
                 customer.get("projects").load(project).then(function(project) {
                     project.get("domains").load().then(function(domains) {
-                        var arr = [];
+                        var domainList = [];
+
+                        var currentLeftDomain = [];
+                        var currentRightDomain = [];
+
                         for (i=0; i<domains.size(); i++) {
+                            var domain = domains.at(i);
+
                             obj = {};
-                            obj.val = domains.at(i).get("oid");
-                            obj.label = domains.at(i).get("name");
-                            arr.push(obj);
-                        }
-                        schema.leftId.subSchema.domainId.options = arr.sort(me.comparator);
-                        schema.rightId.subSchema.domainId.options = arr.sort(me.comparator);
+                            obj.val = domain.get("oid");
+                            obj.label = domain.get("name");
+
+                            // push for widget scope array
+                            domainList.push(obj);
+
+                            // current domains
+                            if (me.model.get("leftId")) {
+                                if (domain.get("oid") === me.model.get("leftId").domainId) {
+                                    currentLeftDomain.push(obj);
+                                }
+
+                            }
+                            if (me.model.get("rightId")) {
+                                if (domain.get("oid") === me.model.get("rightId").domainId) {
+                                    currentRightDomain.push(obj);
+                                }
+                            }  
+                        } 
+
+                        schema.leftId.subSchema.domainId.options = currentLeftDomain;
+                        schema.rightId.subSchema.domainId.options = currentRightDomain;
+                        me.domainList = domainList.sort(me.comparator);
+
                         dfd.resolve(schema);
                     });
                 });
             });
             return dfd;
         }
-
     });
 
     return View;
