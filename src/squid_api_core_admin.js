@@ -143,6 +143,7 @@
                 "value": {
                     "title": "Join Expression",
                     "type": "RelationExpressionEditor",
+                    "validators": ['required'],
                     "editorClass": "form-control suggestion-box"
                 }
             },

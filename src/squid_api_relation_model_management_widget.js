@@ -110,7 +110,8 @@
                     this.cancelCallback.call();
                 }
             },
-            "click .btn-save-form" : function() {
+            "click .btn-save-form" : function(e) {
+                e.stopPropagation();
                 var me = this;
                 var error = this.formContent.validate();
                 if (! error) {

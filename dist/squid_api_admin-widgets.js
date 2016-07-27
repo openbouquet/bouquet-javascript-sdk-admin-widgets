@@ -3554,6 +3554,7 @@ function program1(depth0,data) {
                 "value": {
                     "title": "Join Expression",
                     "type": "RelationExpressionEditor",
+                    "validators": ['required'],
                     "editorClass": "form-control suggestion-box"
                 }
             },
@@ -6104,7 +6105,8 @@ function program1(depth0,data) {
                     this.cancelCallback.call();
                 }
             },
-            "click .btn-save-form" : function() {
+            "click .btn-save-form" : function(e) {
+                e.stopPropagation();
                 var me = this;
                 var error = this.formContent.validate();
                 if (! error) {
