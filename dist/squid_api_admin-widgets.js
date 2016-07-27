@@ -6183,7 +6183,7 @@ function program1(depth0,data) {
                 });
                 // auto select default form fields
                 this.formContent.fields.leftName.setValue(this.formContent.fields.leftId.getValue().domainId);
-                this.formContent.fields.rightName.setValue(this.formContent.fields.rightId.getValue().domainId);
+                this.formContent.fields.rightName.setValue(this.domainList[0].label);
                 this.formContent.fields.cardinality.setValue(this.formContent.fields.cardinality.schema.options[0]);
             }
 
@@ -6244,7 +6244,16 @@ function program1(depth0,data) {
                                 if (domain.get("oid") === me.model.get("rightId").domainId) {
                                     currentRightDomain.push(obj);
                                 }
-                            }  
+                            }
+                            if (me.model.isNew()) {
+                                if (domain.get("oid") === me.config.get("domain")) {
+                                    currentLeftDomain.push(obj);
+                                }
+                            }
+                        }
+
+                        if (me.model.isNew()) {
+                            currentRightDomain.push(domainList[0]);
                         }
 
                         schema.leftId.subSchema.domainId.options = currentLeftDomain;
