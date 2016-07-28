@@ -1527,7 +1527,16 @@ function program1(depth0,data) {
                     // save model
                     modelClone.save(data, {
                         wait: true,
-                        success: function(model) {
+                        success: function() {
+                            // update the original model with non-children attributes
+                            var excluded = children;
+                            var attributes = modelClone.attributes;
+                            for (var att in attributes) {
+                                if (!excluded || (excluded.indexOf(att)<0)) {
+                                    me.model.set(att, modelClone.get(att));
+                                }
+                            }
+                            
                             // status update
                             if (me.cancelCallback) {
                                 me.cancelCallback.call();
@@ -1535,18 +1544,18 @@ function program1(depth0,data) {
 
                             // allow an externalCollection to be updated
                             if (me.externalCollection) {
-                                if (model.isNew()) {
-                                    me.externalCollection.collection.add(model);
+                                if (me.model.isNew()) {
+                                    me.externalCollection.collection.add(me.model);
                                     me.externalCollection.collection.trigger('add');
                                 } else {
-                                    me.externalCollection.collection.set(model,{remove: false});
+                                    me.externalCollection.collection.set(me.model,{remove: false});
                                     me.externalCollection.collection.trigger('sync');
                                 }
                             }
 
                             // call once saved
                             if (me.onSave) {
-                                me.onSave(model);
+                                me.onSave(me.model);
                             }
 
                             me.$el.find(".btn-cancel-form").fadeOut();
