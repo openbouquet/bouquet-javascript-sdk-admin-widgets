@@ -1515,6 +1515,8 @@ function program1(depth0,data) {
                     // for any custom model manipulation before save
                     data = this.customDataManipulation(data);
                     
+                    var isNewModel = this.model.isNew();
+                    
                     // prevent from saving children collections
                     var modelClone = this.model.clone();
                     var children = this.model.get("_children");
@@ -1544,7 +1546,7 @@ function program1(depth0,data) {
 
                             // allow an externalCollection to be updated
                             if (me.externalCollection) {
-                                if (me.model.isNew()) {
+                                if (isNewModel) {
                                     me.externalCollection.collection.add(me.model);
                                     me.externalCollection.collection.trigger('add');
                                 } else {
