@@ -1761,8 +1761,11 @@ function program1(depth0,data) {
                 value = $(event.target).attr("data-attr");
             }
             //Callback to keep filters selection on Counter apps for ex
+            
             if (this.onChangeHandler) {
-                this.onChangeHandler(value ,this.collection);
+            	if (squid_api.model.config && value != squid_api.model.config.get("bookmark")) {
+            		this.onChangeHandler(value ,this.collection);
+            	}
             }
             else {
                 squid_api.setBookmarkId(value);
