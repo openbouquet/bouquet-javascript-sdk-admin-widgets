@@ -4359,22 +4359,19 @@ function program1(depth0,data) {
 
     
     var multiSelect = Backbone.Form.editors.Select.extend ({
-    
+
         render: function() {
             var me = this;
-            this.setOptions(this.schema.options);
+            this.$el.prop('multiple', true);
             var config = this.schema.config || {};
-
-            var elem = this;
             setTimeout(function() {
-                elem.$el.prop('multiple', true);
-                elem.$el.multiselect({
+                me.$el.multiselect({
                     enableFiltering: true,
                     enableFullValueFiltering: true,
                     includeSelectAllOption: true,
                     maxHeight: 500
                 });
-                elem.$el.multiselect("dataprovider", me.value);
+                me.$el.multiselect("dataprovider", me.schema.options);
             }, 0);
 
             return this;
