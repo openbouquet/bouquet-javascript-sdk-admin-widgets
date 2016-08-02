@@ -4360,11 +4360,19 @@ function program1(depth0,data) {
     
     var multiSelect = Backbone.Form.editors.Select.extend ({
 
+        getValue: function() {
+            return this.$el.find('option:selected').map(function(i,v) {
+                return this.value;
+            }).get();
+        },
+
         render: function() {
             var me = this;
+
+            // set multiple on select
             this.$el.prop('multiple', true);
-            var config = this.schema.config || {};
             setTimeout(function() {
+                // use multiselect widget & set default schema
                 me.$el.multiselect({
                     enableFiltering: true,
                     enableFullValueFiltering: true,
