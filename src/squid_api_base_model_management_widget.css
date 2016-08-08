@@ -206,45 +206,45 @@
 }
 
 .ace_content .ace_table:before {
-    background: #2c3e50;
+    background: black;
 }
 
 .ace_content .ace_table:after{
-    background: #fff;
+    background: black;
 }
 
 .ace_content .ace_date:before {
-    background: hotpink;
+    background: black;
 }
 
 .ace_content .ace_date:after{
-    background: #fff;
+    background: black;
 }
 
 .ace_content .ace_domain:before {
-    background: #c0392b;
+    background: black;
 }
 
 .ace_content .ace_domain:after{
-    background: #fff;
+    background: black;
 }
 
 .ace_content .ace_string:before {
-    background: rgb(255,46,95);
+    background: black;
 }
 
 .ace_content .ace_string:after{
-    background: #fff;
+    background: black;
     /*ace_string is already defined in ace editor default theme*/
     color: #000000 !important;
 }
 
 .ace_content .ace_other:before {
-    background: deepskyblue;
+    background: black;
 }
 
 .ace_content .ace_other:after{
-    background: #fff;
+    background: black;
 }
 
 .ace_content .ace_numeric:before {
@@ -252,15 +252,15 @@
 }
 
 .ace_content .ace_numeric:after{
-    background: #fff;
+    background: black;
 }
 
 .ace_content .ace_condition:before {
-    background: darkgoldenrod;
+    background: black;
 }
 
 .ace_content .ace_condition:after{
-    background: #fff;
+    background: black;
 }
 
 .ace_content .ace_DOMAIN:before {
@@ -280,20 +280,21 @@
 }
 
 .ace_content .ace_view:before {
-    background: #7a8799;
+   background: black;
 }
 
 .ace_content .ace_view:after{
-    background: #fff;
+    background: black;
 }
 
 .ace_content .ace_metric:before {
-    background: grey;
+    background: black;
 }
 
 .ace_content .ace_metric:after{
-    background: #fff;
+    background: black;
 }
+
 
 .ace_tooltip_hover {
     background-color: #FFF;
@@ -320,6 +321,11 @@
     pointer-events: none;
 }
 
+.ace_editor.ace_autocomplete {
+      width: 50% !important;
+      font-size: 1.1em;
+      line-height: 1.5;
+}
 
 .object-id {
     padding-top: 5px;
