@@ -133,9 +133,6 @@
                                 me.onSave(me.model);
                             }
 
-                            me.$el.find(".btn-cancel-form").fadeOut();
-                            me.$el.find(".btn-save-form").fadeOut();
-
                             me.status.set("message", "Sucessfully saved");
                         },
                         error: function(xhr) {
@@ -151,8 +148,6 @@
                 if (this.cancelCallback) {
                     this.cancelCallback.call();
                 }
-                this.$el.find(".btn-cancel-form").fadeOut();
-                this.$el.find(".btn-save-form").fadeOut();
             },
             "click .copy-id": function() {
                 var clipboard = new Clipboard(".copy-id");
@@ -217,10 +212,6 @@
                 // me.originalFormContent = me.formContent.getValue();
 
                 me.formContent.on("change", function() {
-                    var saveBtn = me.$el.find(".btn-save-form");
-                    var cancelBtn = me.$el.find(".btn-cancel-form");
-                    saveBtn.fadeIn();
-                    cancelBtn.fadeIn();
 
                     if (me.onFormContentsChange) {
                         me.onFormContentsChange.call(me);
