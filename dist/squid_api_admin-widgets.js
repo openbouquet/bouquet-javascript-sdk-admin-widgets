@@ -3531,7 +3531,11 @@ function program1(depth0,data) {
             "type": "Text",
             "editorClass": "form-control",
             "fieldClass": "leftName",
-            "title": " "
+            "title": " ",
+            "validators": [{
+                type: 'required',
+                message: ' '
+            }]
         },
         "cardinality": {
             "type": "Select",
@@ -3544,7 +3548,11 @@ function program1(depth0,data) {
             "type": "Text",
             "editorClass": "form-control",
             "fieldClass": "rightName",
-            "title": " "
+            "title": " ",
+            "validators": [{
+                type: 'required',
+                message: ' '
+            }]
         },
         "description": {
             "type": "Text",
@@ -3559,7 +3567,10 @@ function program1(depth0,data) {
                 "value": {
                     "title": "Join Expression",
                     "type": "RelationExpressionEditor",
-                    "validators": ['required'],
+                    "validators": [{
+                        type: 'required',
+                        message: ' '
+                    }],
                     "editorClass": "form-control suggestion-box"
                 }
             },

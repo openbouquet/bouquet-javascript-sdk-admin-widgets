@@ -115,7 +115,11 @@
             "type": "Text",
             "editorClass": "form-control",
             "fieldClass": "leftName",
-            "title": " "
+            "title": " ",
+            "validators": [{
+                type: 'required',
+                message: ' '
+            }]
         },
         "cardinality": {
             "type": "Select",
@@ -128,7 +132,11 @@
             "type": "Text",
             "editorClass": "form-control",
             "fieldClass": "rightName",
-            "title": " "
+            "title": " ",
+            "validators": [{
+                type: 'required',
+                message: ' '
+            }]
         },
         "description": {
             "type": "Text",
@@ -143,7 +151,10 @@
                 "value": {
                     "title": "Join Expression",
                     "type": "RelationExpressionEditor",
-                    "validators": ['required'],
+                    "validators": [{
+                        type: 'required',
+                        message: ' '
+                    }],
                     "editorClass": "form-control suggestion-box"
                 }
             },
