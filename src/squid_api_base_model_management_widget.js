@@ -171,6 +171,12 @@
             return dfd.resolve(this.schema);
         },
 
+        removeView: function() {
+            // Unbind view completely
+            this.undelegateEvents();
+            this.$el.removeData().unbind();
+        },
+
         afterRender: function() {
             // to be overridden from other model management widgets
         },

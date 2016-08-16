@@ -1598,6 +1598,12 @@ function program1(depth0,data) {
             return dfd.resolve(this.schema);
         },
 
+        removeView: function() {
+            // Unbind view completely
+            this.undelegateEvents();
+            this.$el.removeData().unbind();
+        },
+
         afterRender: function() {
             // to be overridden from other model management widgets
         },
@@ -3663,7 +3669,10 @@ function program1(depth0,data) {
                     "type": "DimensionExpressionEditor",
                     "editorClass": "form-control suggestion-box",
                     "title": "Expression Value (use Ctrl-Space to have completion)",
-                    "validators": ['required']
+                    "validators": [{
+                        type: 'required',
+                        message: ' '
+                    }]
                 }
             },
             "position": 3,
@@ -3718,7 +3727,11 @@ function program1(depth0,data) {
                 "value": {
                     "title": "Expression Value (use Ctrl-Space to have completion)",
                     "type": "MetricExpressionEditor",
-                    "editorClass": "form-control suggestion-box"
+                    "editorClass": "form-control suggestion-box",
+                    "validators": [{
+                        type: 'required',
+                        message: ' '
+                    }]
                 }
             },
             "position": 1,
