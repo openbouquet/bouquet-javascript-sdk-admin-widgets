@@ -1001,8 +1001,14 @@ function program1(depth0,data) {
                 var selectionChanged = this.config.hasChanged(me.configSelectedId) || (this.config.get(me.configSelectedId) && ! this.selectedModel);
                 this.initModel(this.config, parentChanged, selectionChanged);
             });
+            // listen for status change
+            this.listenTo(this.status, "change:status", this.statusUpdate);
 
             //this.render();
+        },
+
+        statusUpdate: function() {
+            // to be overridden
         },
 
         /**
@@ -1742,6 +1748,15 @@ function program1(depth0,data) {
             });
         },
 
+        statusUpdate: function() {
+            var status = this.status.get("status");
+            if (status === "RUNNING") {
+                this.$el.find("a").addClass("disabled");
+            } else {
+                this.$el.find("a").removeClass("disabled");
+            }
+        },
+
         createModel : function() {
             var model = new this.collection.model();
             // set config to current state
@@ -1753,21 +1768,23 @@ function program1(depth0,data) {
         },
 
         eventSelect : function(event) {
-            var value = $(event.target).parents("li").attr("data-attr");
-            if (! value) {
-                value = $(event.target).attr("data-attr");
-            }
-            //Callback to keep filters selection on Counter apps for ex
+            if (! $(event.target).hasClass("disabled")) {
+                var value = $(event.target).parents("li").attr("data-attr");
+                if (! value) {
+                    value = $(event.target).attr("data-attr");
+                }
+                //Callback to keep filters selection on Counter apps for ex
             
-            if (this.onChangeHandler) {
-            	if (squid_api.model.config && value != squid_api.model.config.get("bookmark")) {
-            		this.onChangeHandler(value ,this.collection);
-            	}
-            }
-            else {
-                squid_api.setBookmarkId(value);
-                if (this.onSelect) {
-                    this.onSelect.call();
+                if (this.onChangeHandler) {
+                    if (squid_api.model.config && value != squid_api.model.config.get("bookmark")) {
+                        this.onChangeHandler(value ,this.collection);
+                    }
+                }
+                else {
+                    squid_api.setBookmarkId(value);
+                    if (this.onSelect) {
+                        this.onSelect.call();
+                    }
                 }
             }
         },
