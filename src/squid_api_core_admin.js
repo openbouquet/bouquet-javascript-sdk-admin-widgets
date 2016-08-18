@@ -660,7 +660,7 @@
                                             score: ea.ranking,
                                             meta: ea.valueType,
                                             origin: me.prefix,
-                                            className: ea.objectType.toUpperCase() + " ." + ea.valueType.toLowerCase()
+                                            className: ea.valueType.toUpperCase() + " ." + ea.valueType.toLowerCase()
                                         };
                                     }))).sort(function (a, b) {
                                         return a.name.localeCompare(b.name);
@@ -703,7 +703,7 @@
                                                 score: ea.ranking,
                                                 meta: ea.valueType,
                                                 origin: me.prefix,
-                                                className: ea.objectType.toUpperCase() + " ." + ea.valueType.toLowerCase()
+                                                className: ea.valueType.toUpperCase() + " ." + ea.valueType.toLowerCase()
                                             };
                                         }))).sort(function (a, b) {
                                             return a.name.localeCompare(b.name);
