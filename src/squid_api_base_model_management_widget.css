@@ -279,6 +279,34 @@
     content:  "\f061";
 }
 
+.ace_content .ace_VIEW:before {
+    content:  "\f06e";
+}
+
+.ace_content .ace_METRIC:before {
+    content:  "\f0fe";
+}
+
+.ace_content .ace_CONDITION:before {
+    content:  "\f128";
+}
+
+.ace_content .ace_NUMERIC:before {
+    content:  "\f067";
+}
+
+.ace_content .ace_OTHER:before {
+    content:  "\f249";
+}
+
+.ace_content .ace_DATE:before {
+    content:  "\f017";
+}
+
+.ace_content .ace_STRING:before {
+    content:  "\f10e";
+}
+
 .ace_content .ace_view:before {
    background: black;
 }
