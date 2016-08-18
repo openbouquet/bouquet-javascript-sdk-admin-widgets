@@ -469,6 +469,7 @@
                             model[att] = item.get(att);
                         }
                         model.visible = true;
+                        model.dynamic = item.get("dynamic");
                         model.roles = this.getModelRoles(item);
                         model.selected = (model.oid === selectedId);
                         models.push(model);
