@@ -230,7 +230,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (helper = helpers.footerLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.footerLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</div>\n<div class=\"squid-api-model-management-footer\">\n      <button type=\"button\" class=\"btn btn-default btn-cancel-form\">Cancel</button>\n    <button type=\"button\" style=\"display: none;\" class=\"btn btn-primary btn-save-form\">Save</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
+  buffer += "\n</div>\n<div class=\"squid-api-model-management-footer\">\n      <button type=\"button\" class=\"btn btn-default btn-cancel-form\">Cancel</button>\n    <button type=\"button\" class=\"btn btn-primary btn-save-form\">Save</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
   return buffer;
   });
 
@@ -1001,8 +1001,14 @@ function program1(depth0,data) {
                 var selectionChanged = this.config.hasChanged(me.configSelectedId) || (this.config.get(me.configSelectedId) && ! this.selectedModel);
                 this.initModel(this.config, parentChanged, selectionChanged);
             });
+            // listen for status change
+            this.listenTo(this.status, "change:status", this.statusUpdate);
 
             //this.render();
+        },
+
+        statusUpdate: function() {
+            // to be overridden
         },
 
         /**
@@ -1560,9 +1566,6 @@ function program1(depth0,data) {
                                 me.onSave(me.model);
                             }
 
-                            me.$el.find(".btn-cancel-form").fadeOut();
-                            me.$el.find(".btn-save-form").fadeOut();
-
                             me.status.set("message", "Sucessfully saved");
                         },
                         error: function(xhr) {
@@ -1578,8 +1581,6 @@ function program1(depth0,data) {
                 if (this.cancelCallback) {
                     this.cancelCallback.call();
                 }
-                this.$el.find(".btn-cancel-form").fadeOut();
-                this.$el.find(".btn-save-form").fadeOut();
             },
             "click .copy-id": function() {
                 var clipboard = new Clipboard(".copy-id");
@@ -1601,6 +1602,12 @@ function program1(depth0,data) {
             var dfd = $.Deferred();
             // to be overridden from other model management widgets
             return dfd.resolve(this.schema);
+        },
+
+        removeView: function() {
+            // Unbind view completely
+            this.undelegateEvents();
+            this.$el.removeData().unbind();
         },
 
         afterRender: function() {
@@ -1644,10 +1651,6 @@ function program1(depth0,data) {
                 // me.originalFormContent = me.formContent.getValue();
 
                 me.formContent.on("change", function() {
-                    var saveBtn = me.$el.find(".btn-save-form");
-                    var cancelBtn = me.$el.find(".btn-cancel-form");
-                    saveBtn.fadeIn();
-                    cancelBtn.fadeIn();
 
                     if (me.onFormContentsChange) {
                         me.onFormContentsChange.call(me);
@@ -1745,6 +1748,15 @@ function program1(depth0,data) {
             });
         },
 
+        statusUpdate: function() {
+            var status = this.status.get("status");
+            if (status === "RUNNING") {
+                this.$el.find("a").addClass("disabled");
+            } else {
+                this.$el.find("a").removeClass("disabled");
+            }
+        },
+
         createModel : function() {
             var model = new this.collection.model();
             // set config to current state
@@ -1756,21 +1768,23 @@ function program1(depth0,data) {
         },
 
         eventSelect : function(event) {
-            var value = $(event.target).parents("li").attr("data-attr");
-            if (! value) {
-                value = $(event.target).attr("data-attr");
-            }
-            //Callback to keep filters selection on Counter apps for ex
+            if (! $(event.target).hasClass("disabled")) {
+                var value = $(event.target).parents("li").attr("data-attr");
+                if (! value) {
+                    value = $(event.target).attr("data-attr");
+                }
+                //Callback to keep filters selection on Counter apps for ex
             
-            if (this.onChangeHandler) {
-            	if (squid_api.model.config && value != squid_api.model.config.get("bookmark")) {
-            		this.onChangeHandler(value ,this.collection);
-            	}
-            }
-            else {
-                squid_api.setBookmarkId(value);
-                if (this.onSelect) {
-                    this.onSelect.call();
+                if (this.onChangeHandler) {
+                    if (squid_api.model.config && value != squid_api.model.config.get("bookmark")) {
+                        this.onChangeHandler(value ,this.collection);
+                    }
+                }
+                else {
+                    squid_api.setBookmarkId(value);
+                    if (this.onSelect) {
+                        this.onSelect.call();
+                    }
                 }
             }
         },
@@ -3540,7 +3554,11 @@ function program1(depth0,data) {
             "type": "Text",
             "editorClass": "form-control",
             "fieldClass": "leftName",
-            "title": " "
+            "title": " ",
+            "validators": [{
+                type: 'required',
+                message: ' '
+            }]
         },
         "cardinality": {
             "type": "Select",
@@ -3553,7 +3571,11 @@ function program1(depth0,data) {
             "type": "Text",
             "editorClass": "form-control",
             "fieldClass": "rightName",
-            "title": " "
+            "title": " ",
+            "validators": [{
+                type: 'required',
+                message: ' '
+            }]
         },
         "description": {
             "type": "Text",
@@ -3568,7 +3590,10 @@ function program1(depth0,data) {
                 "value": {
                     "title": "Join Expression",
                     "type": "RelationExpressionEditor",
-                    "validators": ['required'],
+                    "validators": [{
+                        type: 'required',
+                        message: ' '
+                    }],
                     "editorClass": "form-control suggestion-box"
                 }
             },
@@ -3661,7 +3686,10 @@ function program1(depth0,data) {
                     "type": "DimensionExpressionEditor",
                     "editorClass": "form-control suggestion-box",
                     "title": "Expression Value (use Ctrl-Space to have completion)",
-                    "validators": ['required']
+                    "validators": [{
+                        type: 'required',
+                        message: ' '
+                    }]
                 }
             },
             "position": 3,
@@ -3716,7 +3744,11 @@ function program1(depth0,data) {
                 "value": {
                     "title": "Expression Value (use Ctrl-Space to have completion)",
                     "type": "MetricExpressionEditor",
-                    "editorClass": "form-control suggestion-box"
+                    "editorClass": "form-control suggestion-box",
+                    "validators": [{
+                        type: 'required',
+                        message: ' '
+                    }]
                 }
             },
             "position": 1,

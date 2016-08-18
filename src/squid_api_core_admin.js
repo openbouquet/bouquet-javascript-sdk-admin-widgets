@@ -115,7 +115,11 @@
             "type": "Text",
             "editorClass": "form-control",
             "fieldClass": "leftName",
-            "title": " "
+            "title": " ",
+            "validators": [{
+                type: 'required',
+                message: ' '
+            }]
         },
         "cardinality": {
             "type": "Select",
@@ -128,7 +132,11 @@
             "type": "Text",
             "editorClass": "form-control",
             "fieldClass": "rightName",
-            "title": " "
+            "title": " ",
+            "validators": [{
+                type: 'required',
+                message: ' '
+            }]
         },
         "description": {
             "type": "Text",
@@ -143,7 +151,10 @@
                 "value": {
                     "title": "Join Expression",
                     "type": "RelationExpressionEditor",
-                    "validators": ['required'],
+                    "validators": [{
+                        type: 'required',
+                        message: ' '
+                    }],
                     "editorClass": "form-control suggestion-box"
                 }
             },
@@ -236,7 +247,10 @@
                     "type": "DimensionExpressionEditor",
                     "editorClass": "form-control suggestion-box",
                     "title": "Expression Value (use Ctrl-Space to have completion)",
-                    "validators": ['required']
+                    "validators": [{
+                        type: 'required',
+                        message: ' '
+                    }]
                 }
             },
             "position": 3,
@@ -291,7 +305,11 @@
                 "value": {
                     "title": "Expression Value (use Ctrl-Space to have completion)",
                     "type": "MetricExpressionEditor",
-                    "editorClass": "form-control suggestion-box"
+                    "editorClass": "form-control suggestion-box",
+                    "validators": [{
+                        type: 'required',
+                        message: ' '
+                    }]
                 }
             },
             "position": 1,
