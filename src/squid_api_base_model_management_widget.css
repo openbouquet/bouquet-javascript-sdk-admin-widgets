@@ -189,7 +189,7 @@
     border-radius: 8px;
 }
 .ace_content .ace_TABLE:before {
-    content: "\f0ce";
+    content: "\f0db";
 }
 
 .ace_content .ace_COLUMN:before {
@@ -276,7 +276,7 @@
 }
 
 .ace_content .ace_RELATION:before {
-    content:  "\f061";
+    content:  "\f079";
 }
 
 .ace_content .ace_VIEW:before {
@@ -284,7 +284,7 @@
 }
 
 .ace_content .ace_METRIC:before {
-    content:  "\f0fe";
+    content:  "\f1b2";
 }
 
 .ace_content .ace_CONDITION:before {
