@@ -1402,6 +1402,7 @@ function program1(depth0,data) {
                             model[att] = item.get(att);
                         }
                         model.visible = true;
+                        model.dynamic = item.get("dynamic");
                         model.roles = this.getModelRoles(item);
                         model.selected = (model.oid === selectedId);
                         models.push(model);
@@ -5072,16 +5073,12 @@ function program1(depth0,data) {
             }
         },
 
+        getModelLabel: function(model) {
+            return model.get("name");
+        },
+
         renderRelationView: function(relationView) {
             this.$el.html(relationView.el);
-        },
-        
-        getModelLabel: function(model) {
-            if (model.get("dynamic")) {
-                return "~ " + model.get("name");
-            } else {
-                return model.get("name");
-            }
         },
         
         getModelRoles : function(model) {

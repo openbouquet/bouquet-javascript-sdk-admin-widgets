@@ -63,16 +63,12 @@
             }
         },
 
+        getModelLabel: function(model) {
+            return model.get("name");
+        },
+
         renderRelationView: function(relationView) {
             this.$el.html(relationView.el);
-        },
-        
-        getModelLabel: function(model) {
-            if (model.get("dynamic")) {
-                return "~ " + model.get("name");
-            } else {
-                return model.get("name");
-            }
         },
         
         getModelRoles : function(model) {
