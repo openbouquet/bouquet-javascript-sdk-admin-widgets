@@ -15,6 +15,11 @@
                 data.parentId.projectId = data.id.projectId;
                 data.parentId.domainId = data.id.domainId;
             }
+            if (data.expression) {
+                if (data.expression.value === null) {
+                    delete data.expression;
+                }
+            }
             return data;
         },
 

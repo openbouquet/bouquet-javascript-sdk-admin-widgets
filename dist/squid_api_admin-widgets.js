@@ -3422,6 +3422,11 @@ function program1(depth0,data) {
 
         customDataManipulation: function(data) {
             // to be overridden from other model management widgets
+            if (data.expression) {
+                if (data.expression.value === null) {
+                    delete data.expression;
+                }
+            }
             return data;
         },
 
@@ -3591,10 +3596,6 @@ function program1(depth0,data) {
                 "value": {
                     "title": "Join Expression",
                     "type": "RelationExpressionEditor",
-                    "validators": [{
-                        type: 'required',
-                        message: ' '
-                    }],
                     "editorClass": "form-control suggestion-box"
                 }
             },
@@ -3686,11 +3687,7 @@ function program1(depth0,data) {
                 "value": {
                     "type": "DimensionExpressionEditor",
                     "editorClass": "form-control suggestion-box",
-                    "title": "Expression Value (use Ctrl-Space to have completion)",
-                    "validators": [{
-                        type: 'required',
-                        message: ' '
-                    }]
+                    "title": "Expression Value (use Ctrl-Space to have completion)"
                 }
             },
             "position": 3,
@@ -3745,11 +3742,7 @@ function program1(depth0,data) {
                 "value": {
                     "title": "Expression Value (use Ctrl-Space to have completion)",
                     "type": "MetricExpressionEditor",
-                    "editorClass": "form-control suggestion-box",
-                    "validators": [{
-                        type: 'required',
-                        message: ' '
-                    }]
+                    "editorClass": "form-control suggestion-box"
                 }
             },
             "position": 1,
@@ -4545,6 +4538,11 @@ function program1(depth0,data) {
             if (data.parentId.dimensionId !== null) {
                 data.parentId.projectId = data.id.projectId;
                 data.parentId.domainId = data.id.domainId;
+            }
+            if (data.expression) {
+                if (data.expression.value === null) {
+                    delete data.expression;
+                }
             }
             return data;
         },
@@ -6143,6 +6141,11 @@ function program1(depth0,data) {
         },
 
         customDataManipulation: function(data) {
+            if (data.joinExpression) {
+                if (data.joinExpression.value === null) {
+                    delete data.joinExpression;
+                }
+            }
             return data;
         },
 

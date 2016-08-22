@@ -151,10 +151,6 @@
                 "value": {
                     "title": "Join Expression",
                     "type": "RelationExpressionEditor",
-                    "validators": [{
-                        type: 'required',
-                        message: ' '
-                    }],
                     "editorClass": "form-control suggestion-box"
                 }
             },
@@ -246,11 +242,7 @@
                 "value": {
                     "type": "DimensionExpressionEditor",
                     "editorClass": "form-control suggestion-box",
-                    "title": "Expression Value (use Ctrl-Space to have completion)",
-                    "validators": [{
-                        type: 'required',
-                        message: ' '
-                    }]
+                    "title": "Expression Value (use Ctrl-Space to have completion)"
                 }
             },
             "position": 3,
@@ -305,11 +297,7 @@
                 "value": {
                     "title": "Expression Value (use Ctrl-Space to have completion)",
                     "type": "MetricExpressionEditor",
-                    "editorClass": "form-control suggestion-box",
-                    "validators": [{
-                        type: 'required',
-                        message: ' '
-                    }]
+                    "editorClass": "form-control suggestion-box"
                 }
             },
             "position": 1,
