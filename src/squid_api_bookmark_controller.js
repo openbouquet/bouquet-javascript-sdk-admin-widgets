@@ -343,6 +343,7 @@
                                     $.when(oldFacets, newFacets).done(function(oldFacets, newFacets) {
                                         console.log("merge filters from bookmarks");
                                         var forcedConfig = function(newConfig) {
+                                            var previousBookmarkFacets = previousBookmark.get("config").selection.facets;
                                             newConfig.project = project.get("oid");
                                             newConfig.bookmark = bookmarkId;
                                             
@@ -375,7 +376,7 @@
                                                 //Save/update any facet selected
                                                 if (oldFacets) {
                                                     //We put back the names in the selected items from the domain's facets
-                                                    me.addNameToSelectedFacets(oldFacets, previousBookmark.get("config").selection.facets);
+                                                    me.addNameToSelectedFacets(oldFacets, previousBookmarkFacets);
 
                                                     for (var k=0; k<oldFacets.length; k++) {
                                                         var availableFacet = oldFacets[k];
@@ -384,7 +385,7 @@
                                                         var selectedItems = [];
                                                         var deletedItems = [];
 
-                                                        var bookmarkFacet = me.findFacetByName(previousBookmark.get("config").selection.facets, availableFacet);
+                                                        var bookmarkFacet = me.findFacetByName(previousBookmarkFacets, availableFacet);
                                                         facetForItems = me.findFacetByName(oldSelection.facets, availableFacet);
 
                                                         var availableItems = null;
@@ -468,12 +469,23 @@
                                                             complementFacetItems = me.mergeSelection(savedSelection, lastSelection, facetForItems, bookmarkSelection, deletedSelection);
                                                         }
                                                         if (complementFacetItems && complementFacetItems.length>0) {
-                                                            var copiedFacet = {
+                                                            var toAdd = true;
+                                                            // don't allow two periods to be set when changing bookmark
+                                                            for (var f1=0; f1<previousBookmarkFacets.length; f1++) {
+                                                                if (newFacet.dimension.valueType === "DATE" && newFacet.dimension.type === "CONTINUOUS") {
+                                                                    if (newFacet.id === previousBookmarkFacets[f1].id) {
+                                                                        toAdd = false;
+                                                                    }
+                                                                }
+                                                            }
+                                                            if (toAdd) {
+                                                                var copiedFacet = {
                                                                     dimension: newFacet.dimension,
                                                                     id: newFacet.id,
                                                                     selectedItems: complementFacetItems
-                                                            };
-                                                            forcedSelection.facets.push(copiedFacet);
+                                                                };
+                                                                forcedSelection.facets.push(copiedFacet);
+                                                            }
                                                         }
                                                     }
                                                 }
