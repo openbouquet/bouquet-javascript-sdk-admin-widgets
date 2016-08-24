@@ -2178,16 +2178,54 @@ function program1(depth0,data) {
                     });
                     filters.set("engineVersion", "2");
                     filters.setDomainIds([domainId]);
+                   
+                    //JTH 2016-08-24 add dynamic flag
+                    filters.set("includeDynamic", false);
 
                     console.log("compute (initFilters)");
                     squid_api.controller.facetjob.compute(filters).then(function() {
                         // search for time facets
                         var sel = filters.get("selection");
+                        //JTH 2016-08-24 copy facets
+                        /**/
                         var facets;
                         if (sel && sel.facets) {
                             facets=  sel.facets;
                         }
                         dfd.resolve(facets);
+						/**/
+                        /* remove the new code for the moment
+						var selFacets = [];
+                        var facets = sel.facets;
+                        for (i = 0; i < facets.length; i++) {
+                            var facet = facets[i];
+                            var selFacet = {
+                                    "id" : facet.id,
+                                    "name" : facet.name ? facet.name : facet.dimension.name,
+                                    "items" : [],
+                            		"dimension" : facet.dimension
+                            };
+                            var selectedItems = facet.selectedItems;
+                            for (ix = 0; ix < selectedItems.length; ix++) {
+                                selFacet.selectedItems.push({
+                                        "id" : selectedItems[ix].id,
+                                        "name" : selectedItems[ix].value
+                                });
+                            }
+                            var items = facet.items;
+                            for (ix = 0; ix < items.length; ix++) {
+                                selFacet.items.push({
+                                        "id" : items[ix].id,
+                                        "name" : items[ix].value
+                                });
+                            }
+                            selFacet.available = (facet.dimension.type === "CATEGORICAL" || facet.dimension.type === "SEGMENTS" || (facet.dimension.type === "CONTINUOUS" && facet.dimension.valueType === "DATE") || selFacet.items.length > 0);
+                            if (selFacet.available) {
+                            	selFacets.push(selFacet);
+                            }
+                        }
+                        dfd.resolve(selFacets);
+                        */
                     });
                 } else {
                     dfd.resolve();
@@ -2538,7 +2576,24 @@ function program1(depth0,data) {
                                                                 var diffItems = me.getCustomSelection(facetForItems.selectedItems, bookmarkFacet.selectedItems);   
                                                                 if (diffItems && diffItems.length>0) {
                                                                     selectedItems=diffItems;
-                                                                }		
+                                                                }
+                                                                /* T1778 - non needed code but may be useful at some points
+                                                                if (previousBookmark.get("config").domain === newConfig.domain && newConfig.period) {
+                                                                	if (Object.keys(newConfig.period) && Object.keys(previousBookmark.get("config").period)) {
+                                                                		if (facetForItems.id === previousBookmark.get("config").period[newConfig.domain] && 
+                                                                				newConfig.period[newConfig.domain] !== previousBookmark.get("config").period[newConfig.domain]) {
+                                                                			selectedItems = [];
+                                                                			if (savedNewConfig.selection.facets && savedNewConfig.selection.facets.length) {
+                                                                				for (var l=0; l<savedNewConfig.selection.facets.length; l++) {
+                                                                					if (savedNewConfig.selection.facets[l].id === newConfig.period[newConfig.domain] && savedNewConfig.selection.facets[l].selectedItems) {
+                                                                						selectedItems = savedNewConfig.selection.facets[l].selectedItems;
+                                                                					}
+                                                                				}
+                                                                			}
+                                                                		}
+                                                                	}
+                                                                }
+                                                                */
                                                                 //Now we clean deleted items if segments as it is shared among bookmarks on same domain
                                                                 if (availableFacet.id === "__segments" && me.customDeletedFacets.get(facetName) && diffItems.length>0) {
                                                                     me.customDeletedFacets.set(facetName, me.cleanItems(me.customDeletedFacets.get(facetName), diffItems));
@@ -2597,6 +2652,12 @@ function program1(depth0,data) {
                                                                 if (periodFacet) {
                                                                     complementFacetItems = periodFacet.selectedItems;
                                                                 }// when renaming a child dimension, the dimension name in the bookmark is not updated
+                                                            }
+                                                            //T1778
+                                                            if (complementFacetItems && newConfig.period) {
+                                                            	if (newFacet.id !== newConfig.period[newConfig.domain]) {
+                                                            		complementFacetItems = null;
+                                                            	}
                                                             }
                                                         } else {
                                                             var savedSelection = me.customAddedFacets.get(facetName);
