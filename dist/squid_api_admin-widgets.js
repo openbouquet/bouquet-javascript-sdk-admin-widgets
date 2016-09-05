@@ -230,7 +230,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (helper = helpers.footerLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.footerLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</div>\n<div class=\"squid-api-model-management-footer\">\n      <button type=\"button\" class=\"btn btn-default btn-cancel-form\">Cancel</button>\n    <button type=\"button\" style=\"display: none;\" class=\"btn btn-primary btn-save-form\">Save</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
+  buffer += "\n</div>\n<div class=\"squid-api-model-management-footer\">\n      <button type=\"button\" class=\"btn btn-default btn-cancel-form\">Cancel</button>\n    <button type=\"button\" class=\"btn btn-primary btn-save-form\">Save</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
   return buffer;
   });
 
@@ -1001,8 +1001,14 @@ function program1(depth0,data) {
                 var selectionChanged = this.config.hasChanged(me.configSelectedId) || (this.config.get(me.configSelectedId) && ! this.selectedModel);
                 this.initModel(this.config, parentChanged, selectionChanged);
             });
+            // listen for status change
+            this.listenTo(this.status, "change:status", this.statusUpdate);
 
             //this.render();
+        },
+
+        statusUpdate: function() {
+            // to be overridden
         },
 
         /**
@@ -1396,6 +1402,7 @@ function program1(depth0,data) {
                             model[att] = item.get(att);
                         }
                         model.visible = true;
+                        model.dynamic = item.get("dynamic");
                         model.roles = this.getModelRoles(item);
                         model.selected = (model.oid === selectedId);
                         models.push(model);
@@ -1560,9 +1567,6 @@ function program1(depth0,data) {
                                 me.onSave(me.model);
                             }
 
-                            me.$el.find(".btn-cancel-form").fadeOut();
-                            me.$el.find(".btn-save-form").fadeOut();
-
                             me.status.set("message", "Sucessfully saved");
                         },
                         error: function(xhr) {
@@ -1578,8 +1582,6 @@ function program1(depth0,data) {
                 if (this.cancelCallback) {
                     this.cancelCallback.call();
                 }
-                this.$el.find(".btn-cancel-form").fadeOut();
-                this.$el.find(".btn-save-form").fadeOut();
             },
             "click .copy-id": function() {
                 var clipboard = new Clipboard(".copy-id");
@@ -1601,6 +1603,12 @@ function program1(depth0,data) {
             var dfd = $.Deferred();
             // to be overridden from other model management widgets
             return dfd.resolve(this.schema);
+        },
+
+        removeView: function() {
+            // Unbind view completely
+            this.undelegateEvents();
+            this.$el.removeData().unbind();
         },
 
         afterRender: function() {
@@ -1644,10 +1652,6 @@ function program1(depth0,data) {
                 // me.originalFormContent = me.formContent.getValue();
 
                 me.formContent.on("change", function() {
-                    var saveBtn = me.$el.find(".btn-save-form");
-                    var cancelBtn = me.$el.find(".btn-cancel-form");
-                    saveBtn.fadeIn();
-                    cancelBtn.fadeIn();
 
                     if (me.onFormContentsChange) {
                         me.onFormContentsChange.call(me);
@@ -1745,6 +1749,15 @@ function program1(depth0,data) {
             });
         },
 
+        statusUpdate: function() {
+            var status = this.status.get("status");
+            if (status === "RUNNING") {
+                this.$el.find("a").addClass("disabled");
+            } else {
+                this.$el.find("a").removeClass("disabled");
+            }
+        },
+
         createModel : function() {
             var model = new this.collection.model();
             // set config to current state
@@ -1756,21 +1769,23 @@ function program1(depth0,data) {
         },
 
         eventSelect : function(event) {
-            var value = $(event.target).parents("li").attr("data-attr");
-            if (! value) {
-                value = $(event.target).attr("data-attr");
-            }
-            //Callback to keep filters selection on Counter apps for ex
+            if (! $(event.target).hasClass("disabled")) {
+                var value = $(event.target).parents("li").attr("data-attr");
+                if (! value) {
+                    value = $(event.target).attr("data-attr");
+                }
+                //Callback to keep filters selection on Counter apps for ex
             
-            if (this.onChangeHandler) {
-            	if (squid_api.model.config && value != squid_api.model.config.get("bookmark")) {
-            		this.onChangeHandler(value ,this.collection);
-            	}
-            }
-            else {
-                squid_api.setBookmarkId(value);
-                if (this.onSelect) {
-                    this.onSelect.call();
+                if (this.onChangeHandler) {
+                    if (squid_api.model.config && value != squid_api.model.config.get("bookmark")) {
+                        this.onChangeHandler(value ,this.collection);
+                    }
+                }
+                else {
+                    squid_api.setBookmarkId(value);
+                    if (this.onSelect) {
+                        this.onSelect.call();
+                    }
                 }
             }
         },
@@ -2170,16 +2185,54 @@ function program1(depth0,data) {
                     });
                     filters.set("engineVersion", "2");
                     filters.setDomainIds([domainId]);
+                   
+                    //JTH 2016-08-24 add dynamic flag
+                    filters.set("includeDynamic", false);
 
                     console.log("compute (initFilters)");
                     squid_api.controller.facetjob.compute(filters).then(function() {
                         // search for time facets
                         var sel = filters.get("selection");
+                        //JTH 2016-08-24 copy facets
+                        /**/
                         var facets;
                         if (sel && sel.facets) {
                             facets=  sel.facets;
                         }
                         dfd.resolve(facets);
+						/**/
+                        /* remove the new code for the moment
+						var selFacets = [];
+                        var facets = sel.facets;
+                        for (i = 0; i < facets.length; i++) {
+                            var facet = facets[i];
+                            var selFacet = {
+                                    "id" : facet.id,
+                                    "name" : facet.name ? facet.name : facet.dimension.name,
+                                    "items" : [],
+                            		"dimension" : facet.dimension
+                            };
+                            var selectedItems = facet.selectedItems;
+                            for (ix = 0; ix < selectedItems.length; ix++) {
+                                selFacet.selectedItems.push({
+                                        "id" : selectedItems[ix].id,
+                                        "name" : selectedItems[ix].value
+                                });
+                            }
+                            var items = facet.items;
+                            for (ix = 0; ix < items.length; ix++) {
+                                selFacet.items.push({
+                                        "id" : items[ix].id,
+                                        "name" : items[ix].value
+                                });
+                            }
+                            selFacet.available = (facet.dimension.type === "CATEGORICAL" || facet.dimension.type === "SEGMENTS" || (facet.dimension.type === "CONTINUOUS" && facet.dimension.valueType === "DATE") || selFacet.items.length > 0);
+                            if (selFacet.available) {
+                            	selFacets.push(selFacet);
+                            }
+                        }
+                        dfd.resolve(selFacets);
+                        */
                     });
                 } else {
                     dfd.resolve();
@@ -2530,7 +2583,24 @@ function program1(depth0,data) {
                                                                 var diffItems = me.getCustomSelection(facetForItems.selectedItems, bookmarkFacet.selectedItems);   
                                                                 if (diffItems && diffItems.length>0) {
                                                                     selectedItems=diffItems;
-                                                                }		
+                                                                }
+                                                                /* T1778 - non needed code but may be useful at some points
+                                                                if (previousBookmark.get("config").domain === newConfig.domain && newConfig.period) {
+                                                                	if (Object.keys(newConfig.period) && Object.keys(previousBookmark.get("config").period)) {
+                                                                		if (facetForItems.id === previousBookmark.get("config").period[newConfig.domain] && 
+                                                                				newConfig.period[newConfig.domain] !== previousBookmark.get("config").period[newConfig.domain]) {
+                                                                			selectedItems = [];
+                                                                			if (savedNewConfig.selection.facets && savedNewConfig.selection.facets.length) {
+                                                                				for (var l=0; l<savedNewConfig.selection.facets.length; l++) {
+                                                                					if (savedNewConfig.selection.facets[l].id === newConfig.period[newConfig.domain] && savedNewConfig.selection.facets[l].selectedItems) {
+                                                                						selectedItems = savedNewConfig.selection.facets[l].selectedItems;
+                                                                					}
+                                                                				}
+                                                                			}
+                                                                		}
+                                                                	}
+                                                                }
+                                                                */
                                                                 //Now we clean deleted items if segments as it is shared among bookmarks on same domain
                                                                 if (availableFacet.id === "__segments" && me.customDeletedFacets.get(facetName) && diffItems.length>0) {
                                                                     me.customDeletedFacets.set(facetName, me.cleanItems(me.customDeletedFacets.get(facetName), diffItems));
@@ -2589,6 +2659,12 @@ function program1(depth0,data) {
                                                                 if (periodFacet) {
                                                                     complementFacetItems = periodFacet.selectedItems;
                                                                 }// when renaming a child dimension, the dimension name in the bookmark is not updated
+                                                            }
+                                                            //T1778
+                                                            if (complementFacetItems && newConfig.period) {
+                                                            	if (newFacet.id !== newConfig.period[newConfig.domain]) {
+                                                            		complementFacetItems = null;
+                                                            	}
                                                             }
                                                         } else {
                                                             var savedSelection = me.customAddedFacets.get(facetName);
@@ -3414,6 +3490,11 @@ function program1(depth0,data) {
 
         customDataManipulation: function(data) {
             // to be overridden from other model management widgets
+            if (data.expression) {
+                if (data.expression.value === null) {
+                    delete data.expression;
+                }
+            }
             return data;
         },
 
@@ -3547,7 +3628,11 @@ function program1(depth0,data) {
             "type": "Text",
             "editorClass": "form-control",
             "fieldClass": "leftName",
-            "title": " "
+            "title": " ",
+            "validators": [{
+                type: 'required',
+                message: ' '
+            }]
         },
         "cardinality": {
             "type": "Select",
@@ -3560,7 +3645,11 @@ function program1(depth0,data) {
             "type": "Text",
             "editorClass": "form-control",
             "fieldClass": "rightName",
-            "title": " "
+            "title": " ",
+            "validators": [{
+                type: 'required',
+                message: ' '
+            }]
         },
         "description": {
             "type": "Text",
@@ -3575,7 +3664,6 @@ function program1(depth0,data) {
                 "value": {
                     "title": "Join Expression",
                     "type": "RelationExpressionEditor",
-                    "validators": ['required'],
                     "editorClass": "form-control suggestion-box"
                 }
             },
@@ -3667,8 +3755,7 @@ function program1(depth0,data) {
                 "value": {
                     "type": "DimensionExpressionEditor",
                     "editorClass": "form-control suggestion-box",
-                    "title": "Expression Value (use Ctrl-Space to have completion)",
-                    "validators": ['required']
+                    "title": "Expression Value (use Ctrl-Space to have completion)"
                 }
             },
             "position": 3,
@@ -4520,6 +4607,11 @@ function program1(depth0,data) {
                 data.parentId.projectId = data.id.projectId;
                 data.parentId.domainId = data.id.domainId;
             }
+            if (data.expression) {
+                if (data.expression.value === null) {
+                    delete data.expression;
+                }
+            }
             return data;
         },
 
@@ -5047,16 +5139,12 @@ function program1(depth0,data) {
             }
         },
 
+        getModelLabel: function(model) {
+            return model.get("name");
+        },
+
         renderRelationView: function(relationView) {
             this.$el.html(relationView.el);
-        },
-        
-        getModelLabel: function(model) {
-            if (model.get("dynamic")) {
-                return "~ " + model.get("name");
-            } else {
-                return model.get("name");
-            }
         },
         
         getModelRoles : function(model) {
@@ -6121,6 +6209,11 @@ function program1(depth0,data) {
         },
 
         customDataManipulation: function(data) {
+            if (data.joinExpression) {
+                if (data.joinExpression.value === null) {
+                    delete data.joinExpression;
+                }
+            }
             return data;
         },
 

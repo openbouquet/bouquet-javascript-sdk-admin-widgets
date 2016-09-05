@@ -100,6 +100,11 @@
         },
 
         customDataManipulation: function(data) {
+            if (data.joinExpression) {
+                if (data.joinExpression.value === null) {
+                    delete data.joinExpression;
+                }
+            }
             return data;
         },
 

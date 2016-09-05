@@ -68,8 +68,14 @@
                 var selectionChanged = this.config.hasChanged(me.configSelectedId) || (this.config.get(me.configSelectedId) && ! this.selectedModel);
                 this.initModel(this.config, parentChanged, selectionChanged);
             });
+            // listen for status change
+            this.listenTo(this.status, "change:status", this.statusUpdate);
 
             //this.render();
+        },
+
+        statusUpdate: function() {
+            // to be overridden
         },
 
         /**
@@ -463,6 +469,7 @@
                             model[att] = item.get(att);
                         }
                         model.visible = true;
+                        model.dynamic = item.get("dynamic");
                         model.roles = this.getModelRoles(item);
                         model.selected = (model.oid === selectedId);
                         models.push(model);
