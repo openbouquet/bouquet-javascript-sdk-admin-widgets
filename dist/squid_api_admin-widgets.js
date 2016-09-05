@@ -1950,6 +1950,12 @@ function program1(depth0,data) {
                 this.jsonData.createRole = this.getCreateRole();
 
                 var selectedId = this.config.get(this.configSelectedId);
+                
+                // build a BM base link without the state
+                var baseLink = new URI();
+                baseLink.removeSearch("state");
+                baseLink.hash("#");
+                baseLink.normalizeHash();
 
                 // store model data
                 for (i=0; i<this.collection.size(); i++) {
@@ -2038,6 +2044,7 @@ function program1(depth0,data) {
                                         bookmark.selected = (bookmark.oid === selectedId);
                                         bookmark.visible = true;
                                         bookmark.userFriendlyName = friendlyPath;
+                                        bookmark.baseLink = baseLink;
                                     }
                                     // store active folder
                                     if (activePath === collection[x].path.value) {
