@@ -3000,6 +3000,7 @@ function program1(depth0,data) {
                         }
                     }
                     display += this.selectedModel.get("name");
+                    this.$el.find(".squid-api-button-view").text(display);
                     this.$el.find("button").text(display);
                 }
                 if (match) {
