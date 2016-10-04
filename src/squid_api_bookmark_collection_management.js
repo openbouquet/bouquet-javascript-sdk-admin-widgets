@@ -18,6 +18,7 @@
         descriptionHover : null,
         returnPaths: null,
         hierarchialList: null,
+        disableRightClickOnSelect: null,
 
         init : function(options) {
             var me = this;
@@ -46,6 +47,9 @@
             }
             if (options.hierarchialList) {
                 this.hierarchialList = options.hierarchialList;
+            }
+            if (options.disableRightClickOnSelect) {
+                this.disableRightClickOnSelect = options.disableRightClickOnSelect;
             }
         },
 
@@ -95,6 +99,8 @@
                         this.onSelect.call();
                     }
                 }
+            } else {
+                event.preventDefault();
             }
         },
 
@@ -411,6 +417,8 @@
             this.$el.html(html);
 
             this.$el.find("input.search").focus();
+
+            this.statusUpdate();
 
             if (this.jsonData.collection) {
                 // if no active collection, open the parent folder of currently selected bookmark

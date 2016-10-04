@@ -1710,6 +1710,7 @@ function program1(depth0,data) {
         descriptionHover : null,
         returnPaths: null,
         hierarchialList: null,
+        disableRightClickOnSelect: null,
 
         init : function(options) {
             var me = this;
@@ -1738,6 +1739,9 @@ function program1(depth0,data) {
             }
             if (options.hierarchialList) {
                 this.hierarchialList = options.hierarchialList;
+            }
+            if (options.disableRightClickOnSelect) {
+                this.disableRightClickOnSelect = options.disableRightClickOnSelect;
             }
         },
 
@@ -1787,6 +1791,8 @@ function program1(depth0,data) {
                         this.onSelect.call();
                     }
                 }
+            } else {
+                event.preventDefault();
             }
         },
 
@@ -2103,6 +2109,8 @@ function program1(depth0,data) {
             this.$el.html(html);
 
             this.$el.find("input.search").focus();
+
+            this.statusUpdate();
 
             if (this.jsonData.collection) {
                 // if no active collection, open the parent folder of currently selected bookmark
@@ -4994,6 +5002,8 @@ function program1(depth0,data) {
                 this.$el.find("select").multiselect('rebuild');
             }
 
+            this.enable();
+
             return this;
         },
 
@@ -5526,6 +5536,8 @@ function program1(depth0,data) {
                 // Remove Button Title Tag
                 this.$el.find("button").removeAttr('title');
             }
+
+            this.enable();
 
             // update view data if render is called after the metric change event
             this.updateView();

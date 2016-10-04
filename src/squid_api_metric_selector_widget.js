@@ -213,6 +213,8 @@
                 this.$el.find("button").removeAttr('title');
             }
 
+            this.enable();
+
             // update view data if render is called after the metric change event
             this.updateView();
         },

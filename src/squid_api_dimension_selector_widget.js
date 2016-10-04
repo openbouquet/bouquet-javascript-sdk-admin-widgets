@@ -341,6 +341,8 @@
                 this.$el.find("select").multiselect('rebuild');
             }
 
+            this.enable();
+
             return this;
         },
 
