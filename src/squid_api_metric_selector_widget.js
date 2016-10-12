@@ -94,7 +94,7 @@
         },
 
         enable: function() {
-            if (this.status.get("status") !== "DONE") {
+            if (this.status.get("status") == "RUNNING") {
                 this.$el.find("button").prop("disabled", true);
             } else {
                 this.$el.find("button").prop("disabled", false);
