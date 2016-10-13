@@ -2577,7 +2577,7 @@ function program1(depth0,data) {
 
                                                         var availableItems = null;
                                                         if (facetForItems && facetForItems.selectedItems) {
-                                                            if (facetForItems.id === "__segments") {
+                                                            if (facetForItems.id === "__segments" && me.getSegmentFacet(newFacets)) {
                                                                 availableItems = me.getSegmentFacet(newFacets).items;
                                                             }
                                                             if (bookmarkFacet) {
