@@ -12,6 +12,7 @@
         onChangeHandler : null,
         filterBy : null,
         buttonText : null,
+        displayAll : null,
         customView : null,
 
         init: function(options) {
@@ -43,6 +44,9 @@
                 }
                 if (options.customView) {
                     this.customView = options.customView;
+                }
+                if (options.displayAll) {
+                    this.displayAll = options.displayAll;
                 }
                 if (options.buttonText) {
                     this.buttonText = options.buttonText;
@@ -90,7 +94,7 @@
         },
 
         enable: function() {
-            if (this.status.get("status") !== "DONE") {
+            if (this.status.get("status") == "RUNNING") {
                 this.$el.find("button").prop("disabled", true);
             } else {
                 this.$el.find("button").prop("disabled", false);
@@ -112,21 +116,19 @@
 
                     // check dynamic rules
                     var add = false;
-                    if ((domain.get("dynamic") === true) || (item.get("dynamic") === false)) {
-                        if (this.filterBy) {
-                            if (_.contains(this.filterBy, item.get("oid"))) {
-                                add = true;
-                            }
-                        } else {
+                    if (this.filterBy) {
+                        if (_.contains(this.filterBy, item.get("oid"))) {
                             add = true;
                         }
+                    } else {
+                        add = true;
                     }
 
                     if ((add === true) && (this.available || this.chosen)) {
                         // check this metric is available (or chosen)
                         var availableArray = this.config.get(this.available);
                         var chosenArray = this.config.get(this.chosen);
-                        if ((availableArray && availableArray.indexOf(item.get("oid")) < 0) && (chosenArray && chosenArray.indexOf(item.get("oid")) < 0)) {
+                        if ((availableArray && availableArray.length > 0 && availableArray.indexOf(item.get("oid")) < 0) && (chosenArray && chosenArray.indexOf(item.get("oid")) < 0)) {
                             add = false;
                         }
                     }
@@ -210,6 +212,8 @@
                 // Remove Button Title Tag
                 this.$el.find("button").removeAttr('title');
             }
+
+            this.enable();
 
             // update view data if render is called after the metric change event
             this.updateView();

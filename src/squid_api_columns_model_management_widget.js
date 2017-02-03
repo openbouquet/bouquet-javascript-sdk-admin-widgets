@@ -7,6 +7,11 @@
 
         customDataManipulation: function(data) {
             // to be overridden from other model management widgets
+            if (data.expression) {
+                if (data.expression.value === null) {
+                    delete data.expression;
+                }
+            }
             return data;
         },
 

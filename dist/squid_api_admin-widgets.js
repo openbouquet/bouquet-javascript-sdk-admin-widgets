@@ -226,7 +226,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (helper = helpers.modelDefinition) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.modelDefinition); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "-model-management squid-api-model-management\">\n\n</div>\n<div class=\"squid-api-model-management-footer\">\n  	<button type=\"button\" class=\"btn btn-default btn-cancel\">Cancel</button>\n	<button type=\"button\" class=\"btn btn-primary btn-save-form\">Save</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
+    + "-model-management squid-api-model-management\">\n\n</div>\n<div class=\"modal-footer\">\n  ";
+  if (helper = helpers.footerLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.footerLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n</div>\n<div class=\"squid-api-model-management-footer\">\n      <button type=\"button\" class=\"btn btn-default btn-cancel-form\">Cancel</button>\n    <button type=\"button\" class=\"btn btn-primary btn-save-form\">Save</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
   return buffer;
   });
 
@@ -947,6 +951,8 @@ function program1(depth0,data) {
         cancelCallback : null,
         collectionLoading : false,
         afterRender : null,
+        onFormContentsChange: null,
+        modelViewEl : null,
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -963,17 +969,26 @@ function program1(depth0,data) {
                     // default sorting
                     this.comparator =  squid_api.utils.defaultComparator;
                 }
+                if (options.onFormContentsChange) {
+                    this.onFormContentsChange = options.onFormContentsChange;
+                }
                 if (options.cancelCallback) {
                     this.cancelCallback = options.cancelCallback;
                 }
                 if (options.onSelect) {
                     this.onSelect = options.onSelect;
                 }
+                if (options.onEdit) {
+                    this.onEdit = options.onEdit;
+                }
                 if (options.afterRender) {
                     this.afterRender = options.afterRender;
                 }
                 if (options.template) {
                     this.template = options.template;
+                }
+                if (options.modelViewEl) {
+                    this.modelViewEl = options.modelViewEl;
                 }
             }
 
@@ -986,8 +1001,14 @@ function program1(depth0,data) {
                 var selectionChanged = this.config.hasChanged(me.configSelectedId) || (this.config.get(me.configSelectedId) && ! this.selectedModel);
                 this.initModel(this.config, parentChanged, selectionChanged);
             });
+            // listen for status change
+            this.listenTo(this.status, "change:status", this.statusUpdate);
 
             //this.render();
+        },
+
+        statusUpdate: function() {
+            // to be overridden
         },
 
         /**
@@ -1065,6 +1086,7 @@ function program1(depth0,data) {
                     me.render();
                     me.listenTo(me.selectedModel, "change", me.render);
                 }).fail(function() {
+                    console.error("setSelectedModel - model not found : "+modelId+" in collection "+me.collection);
                     me.render();
                 });
             } else {
@@ -1111,7 +1133,7 @@ function program1(depth0,data) {
         },
 
         getSelectedModel : function(event) {
-            var id = $(event.target).parents('tr').data("attr");
+            var id = $(event.target).data("attr") || $(event.target).parents('tr').data("attr");
             var model = this.collection.get(id);
             return model;
         },
@@ -1135,6 +1157,7 @@ function program1(depth0,data) {
                 cancelCallback : function() {
                     me.render();
                 },
+                onFormContentsChange: this.onFormContentsChange,
                 onSave : function(model) {
                     me.collection.add(model);
                     // call any super onSave
@@ -1182,10 +1205,14 @@ function program1(depth0,data) {
                 });
                 this.renderModelView(new this.modelView({
                     model : model,
+                    onFormContentsChange: this.onFormContentsChange,
                     cancelCallback : function() {
                         me.render();
                     }
                 }));
+            }
+            if (this.onEdit) {
+                this.onEdit.call(event);
             }
         },
 
@@ -1337,13 +1364,17 @@ function program1(depth0,data) {
         },
 
         renderModelView: function(modelView) {
-            this.$el.html(modelView.el);
+            if (this.modelViewEl) {
+                $(this.modelViewEl).html(modelView.el);
+            } else {
+                this.$el.html(modelView.el);
+            }
+
             // focus on first element
             this.$el.find('input[type=text],textarea,select').filter(":visible:first").focus();
         },
 
         render: function() {
-            console.log("render CollectionManagementWidget "+this.type);
             this.jsonData = {
                 collectionLoaded : !this.collectionLoading,
                 collection : this.collection,
@@ -1371,6 +1402,7 @@ function program1(depth0,data) {
                             model[att] = item.get(att);
                         }
                         model.visible = true;
+                        model.dynamic = item.get("dynamic");
                         model.roles = this.getModelRoles(item);
                         model.selected = (model.oid === selectedId);
                         models.push(model);
@@ -1409,6 +1441,9 @@ function program1(depth0,data) {
 
         model : null,
         collectionPluralLabel : null,
+        onFormContentsChange: null,
+        afterRenderCallback: null,
+        externalCollection: null,
 
         initialize: function(options) {
             this.status = squid_api.model.status;
@@ -1428,6 +1463,18 @@ function program1(depth0,data) {
             }
             if (options.onSave) {
                 this.onSave = options.onSave;
+            }
+            if (options.openModelCallback) {
+                this.openModelCallback = options.openModelCallback;
+            }
+            if (options.afterRenderCallback) {
+                this.afterRenderCallback = options.afterRenderCallback;
+            }
+            if (options.onFormContentsChange) {
+                this.onFormContentsChange = options.onFormContentsChange;
+            }
+            if (options.externalCollection) {
+                this.externalCollection = options.externalCollection;
             }
             if (options.comparator) {
                 this.comparator = options.comparator;
@@ -1460,10 +1507,9 @@ function program1(depth0,data) {
         },
 
         events: {
-            "click .btn-cancel": function() {
-                // reset parent view if cancel button clicked
-                if (this.cancelCallback) {
-                    this.cancelCallback.call();
+            "click .open-model": function() {
+                if (this.openModelCallback) {
+                    this.openModelCallback(this);
                 }
             },
             "click .btn-save-form" : function() {
@@ -1475,25 +1521,66 @@ function program1(depth0,data) {
 
                     // for any custom model manipulation before save
                     data = this.customDataManipulation(data);
+                    
+                    var isNewModel = this.model.isNew();
+                    
+                    // prevent from saving children collections
+                    var modelClone = this.model.clone();
+                    var children = this.model.get("_children");
+                    if (children) {
+                        for (var i=0; i<children.length; i++) {
+                            modelClone.set(children[i], []);
+                        }
+                    }
 
                     // save model
-                    this.model.save(data, {
+                    modelClone.save(data, {
                         wait: true,
-                        success: function(model) {
+                        success: function() {
+                            // update the original model with non-children attributes
+                            var excluded = children;
+                            var attributes = modelClone.attributes;
+                            for (var att in attributes) {
+                                if (!excluded || (excluded.indexOf(att)<0)) {
+                                    me.model.set(att, modelClone.get(att));
+                                }
+                            }
+                            
                             // status update
                             if (me.cancelCallback) {
                                 me.cancelCallback.call();
                             }
+
+                            // allow an externalCollection to be updated
+                            if (me.externalCollection) {
+                                if (isNewModel) {
+                                    me.externalCollection.collection.add(me.model);
+                                    me.externalCollection.collection.trigger('add');
+                                } else {
+                                    me.externalCollection.collection.set(me.model,{remove: false});
+                                    me.externalCollection.collection.trigger('sync');
+                                }
+                            }
+
                             // call once saved
                             if (me.onSave) {
-                                me.onSave(model);
+                                me.onSave(me.model);
                             }
+
                             me.status.set("message", "Sucessfully saved");
                         },
                         error: function(xhr) {
                             me.status.set("error", xhr);
                         }
                     });
+                }
+            },
+            "click .btn-cancel-form": function() {
+                this.formContent.render();
+                this.$el.find(".modal-body").html(this.formContent.el);
+                // reset parent view if cancel button clicked
+                if (this.cancelCallback) {
+                    this.cancelCallback.call();
                 }
             },
             "click .copy-id": function() {
@@ -1518,7 +1605,17 @@ function program1(depth0,data) {
             return dfd.resolve(this.schema);
         },
 
+        removeView: function() {
+            // Unbind view completely
+            this.undelegateEvents();
+            this.$el.removeData().unbind();
+        },
+
         afterRender: function() {
+            // to be overridden from other model management widgets
+        },
+
+        beforeRender: function() {
             // to be overridden from other model management widgets
         },
 
@@ -1534,10 +1631,14 @@ function program1(depth0,data) {
             if (this.model.isNew()) {
                 jsonData.headerLabel = "Creating a new " + this.model.definition.toLowerCase();
             } else {
-                jsonData.headerLabel = "Editing " + this.model.definition.toLowerCase() + " with name " + this.model.get("name") + " <span data-clipboard-text='" + this.model.get("oid") + "' class='copy-id'>(" + this.model.get("oid") + "</span>)";
+                jsonData.headerLabel = "Editing " + this.model.definition.toLowerCase() + " " +this.model.get("name");
             }
 
+            jsonData.footerLabel = "<div class='object-id'><label>Object ID</label> <br /> <input data-clipboard-text='" + this.model.get("oid") + "' class='copy-id' value='" + this.model.get("oid") + "' /></div>";
+
             this.setSchema().then(function(schema) {
+                me.beforeRender();
+
                 // create form
                 me.formContent = new Backbone.Form({
                     schema: schema,
@@ -1547,6 +1648,22 @@ function program1(depth0,data) {
                 // append save buttons
                 me.$el.html(me.template(jsonData));
 
+                // expression editor to be updated
+                // me.originalFormContent = me.formContent.getValue();
+
+                me.formContent.on("change", function() {
+
+                    if (me.onFormContentsChange) {
+                        me.onFormContentsChange.call(me);
+                    }
+
+                    // if (me.formContent.getValue() !== me.originalFormContent) {
+                    //     saveBtn.fadeIn();
+                    // } else {
+                    //     saveBtn.fadeOut();
+                    // }
+                });
+
                 // place the form into a backbone view
                 me.$el.find(".modal-body").html(me.formContent.el);
 
@@ -1555,6 +1672,14 @@ function program1(depth0,data) {
 
                 // after render handler
                 me.afterRender();
+
+                if (me.afterRenderCallback) {
+                    me.afterRenderCallback(me);
+                }
+
+                if (me.model.isNew()) {
+                    me.$el.find(".object-id").hide();
+                }
             });
 
             return this;
@@ -1566,7 +1691,7 @@ function program1(depth0,data) {
 }));
 
 (function (root, factory) {
-    root.squid_api.view.BookmarkCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_bookmark_collection_management_widget);
+	root.squid_api.view.BookmarkCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_bookmark_collection_management_widget);
 
 }(this, function (Backbone, squid_api, template) {
 
@@ -1583,7 +1708,9 @@ function program1(depth0,data) {
         filteredOids: null,
         onChangeHandler : null,
         descriptionHover : null,
+        returnPaths: null,
         hierarchialList: null,
+        disableRightClickOnSelect: null,
 
         init : function(options) {
             var me = this;
@@ -1591,6 +1718,9 @@ function program1(depth0,data) {
 
             if (options.headerText) {
                 this.headerText = options.headerText;
+            }
+            if (options.config) {
+                this.config = options.config;
             }
             if (options.filteredPaths) {
                 this.filteredPaths = options.filteredPaths;
@@ -1601,11 +1731,17 @@ function program1(depth0,data) {
             if (options.onChangeHandler) {
                 this.onChangeHandler = options.onChangeHandler;
             }
+            if (options.returnPaths) {
+                this.returnPaths = options.returnPaths;
+            }
             if (options.descriptionHover) {
                 this.descriptionHover = options.descriptionHover;
             }
             if (options.hierarchialList) {
                 this.hierarchialList = options.hierarchialList;
+            }
+            if (options.disableRightClickOnSelect) {
+                this.disableRightClickOnSelect = options.disableRightClickOnSelect;
             }
         },
 
@@ -1615,6 +1751,15 @@ function program1(depth0,data) {
                     return project.get("bookmarks").load();
                 });
             });
+        },
+
+        statusUpdate: function() {
+            var status = this.status.get("status");
+            if (status === "RUNNING") {
+                this.$el.find("a").addClass("disabled");
+            } else {
+                this.$el.find("a").removeClass("disabled");
+            }
         },
 
         createModel : function() {
@@ -1628,19 +1773,26 @@ function program1(depth0,data) {
         },
 
         eventSelect : function(event) {
-            var value = $(event.target).parents("li").attr("data-attr");
-            if (! value) {
-                value = $(event.target).attr("data-attr");
-            }
-            //Callback to keep filters selection on Counter apps for ex
-            if (this.onChangeHandler) {
-                this.onChangeHandler(value ,this.collection);
-            }
-            else {
-                squid_api.setBookmarkId(value);
-                if (this.onSelect) {
-                    this.onSelect.call();
+            if (! $(event.target).hasClass("disabled")) {
+                var value = $(event.target).parents("li").attr("data-attr");
+                if (! value) {
+                    value = $(event.target).attr("data-attr");
                 }
+                //Callback to keep filters selection on Counter apps for ex
+            
+                if (this.onChangeHandler) {
+                    if (squid_api.model.config && value != squid_api.model.config.get("bookmark")) {
+                        this.onChangeHandler(value ,this.collection);
+                    }
+                }
+                else {
+                    squid_api.setBookmarkId(value);
+                    if (this.onSelect) {
+                        this.onSelect.call();
+                    }
+                }
+            } else {
+                event.preventDefault();
             }
         },
 
@@ -1669,7 +1821,6 @@ function program1(depth0,data) {
             var listHtml = $(this.template(filteredCollection)).find(".list").last().html();
             this.$el.find(".list").last().html(listHtml);
 
-            // this.bookmarkFolderStateCheck();
             if (text.length > 0) {
                 this.templateWidgets("open");
             } else {
@@ -1788,38 +1939,15 @@ function program1(depth0,data) {
             }
             return name;
         },
-        bookmarkFolderStateSet: function(item, action) {
-            var project = this.config.get("project");
-            var bookmarkFolderState = $.extend(true, {}, this.config.get("bookmarkFolderState"));
-            if (action == "show") {
-                if (bookmarkFolderState) {
-                    bookmarkFolderState[project] = item;
-                } else {
-                    var obj = {};
-                    obj[project] = item;
-                    bookmarkFolderState = obj;
-                }
-            } else if (action == "hidden") {
-                if (bookmarkFolderState) {
-                    delete bookmarkFolderState[project];
-                }
-            }
-            this.config.set("bookmarkFolderState", bookmarkFolderState);
-        },
-        bookmarkFolderStateCheck: function() {
-            var bookmarkFolderState = this.config.get("bookmarkFolderState");
-            var project = this.config.get("project");
-            // open folder if stored in config
-            if (bookmarkFolderState) {
-                if (bookmarkFolderState[project]) {
-                    this.$el.find("#" + bookmarkFolderState[project]).collapse('toggle');
-                }
+        bookmarkFolderState: function(item) {
+            if (item || item === 0) {
+                this.$el.find("#bookmark-collapse-" + item).collapse('toggle');
             }
         },
         render: function(activePath) {
             console.log("render CollectionManagementWidget "+this.type);
             var project = this.config.get("project");
-            var bookmarkFolderState = this.config.get("bookmarkFolderState");
+            var currentBookmark = this.config.get("bookmark");
 
             this.jsonData = {
                 collectionLoaded : !this.collectionLoading,
@@ -1843,7 +1971,7 @@ function program1(depth0,data) {
                 this.jsonData.createRole = this.getCreateRole();
 
                 var selectedId = this.config.get(this.configSelectedId);
-
+                
                 // store model data
                 for (i=0; i<this.collection.size(); i++) {
                     var item = this.collection.at(i);
@@ -1936,15 +2064,14 @@ function program1(depth0,data) {
                                     if (activePath === collection[x].path.value) {
                                         collection[x].active = true;
                                     }
+                                    if (currentBookmark === bookmark.oid) {
+                                        collection[x].currentBookmarkInside = true;
+                                    }
                                     collection[x].bookmarks.push(bookmark);
                                 }
                             }
                         }
                     }
-                }
-
-                if (_.where(collection, {active: true}).length === 0 && collection.length > 0) {
-                    collection[0].active = true;
                 }
 
                 // sort bookmarks by label
@@ -1968,8 +2095,13 @@ function program1(depth0,data) {
                     var textB = b.path.value.replace(/\//g, '').replace(/ /g, '').toUpperCase();
                     return (textA > textB) ? 1 : (textA < textB) ? -1 : 0;
                 });
+                if (_.where(collection, {active: true}).length === 0 && collection.length > 0) {
+                    collection[0].active = true;
+                }
                 this.jsonData.collection = collection;
-                console.log(paths);
+                if (this.returnPaths) {
+                    this.returnPaths.call(paths);
+                }
             }
 
             // render template
@@ -1978,8 +2110,19 @@ function program1(depth0,data) {
 
             this.$el.find("input.search").focus();
 
-            this.bookmarkFolderStateCheck();
-            this.templateWidgets();
+            this.statusUpdate();
+
+            if (this.jsonData.collection) {
+                // if no active collection, open the parent folder of currently selected bookmark
+                if (! activePath) {
+                    var indexToOpen = _.indexOf(_.pluck(this.jsonData.collection, 'currentBookmarkInside'), true);
+                    if (indexToOpen === -1) {
+                        indexToOpen = 0;
+                    }
+                    this.bookmarkFolderState(indexToOpen);
+                }
+                this.templateWidgets();
+            }
 
             return this;
         },
@@ -1991,16 +2134,6 @@ function program1(depth0,data) {
                     trigger: "hover"
                 });
             }
-            // accordion & events
-            this.$el.find(".collapse").on('hidden.bs.collapse', { context: this }, function (event) {
-                var item = $(this).attr("id");
-                event.data.context.bookmarkFolderStateSet(item, "hidden");
-            });
-            this.$el.find(".collapse").on('show.bs.collapse', { context: this }, function (event) {
-                var item = $(this).attr("id");
-                event.data.context.bookmarkFolderStateSet(item, "show");
-            });
-
             if (collapseState == "open") {
                 var folders = this.$el.find(".collapse");
                 for (var i=0; i<folders.length; i++) {
@@ -2013,6 +2146,573 @@ function program1(depth0,data) {
     });
 
     return View;
+}));
+
+/*! Squid Core API Bookmark Controller V1.0 */
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD.
+        define(['Backbone', '_', 'squid_api'], factory);
+    } else {
+        factory(root.Backbone, _, root.squid_api);
+    }
+}(this, function (Backbone, _, squid_api) {
+
+    // Enhance Squid API controller
+    var Controller = {
+
+            savedAnalysesConfig: new Map(),
+            customAddedFacets: new Map(),
+            customDeletedFacets: new Map(),
+
+            /**
+             * Function allowing to reset the whole user navigation (for ex when changing the project)
+             */
+            resetAll: function() {
+                Controller.savedAnalysesConfig = new Map();
+                Controller.customAddedFacets = new Map();
+                Controller.customDeletedFacets = new Map();
+            },
+
+            /**
+             * @return available facets from a domain
+             */
+            loadFacets: function (projectId, domainId) {
+                var dfd = new $.Deferred();
+                if (domainId) {
+                    var filters = new squid_api.model.FiltersJob();
+                    filters.set("id", {
+                        "projectId": projectId
+                    });
+                    filters.set("engineVersion", "2");
+                    filters.setDomainIds([domainId]);
+                   
+                    //JTH 2016-08-24 add dynamic flag
+                    filters.set("includeDynamic", false);
+
+                    console.log("compute (initFilters)");
+                    squid_api.controller.facetjob.compute(filters).then(function() {
+                        // search for time facets
+                        var sel = filters.get("selection");
+                        //JTH 2016-08-24 copy facets
+                        /**/
+                        var facets;
+                        if (sel && sel.facets) {
+                            facets=  sel.facets;
+                        }
+                        dfd.resolve(facets);
+						/**/
+                        /* remove the new code for the moment
+						var selFacets = [];
+                        var facets = sel.facets;
+                        for (i = 0; i < facets.length; i++) {
+                            var facet = facets[i];
+                            var selFacet = {
+                                    "id" : facet.id,
+                                    "name" : facet.name ? facet.name : facet.dimension.name,
+                                    "items" : [],
+                            		"dimension" : facet.dimension
+                            };
+                            var selectedItems = facet.selectedItems;
+                            for (ix = 0; ix < selectedItems.length; ix++) {
+                                selFacet.selectedItems.push({
+                                        "id" : selectedItems[ix].id,
+                                        "name" : selectedItems[ix].value
+                                });
+                            }
+                            var items = facet.items;
+                            for (ix = 0; ix < items.length; ix++) {
+                                selFacet.items.push({
+                                        "id" : items[ix].id,
+                                        "name" : items[ix].value
+                                });
+                            }
+                            selFacet.available = (facet.dimension.type === "CATEGORICAL" || facet.dimension.type === "SEGMENTS" || (facet.dimension.type === "CONTINUOUS" && facet.dimension.valueType === "DATE") || selFacet.items.length > 0);
+                            if (selFacet.available) {
+                            	selFacets.push(selFacet);
+                            }
+                        }
+                        dfd.resolve(selFacets);
+                        */
+                    });
+                } else {
+                    dfd.resolve();
+                }
+                return dfd;
+            },
+
+            /**
+             * @return the facet related to segments
+             */
+            getSegmentFacet: function (facets) {
+                if (facets) {
+                    for (var i=0; i<facets.length;i++) {
+                        if (facets[i].id === "__segments") {
+                            return facets[i];
+                        }
+                    }
+                }
+            },
+
+            /**
+             * Remove the current domain id to get only the relations path up to the the facet
+             */
+            getRelationPath: function (id) {
+                var splitted = id.split("@");
+                var result = '';
+                if (splitted.length > 3) {
+                    for (var i=2; i < splitted.length; i++) {
+                        result = result + splitted[i];
+                    }    
+                }
+                return result;
+            },
+
+            /**
+             * Limitation: selected items from a config don't include the facet name, this is why we use oid in case the facet comes from a sub domain
+             * @return a facet from its name or oid
+             */
+            findFacetByName: function (facets, facet) {
+                if (facets) {
+                    for (var i=0; i<facets.length;i++) {
+                        if (Controller.normalyzeFacetName(facets[i]) === Controller.normalyzeFacetName(facet)) {
+                            return facets[i];
+                        }
+                    }
+                }
+            },
+
+            /**
+             * @return name from the dimension of the facet as selected items from a config don't include the facet name
+             */
+            normalyzeFacetName: function (facet) {
+                var facetName = facet.name;
+                //Segments have to be handled at a domain level
+                if (facet.id === "__segments") {
+                    facetName = facet.dimension.id.domainId;
+                    //} else if ((facet.id.split("@").length - 1) > 2){ //In case of relations, we use the relations path as name to deduplicate the same facet used through multiple paths
+                    //	facetName = this.getRelationPath(facet.id);
+                } else if (facetName === false) {
+                    facetName = facet.dimension.name;
+                }
+                return facetName;
+            },
+
+            /**
+             * @return a custom selection of items (not defined in a reference such as a bookmark)
+             */
+            getCustomSelection: function (currentItems, referenceItems, availableItems) {
+                var segmentItems = [];
+                if (currentItems) {
+                    for (var i=0; i<currentItems.length; i++) {
+                        var item = currentItems[i];
+                        var add=true;
+                        if (referenceItems) {
+                            for (var j=0; j<referenceItems.length; j++) {
+                                var referenceItem = referenceItems[j];
+                                if (item.type && referenceItem.type && item.type === referenceItem.type && item.id && referenceItem.id && item.id === referenceItem.id) {
+                                    add=false;
+                                }
+                            }
+                        }
+                        if (add) {
+                            if (availableItems) {
+                                if (Controller.containsSelection(availableItems,item)) {
+                                    segmentItems.push(item);
+                                }
+                            } else {
+                                segmentItems.push(item);
+                            }
+                        }
+                    }
+                }
+                return segmentItems;
+            },
+
+            /**
+             * @return if an item is contained in an array through ids or names
+             */
+            containsSelection: function (a, obj) {
+                var i = a.length;
+                while (i--) {
+                    if (!a[i].name && !obj.name) {
+                        if (a[i].id === obj.id) {
+                            return true;
+                        }
+                    } else if (a[i].name === obj.name) {
+                        return true;			 
+                    }
+                }
+                return false;
+            },
+
+            /**
+             * Remove/clean from a custom selection items 
+             * Remove an facet when no more custom items are present
+             * the commented code is an attempt to strengthen with all available items from the facet if they can be sent
+             * @param customSelections: array of all custom selection facets
+             * @param facetName: the facet name to look at
+             * @param availableItems: the list of all available items from the facet
+             */
+            cleanCustomSelection: function(customSelections, facetName, availableItems) {
+                if (customSelections.has(facetName)) {
+                    /*					if (availableItems) {
+					cleanedItems = Controller.cleanItems(customSelections.get(facetName), availableItems);
+					if (cleanedItems && cleanedItems.length>=1) {
+						customSelections.set(facetName, cleanedItems);
+					} else {
+						customSelections.delete(facetName);
+					}
+				} else {
+                     */						
+                    customSelections.delete(facetName);
+                    /*					}
+                     */				
+                }
+            },
+
+            /**
+             * Build a clean list of custom items (not present in the list of all available items from the facet
+             * @param items: the list of items to consider
+             * @param availableItems: the list of all available items from the facet
+             */
+            cleanItems: function(items, availableItems) {
+                var cleanedItems = [];
+                for (var i=0; i<items.length; i++) {
+                    if (Controller.containsSelection(availableItems, items[i]) === false) {
+                        cleanedItems.push(items[i]);
+                    }
+                }
+                return cleanedItems;
+            },
+
+            /**
+             * Merge several list of items into a new list, used to define the new selection from user's interaction
+             * @param savedSelection: custom items selected by the user
+             * @param forcedSelection: last selection known on the same bookmark
+             * @param facetForItems: list of facet's item (optional) for strengthening 
+             * @param bookmarkSelection: selected items defined in the bookmark
+             * @param deletedSelection: custom items recently deleted by the user
+             * @return the merged list of selected items
+             */
+            mergeSelection: function (savedSelection, forcedSelection, facetForItems, bookmarkSelection, deletedSelection) {
+                var segments = [];
+                var toAdd = [];
+
+                //Define starting point depending if the user has already used or not the bookmark
+                if (forcedSelection && savedSelection) {
+                    toAdd = segments.concat(forcedSelection.selectedItems);
+                } else if (bookmarkSelection && bookmarkSelection.selectedItems){
+                    toAdd  = segments.concat(bookmarkSelection.selectedItems);
+                }
+
+                //remove recently deleted items if any
+                for (var f=0; f<toAdd.length; f++) {
+                    if (!deletedSelection) {
+                        segments.push(toAdd[f]);					 
+                    } else if (Controller.containsSelection(deletedSelection, toAdd[f]) === false) {
+                        segments.push(toAdd[f]);			
+                    }
+                }
+
+                //Apply custom items if possible
+                if (savedSelection) {
+                    for (var i=0; i<savedSelection.length; i++) {
+                        var segment = savedSelection[i];
+                        var add = true;
+                        //Do we remove because it is already in the forced config?
+                        if (forcedSelection) {
+                            for (var j=0; j<forcedSelection.selectedItems.length; j++) {
+                                if (segment.value && forcedSelection.selectedItems[j].value && segment.value === forcedSelection.selectedItems[j].value) {
+                                    add=false;
+                                }
+                            }
+                        }
+                        //Do we remove because it is not all segments from the domain (strengthen)
+                        if (add === true) {
+                            var addItem = false;
+                            if (facetForItems) {
+                                for (var k=0; k<facetForItems.items.length; k++) {
+                                    if (segment.value && facetForItems.items[k].value && segment.value === facetForItems.items[k].value) {
+                                        addItem=true;
+                                        segment = facetForItems.items[k];
+                                    }
+                                }
+                            } else {
+                                //Items not provided (because list too long), set true as default
+                                addItem=true;
+                            }
+                            add = addItem;
+                        }
+                        //Do we remove because it is a segment defined in the bookmark?
+                        if (add === true) {
+                            if (bookmarkSelection) {
+                                for (var l=0; l<bookmarkSelection.selectedItems.length; l++) {
+                                    if (segment.value && bookmarkSelection.selectedItems[l].value && segment.value === bookmarkSelection.selectedItems[l].value) {
+                                        add=false;
+                                    }
+                                }
+                            }
+                        }
+                        if (add === true) {
+                            segments.push(segment);
+                        }
+                    }
+                }
+                return segments;
+            },
+
+            /**
+             * Setup the facet name in selected items from the domain facets
+             */
+            addNameToSelectedFacets: function(domainFacets, selectedFacets) {
+                for (var i=0; i<selectedFacets.length; i++) {
+                    selectedFacets[i].name = Controller.getSelectedFacetName(domainFacets, selectedFacets[i]);
+                }
+            },
+
+            /**
+             * return the facet name from the domain'facet itself instead of the selection
+             */
+            getSelectedFacetName: function(facets, selectedFacet) {
+                for (var j=0; j<facets.length; j++) {
+                    if (facets[j].id === selectedFacet.id) {
+                        return facets[j].name;
+                    }
+                }
+            },
+
+
+            /**
+             * Handle the construction of the new configuration when switching from one bookmark to another one, applying filters change operated by the user
+             * @param bookmarkId
+             * @param bookmarksCollection
+             * @returns the new configuration
+             */
+            setBookmarkAction: function(bookmark, forcedConfig, attributes) {
+                if (!squid_api.model.config.get("bookmark")) {
+                    // first time opening a bookmark
+                    squid_api.setBookmark(bookmark, forcedConfig, attributes);
+                } else {
+                    var me = Controller;
+                    var bookmarkId = bookmark.id;
+                    var config = squid_api.model.config;
+                    var copyConfig = $.extend(true, {}, config);
+
+                    var oldFacets = Controller.loadFacets(copyConfig.get("project"), copyConfig.get("domain"));
+                    var newBookmark = bookmark;
+                    var newFacets = Controller.loadFacets(copyConfig.get("project"), newBookmark.get("config").domain);
+
+                    var cleanedItems;
+                    if (squid_api.model.config.get("bookmark") === bookmarkId) {
+                        // force bookmark reset
+                        $.when(oldFacets).done(function(oldFacets)  {
+                            if (oldFacets) {
+                                for (var k=0; k<oldFacets.length; k++) {
+                                    var availableFacet = oldFacets[k];
+                                    var facetName = me.normalyzeFacetName(availableFacet);
+                                    var availableItems = null;
+                                    if (availableFacet.id === "__segments") {
+                                        availableItems = availableFacet.items;
+                                    }
+                                    me.cleanCustomSelection(me.customAddedFacets, facetName, availableItems);
+                                    me.cleanCustomSelection(me.customDeletedFacets, facetName, availableItems);
+                                }
+                            }
+                            squid_api.setBookmark(bookmark, forcedConfig, attributes);
+                        });
+                    } else {
+                        // get the previous Bookmark
+                        squid_api.getCustomer().then(function(customer) {
+                            customer.get("projects").load(copyConfig.get("project")).then(function(project) {
+                                project.get("bookmarks").load(copyConfig.get("bookmark")).done(function(previousBookmark) {
+
+                                    //Get list of available facets for each domains
+                                    $.when(oldFacets, newFacets).done(function(oldFacets, newFacets) {
+                                        console.log("merge filters from bookmarks");
+                                        var forcedConfig = function(newConfig) {
+                                            newConfig.project = project.get("oid");
+                                            newConfig.bookmark = bookmarkId;
+                                            
+                                            me.addNameToSelectedFacets(newFacets, newConfig.selection.facets);
+                                            var oldSelection = copyConfig.get("selection");
+                                            if (oldSelection && oldSelection.facets)  {
+                                                me.addNameToSelectedFacets(oldFacets, oldSelection.facets);
+                                            }
+                                            var facetName;
+                                            var facetForItems;
+
+                                            if (previousBookmark && previousBookmark.id) {
+                                                me.savedAnalysesConfig.set(copyConfig.get("bookmark"), copyConfig.attributes);
+                                            }
+
+                                            //Get the latest config used on the new bookmark used if any
+                                            var savedNewConfig = me.savedAnalysesConfig.get(newBookmark.id);
+                                            //In case it is the first bookmark selected
+                                            if (!savedNewConfig || !savedNewConfig.selection) {
+                                                savedNewConfig = newConfig;
+                                            } else {
+                                            	//V3 compatibility: initialize dimensions, metrics & order by from last saved state for the same bookmark
+                                            	newConfig.chosenDimensions = savedNewConfig.chosenDimensions;
+                                            	newConfig.chosenMetrics = savedNewConfig.chosenMetrics;
+                                            	newConfig.orderBy = savedNewConfig.orderBy;
+                                            }
+                                            var forcedSelection = { "compareTo" : [], "facets" : []};
+
+                                            if (oldSelection && oldSelection.facets) {
+                                                //Save/update any facet selected
+                                                if (oldFacets) {
+                                                    //We put back the names in the selected items from the domain's facets
+                                                    me.addNameToSelectedFacets(oldFacets, previousBookmark.get("config").selection.facets);
+
+                                                    for (var k=0; k<oldFacets.length; k++) {
+                                                        var availableFacet = oldFacets[k];
+                                                        var existsInNewConfig = me.containsSelection(newFacets, availableFacet);
+                                                        facetName = me.normalyzeFacetName(availableFacet);
+                                                        var selectedItems = [];
+                                                        var deletedItems = [];
+
+                                                        var bookmarkFacet = me.findFacetByName(previousBookmark.get("config").selection.facets, availableFacet);
+                                                        facetForItems = me.findFacetByName(oldSelection.facets, availableFacet);
+
+                                                        var availableItems = null;
+                                                        if (facetForItems && facetForItems.selectedItems) {
+                                                            if (facetForItems.id === "__segments" && me.getSegmentFacet(newFacets)) {
+                                                                availableItems = me.getSegmentFacet(newFacets).items;
+                                                            }
+                                                            if (bookmarkFacet) {
+                                                                var diffItems = me.getCustomSelection(facetForItems.selectedItems, bookmarkFacet.selectedItems);   
+                                                                if (diffItems && diffItems.length>0) {
+                                                                    selectedItems=diffItems;
+                                                                }
+                                                                /* T1778 - non needed code but may be useful at some points
+                                                                if (previousBookmark.get("config").domain === newConfig.domain && newConfig.period) {
+                                                                	if (Object.keys(newConfig.period) && Object.keys(previousBookmark.get("config").period)) {
+                                                                		if (facetForItems.id === previousBookmark.get("config").period[newConfig.domain] && 
+                                                                				newConfig.period[newConfig.domain] !== previousBookmark.get("config").period[newConfig.domain]) {
+                                                                			selectedItems = [];
+                                                                			if (savedNewConfig.selection.facets && savedNewConfig.selection.facets.length) {
+                                                                				for (var l=0; l<savedNewConfig.selection.facets.length; l++) {
+                                                                					if (savedNewConfig.selection.facets[l].id === newConfig.period[newConfig.domain] && savedNewConfig.selection.facets[l].selectedItems) {
+                                                                						selectedItems = savedNewConfig.selection.facets[l].selectedItems;
+                                                                					}
+                                                                				}
+                                                                			}
+                                                                		}
+                                                                	}
+                                                                }
+                                                                */
+                                                                //Now we clean deleted items if segments as it is shared among bookmarks on same domain
+                                                                if (availableFacet.id === "__segments" && me.customDeletedFacets.get(facetName) && diffItems.length>0) {
+                                                                    me.customDeletedFacets.set(facetName, me.cleanItems(me.customDeletedFacets.get(facetName), diffItems));
+                                                                }
+
+                                                                diffItems = me.getCustomSelection(bookmarkFacet.selectedItems, facetForItems.selectedItems, availableItems);
+
+                                                                //Now we copy back remaining deleted items if segments as it is shared among bookmarks on same domain
+                                                                if (availableFacet.id === "__segments" && me.customDeletedFacets.get(facetName)) {
+                                                                    diffItems = diffItems.concat(me.customDeletedFacets.get(facetName));
+                                                                }
+
+                                                                //No need for period as it is a single selection
+                                                                if ((availableFacet.dimension.type === "CONTINUOUS" && availableFacet.dimension.valueType === "DATE") === false) {
+                                                                    if (diffItems && diffItems.length>0) {
+                                                                        deletedItems=diffItems;
+                                                                    }		
+                                                                }
+                                                            } else {
+                                                                selectedItems = facetForItems.selectedItems;
+                                                            }
+                                                        }
+                                                        if (selectedItems && selectedItems.length>0) {
+                                                            me.customAddedFacets.set(facetName, selectedItems);
+                                                        } else {
+                                                            me.cleanCustomSelection(me.customAddedFacets, facetName, availableItems);
+                                                        }
+                                                        if (deletedItems && deletedItems.length>0) {
+                                                            me.customDeletedFacets.set(facetName, deletedItems);
+                                                        } else if (me.customDeletedFacets.has(facetName)) {
+                                                            me.cleanCustomSelection(me.customDeletedFacets, facetName, availableItems);
+                                                        }
+                                                    }
+                                                }
+
+                                                //We add new selected facets on other dashboards
+                                                if (newFacets) {
+                                                    for (var f=0; f<newFacets.length; f++) {
+                                                        var newFacet = newFacets[f];
+                                                        facetName = me.normalyzeFacetName(newFacet);
+                                                        var complementFacetItems = null;
+                                                        if (newFacet.dimension.type === "CONTINUOUS" && newFacet.dimension.valueType === "DATE") {
+                                                            //For dates there is only one selection item
+                                                            
+                                                        	if (oldSelection.compareTo && oldSelection.compareTo.length === 1) {
+                                                                var savedNewCompare = $.extend(true, {}, newFacet);
+                                                                savedNewCompare.selectedItems = $.extend(true, [], oldSelection.compareTo[0].selectedItems);
+                                                                forcedSelection.compareTo.push(savedNewCompare);
+                                                            } else {
+                                                            	forcedSelection.compareTo = null;
+                                                            	/*We don't copy anymore the new compare
+                                                                if (savedNewConfig.selection.compareTo) {
+                                                                    forcedSelection.compareTo = $.extend(true, [], savedNewConfig.selection.compareTo);
+                                                                }
+                                                                */
+                                                            }
+                                                            complementFacetItems = me.customAddedFacets.get(facetName);
+                                                            if (!complementFacetItems) {
+                                                                var periodFacet = me.findFacetByName(newConfig.selection.facets, newFacet); 
+                                                                if (periodFacet) {
+                                                                    complementFacetItems = periodFacet.selectedItems;
+                                                                }// when renaming a child dimension, the dimension name in the bookmark is not updated
+                                                            }
+                                                            //T1778
+                                                            if (complementFacetItems && newConfig.period) {
+                                                            	if (newFacet.id !== newConfig.period[newConfig.domain]) {
+                                                            		complementFacetItems = null;
+                                                            	}
+                                                            }
+                                                        } else {
+                                                            var savedSelection = me.customAddedFacets.get(facetName);
+                                                            var deletedSelection = me.customDeletedFacets.get(facetName);
+                                                            var bookmarkSelection = me.findFacetByName(newConfig.selection.facets, newFacet); // when renaming a child dimension, the dimension name in the bookmark is not updated
+                                                            var lastSelection = me.findFacetByName(savedNewConfig.selection.facets, newFacet);
+                                                            facetForItems = null;
+                                                            if (newFacet.id === "__segments") {
+                                                                facetForItems = me.getSegmentFacet(newFacets);
+                                                            }
+                                                            complementFacetItems = me.mergeSelection(savedSelection, lastSelection, facetForItems, bookmarkSelection, deletedSelection);
+                                                        }
+                                                        if (complementFacetItems && complementFacetItems.length>0) {
+                                                            var copiedFacet = {
+                                                                    dimension: newFacet.dimension,
+                                                                    id: newFacet.id,
+                                                                    selectedItems: complementFacetItems
+                                                            };
+                                                            forcedSelection.facets.push(copiedFacet);
+                                                        }
+                                                    }
+                                                }
+
+                                                //Set then next config from selected facets
+                                                newConfig.selection = forcedSelection;
+                                            }
+
+                                            return newConfig;
+                                        };
+
+                                        squid_api.setBookmark(bookmark, forcedConfig, null);           
+                                    });
+                                });
+                            });
+                        });
+                    }
+                }
+            }
+    };
+
+    squid_api.controller.Bookmark = Controller;
+
+    return squid_api;
 }));
 
 (function (root, factory) {
@@ -2312,6 +3012,7 @@ function program1(depth0,data) {
                         }
                     }
                     display += this.selectedModel.get("name");
+                    this.$el.find(".squid-api-button-view").text(display);
                     this.$el.find("button").text(display);
                 }
                 if (match) {
@@ -2507,6 +3208,93 @@ function program1(depth0,data) {
     };
 
     return Utils;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.ColumnCollectionManagementWidget = factory(root.Backbone, root.squid_api);
+
+}(this, function (Backbone, squid_api) {
+
+    var View = squid_api.view.BaseCollectionManagementWidget.extend({
+        type : null,
+        typeLabel : null,
+        typeLabelPlural : null,
+        configParentId : "domain",
+
+        init : function(options) {
+            var me = this;
+
+            // set column type
+            if (options) {
+                if (options.type) {
+                    this.type = options.type;
+                }
+            }
+
+            this.typeLabel = this.type;
+            this.typeLabelPlural = this.type + "s";
+
+            this.modelView = squid_api.view.BaseModelManagementWidget;
+
+            if (this.type === "Dimension") {
+                this.modelView = squid_api.view.DimensionModelManagementWidget;
+            }
+        },
+
+        loadCollection : function(parentId) {
+            var me = this;
+            return squid_api.getCustomer().then(function(customer) {
+                return customer.get("projects").load(me.config.get("project")).then(function(project) {
+                    return project.get("domains").load(parentId).then(function(domain) {
+                        return domain.get(me.typeLabelPlural.toLowerCase()).load();
+                    });
+                });
+            });
+        },
+
+        events: {
+            'mouseenter tr': function(event) {
+                this.eventMouseEnter(event);
+            },
+            'mouseleave tr': function(event) {
+                this.eventMouseLeave(event);
+            },
+            "click .create" : function(event) {
+                this.eventCreate(event);
+            },
+            'input .search' : function(event) {
+                this.eventSearch(event);
+            },
+            "click .edit": function(event) {
+                this.eventEdit(event);
+            },
+            "click .refresh": function(event) {
+                this.eventRefresh(event);
+            },
+            "click .delete": function(event) {
+                this.eventDelete(event);
+            },
+            "click .select": function(event) {
+                this.eventSelect(event);
+            }
+        },
+
+        getModelLabel: function(model) {
+            if (model.get("dynamic")) {
+                return "~ " + model.get("name");
+            } else {
+                return model.get("name");
+            }
+        },
+
+        getModelRoles : function(model) {
+            var roles = squid_api.view.BaseCollectionManagementWidget.prototype.getModelRoles.call(this, model);
+            return roles;
+        }
+
+    });
+
+    return View;
 }));
 
 (function (root, factory) {
@@ -2708,6 +3496,11 @@ function program1(depth0,data) {
 
         customDataManipulation: function(data) {
             // to be overridden from other model management widgets
+            if (data.expression) {
+                if (data.expression.value === null) {
+                    delete data.expression;
+                }
+            }
             return data;
         },
 
@@ -2732,302 +3525,312 @@ function program1(depth0,data) {
 
     squid_api.model.DomainModel.prototype.definition = "Domain";
     squid_api.model.DomainModel.prototype.ignoredAttributes = [
-                                                               'accessRights', 'dimensions', 'metrics' ];
+        'accessRights', 'dimensions', 'metrics'];
     squid_api.model.DomainModel.prototype.schema = {
-            "id" : {
-                "title" : " ",
-                "type" : "Object",
-                "subSchema" : {
-                    "projectId" : {
-                        "options" : [],
-                        "type" : "Text",
-                        "editorClass" : "hidden"
-                    },
-                    "domainId" : {
-                        "options" : [],
-                        "type" : "Text",
-                        "editorClass" : "form-control"
-                    }
+        "id": {
+            "title": " ",
+            "type": "Object",
+            "subSchema": {
+                "projectId": {
+                    "options": [],
+                    "type": "Text",
+                    "editorClass": "hidden"
                 },
-                "editorClass" : "hidden",
-                "fieldClass" : "id"
+                "domainId": {
+                    "options": [],
+                    "type": "Text",
+                    "editorClass": "form-control"
+                }
             },
-            "name" : {
-                "type" : "Text",
-                "editorClass" : "form-control",
-                "fieldClass" : "name"
+            "editorClass": "hidden",
+            "fieldClass": "id"
+        },
+        "name": {
+            "type": "Text",
+            "editorClass": "form-control",
+            "fieldClass": "name"
+        },
+        "description": {
+            "type": "TextArea",
+            "editorClass": "form-control",
+            "fieldClass": "description"
+        },
+        "subject": {
+            "type": "Object",
+            "title": "",
+            "subSchema": {
+                "value": {
+                    "title": "Subject Value (use Ctrl-Space to have completion)",
+                    "type": "DomainExpressionEditor",
+                    "editorClass": "form-control suggestion-box"
+                }
             },
-            "description" : {
-                "type" : "TextArea",
-                "editorClass" : "form-control",
-                "fieldClass" : "description"
-            },
-            "subject" : {
-                "type" : "Object",
-                "title" : "",
-                "subSchema" : {
-                    "value" : {
-                        "title" : "Subject Value",
-                        "type" : "DomainExpressionEditor",
-                        "editorClass" : "form-control suggestion-box"
-                    }
-                },
-                "position" : 1,
-                "fieldClass" : "subject"
-            }
+            "position": 1,
+            "fieldClass": "subject"
+        }
     };
 
     squid_api.model.RelationModel.prototype.definition = "Relation";
-    squid_api.model.RelationModel.prototype.ignoredAttributes = [ 'accessRights' ];
+    squid_api.model.RelationModel.prototype.ignoredAttributes = ['accessRights'];
     squid_api.model.RelationModel.prototype.schema = {
-            "id" : {
-                "title" : " ",
-                "type" : "Object",
-                "subSchema" : {
-                    "projectId" : {
-                        "options" : [],
-                        "type" : "Text",
-                        "title" : " ",
-                        "editorClass" : "hidden"
-                    },
-                    "relationId" : {
-                        "options" : [],
-                        "type" : "Text",
-                        "editorClass" : "form-control"
-                    }
+        "id": {
+            "title": " ",
+            "type": "Object",
+            "subSchema": {
+                "projectId": {
+                    "options": [],
+                    "type": "Text",
+                    "title": " ",
+                    "editorClass": "hidden"
                 },
-                "editorClass" : "hidden",
-                "fieldClass" : "id"
+                "relationId": {
+                    "options": [],
+                    "type": "Text",
+                    "editorClass": "form-control"
+                }
             },
-            "leftId" : {
-                "title" : " ",
-                "type" : "Object",
-                "subSchema" : {
-                    "projectId" : {
-                        "options" : [],
-                        "type" : "Text",
-                        "title" : " ",
-                        "editorClass" : "hidden"
-                    },
-                    "domainId" : {
-                        "options" : [],
-                        "type" : "Select",
-                        "editorClass" : "form-control",
-                        "title" : "Left Domain"
-                    }
+            "editorClass": "hidden",
+            "fieldClass": "id"
+        },
+        "rightId": {
+            "title": " ",
+            "type": "Object",
+            "subSchema": {
+                "projectId": {
+                    "options": [],
+                    "type": "Text",
+                    "title": " ",
+                    "editorClass": "hidden"
                 },
-                "fieldClass" : "leftId"
+                "domainId": {
+                    "options": [],
+                    "type": "Select",
+                    "editorClass": "form-control",
+                    "title": "Related With"
+                }
             },
-            "leftCardinality" : {
-                "type" : "Select",
-                "editorClass" : "form-control",
-                "options" : [ "ZERO_OR_ONE", "ONE", "MANY" ],
-                "fieldClass" : "leftCardinality"
-            },
-            "rightCardinality" : {
-                "type" : "Select",
-                "editorClass" : "form-control",
-                "options" : [ "ZERO_OR_ONE", "ONE", "MANY" ],
-                "fieldClass" : "rightCardinality"
-            },
-            "rightId" : {
-                "title" : " ",
-                "type" : "Object",
-                "subSchema" : {
-                    "projectId" : {
-                        "options" : [],
-                        "type" : "Text",
-                        "title" : " ",
-                        "editorClass" : "hidden"
-                    },
-                    "domainId" : {
-                        "options" : [],
-                        "type" : "Select",
-                        "editorClass" : "form-control",
-                        "title" : "Right Domain"
-                    }
+            "fieldClass": "rightId"
+        },
+        "leftId": {
+            "title": " ",
+            "type": "Object",
+            "subSchema": {
+                "projectId": {
+                    "options": [],
+                    "type": "Text",
+                    "title": " ",
+                    "editorClass": "hidden"
                 },
-                "fieldClass" : "rightId"
+                "domainId": {
+                    "options": [],
+                    "type": "Select",
+                    "editorClass": "form-control",
+                    "title": "Related With Left"
+                }
             },
-            "leftName" : {
-                "type" : "Text",
-                "editorClass" : "form-control",
-                "fieldClass" : "leftName"
+            "fieldClass": "leftId"
+        },
+        "leftName": {
+            "type": "Text",
+            "editorClass": "form-control",
+            "fieldClass": "leftName",
+            "title": " ",
+            "validators": [{
+                type: 'required',
+                message: ' '
+            }]
+        },
+        "cardinality": {
+            "type": "Select",
+            "editorClass": "form-control",
+            "options": ["many to zero or one", "zero or one to many", "one to one", "one to many", "many to one", "zero or one to one", "one to zero or one"],
+            "title": " ",
+            "fieldClass": "cardinality"
+        },
+        "rightName": {
+            "type": "Text",
+            "editorClass": "form-control",
+            "fieldClass": "rightName",
+            "title": " ",
+            "validators": [{
+                type: 'required',
+                message: ' '
+            }]
+        },
+        "description": {
+            "type": "Text",
+            "editorClass": "form-control",
+            "title": "Description",
+            "fieldClass": "description",
+        },
+        "joinExpression": {
+            "title": " ",
+            "type": "Object",
+            "subSchema": {
+                "value": {
+                    "title": "Join Expression",
+                    "type": "RelationExpressionEditor",
+                    "editorClass": "form-control suggestion-box"
+                }
             },
-            "rightName" : {
-                "type" : "Text",
-                "editorClass" : "form-control",
-                "fieldClass" : "rightName"
-            },
-            "joinExpression" : {
-                "title" : " ",
-                "type" : "Object",
-                "subSchema" : {
-                    "value" : {
-                        "title" : "Join Expression",
-                        "type" : "RelationExpressionEditor",
-                        "editorClass" : "form-control suggestion-box"
-                    }
-                },
-                "fieldClass" : "joinExpression"
-            }
+            "fieldClass": "joinExpression"
+        }
     };
 
     squid_api.model.DimensionModel.prototype.definition = "Dimension";
     squid_api.model.DimensionModel.prototype.ignoredAttributes = [
-                                                                  'options', 'accessRights', 'dynamic', 'attributes',
-                                                                  'valueType' ];
+        'options', 'accessRights', 'dynamic', 'attributes',
+        'valueType'];
     squid_api.model.DimensionModel.prototype.schema = {
-            "id" : {
-                "title" : " ",
-                "type" : "Object",
-                "subSchema" : {
-                    "projectId" : {
-                        "options" : [],
-                        "type" : "Text",
-                        "editorClass" : "hidden"
-                    },
-                    "domainId" : {
-                        "options" : [],
-                        "type" : "Text",
-                        "editorClass" : "form-control"
-                    },
-                    "dimensionId" : {
-                        "options" : [],
-                        "type" : "Text",
-                        "editorClass" : "form-control"
-                    }
+        "id": {
+            "title": " ",
+            "type": "Object",
+            "subSchema": {
+                "projectId": {
+                    "options": [],
+                    "type": "Text",
+                    "editorClass": "hidden"
                 },
-                "editorClass" : "hidden",
-                "fieldClass" : "id"
-            },
-            "name" : {
-                "type" : "Text",
-                "editorClass" : "form-control",
-                "fieldClass" : "name"
-            },
-            "description" : {
-                "type" : "TextArea",
-                "editorClass" : "form-control",
-                "fieldClass" : "description"
-            },
-            "type" : {
-                "type" : "Checkboxes",
-                "editorClass" : " ",
-                "options" : [ {
-                    "val" : "CATEGORICAL",
-                    "label" : "Indexed"
-                }, {
-                    "val" : "CONTINUOUS",
-                    "label" : "Period"
-                } ],
-                "position" : 1,
-                "fieldClass" : "type checkbox"
-            },
-            "parentId" : {
-                "title" : " ",
-                "type" : "Object",
-                "subSchema" : {
-                    "projectId" : {
-                        "options" : [],
-                        "type" : "Text",
-                        "editorClass" : "hidden",
-                        "fieldClass" : "hidden"
-                    },
-                    "domainId" : {
-                        "options" : [],
-                        "type" : "Text",
-                        "editorClass" : "form-control",
-                        "fieldClass" : "hidden"
-                    },
-                    "dimensionId" : {
-                        "options" : [{val : null, label : " "}],
-                        "type" : "Select",
-                        "editorClass" : "form-control",
-                        "title" : "Parent Dimension"
-                    }
+                "domainId": {
+                    "options": [],
+                    "type": "Text",
+                    "editorClass": "form-control"
                 },
-                "position" : 2,
-                "fieldClass" : "parentId"
+                "dimensionId": {
+                    "options": [],
+                    "type": "Text",
+                    "editorClass": "form-control"
+                }
             },
-            "expression" : {
-                "type" : "Object",
-                title : "",
-                "subSchema" : {
-                    "value" : {
-                        "type" : "DimensionExpressionEditor",
-                        "editorClass" : "form-control suggestion-box",
-                        "title" : "Expression Value",
-                        "validators": ['required']
-                    }
+            "editorClass": "hidden",
+            "fieldClass": "id"
+        },
+        "name": {
+            "type": "Text",
+            "editorClass": "form-control",
+            "fieldClass": "name"
+        },
+        "description": {
+            "type": "TextArea",
+            "editorClass": "form-control",
+            "fieldClass": "description"
+        },
+        "type": {
+            "type": "Checkboxes",
+            "editorClass": " ",
+            "options": [{
+                "val": "CATEGORICAL",
+                "label": "Use as a filter"
+            }, {
+                "val": "CONTINUOUS",
+                "label": "Period"
+            }],
+            "position": 1,
+            "fieldClass": "type checkbox"
+        },
+        "parentId": {
+            "title": " ",
+            "type": "Object",
+            "subSchema": {
+                "projectId": {
+                    "options": [],
+                    "type": "Text",
+                    "editorClass": "hidden",
+                    "fieldClass": "hidden"
                 },
-                "position" : 3,
-                "fieldClass" : "expression"
-            }
+                "domainId": {
+                    "options": [],
+                    "type": "Text",
+                    "editorClass": "form-control",
+                    "fieldClass": "hidden"
+                },
+                "dimensionId": {
+                    "options": [{val: null, label: " "}],
+                    "type": "Select",
+                    "editorClass": "form-control",
+                    "title": "Parent Dimension"
+                }
+            },
+            "position": 2,
+            "fieldClass": "parentId"
+        },
+        "expression": {
+            "type": "Object",
+            title: "",
+            "subSchema": {
+                "value": {
+                    "type": "DimensionExpressionEditor",
+                    "editorClass": "form-control suggestion-box",
+                    "title": "Expression Value (use Ctrl-Space to have completion)"
+                }
+            },
+            "position": 3,
+            "fieldClass": "expression"
+        }
     };
 
     squid_api.model.MetricModel.prototype.definition = "Metric";
     squid_api.model.MetricModel.prototype.schema = {
-            "id" : {
-                "title" : " ",
-                "type" : "Object",
-                "subSchema" : {
-                    "projectId" : {
-                        "options" : [],
-                        "type" : "Text",
-                        "editorClass" : "hidden"
-                    },
-                    "domainId" : {
-                        "options" : [],
-                        "type" : "Text",
-                        "editorClass" : "form-control"
-                    },
-                    "metricId" : {
-                        "options" : [],
-                        "type" : "Text",
-                        "editorClass" : "form-control"
-                    }
+        "id": {
+            "title": " ",
+            "type": "Object",
+            "subSchema": {
+                "projectId": {
+                    "options": [],
+                    "type": "Text",
+                    "editorClass": "hidden"
                 },
-                "editorClass" : "hidden",
-                "fieldClass" : "id"
-            },
-            "dynamic" : {
-                "type" : "Text",
-                "editorClass" : "form-control",
-                "fieldClass" : "dynamic hidden"
-            },
-            "name" : {
-                "type" : "Text",
-                "editorClass" : "form-control",
-                "fieldClass" : "name"
-            },
-            "description" : {
-                "type" : "TextArea",
-                "editorClass" : "form-control",
-                "fieldClass" : "description"
-            },
-            "expression" : {
-                "title" : "",
-                "type" : "Object",
-                "subSchema" : {
-                    "value" : {
-                        "title" : "Expression Value",
-                        "type" : "MetricExpressionEditor",
-                        "editorClass" : "form-control suggestion-box"
-                    }
+                "domainId": {
+                    "options": [],
+                    "type": "Text",
+                    "editorClass": "form-control"
                 },
-                "position" : 1,
-                "fieldClass" : "expression"
-            }
+                "metricId": {
+                    "options": [],
+                    "type": "Text",
+                    "editorClass": "form-control"
+                }
+            },
+            "editorClass": "hidden",
+            "fieldClass": "id"
+        },
+        "dynamic": {
+            "type": "Text",
+            "editorClass": "form-control",
+            "fieldClass": "dynamic hidden"
+        },
+        "name": {
+            "type": "Text",
+            "editorClass": "form-control",
+            "fieldClass": "name"
+        },
+        "description": {
+            "type": "TextArea",
+            "editorClass": "form-control",
+            "fieldClass": "description"
+        },
+        "expression": {
+            "title": "",
+            "type": "Object",
+            "subSchema": {
+                "value": {
+                    "title": "Expression Value (use Ctrl-Space to have completion)",
+                    "type": "MetricExpressionEditor",
+                    "editorClass": "form-control suggestion-box"
+                }
+            },
+            "position": 1,
+            "fieldClass": "expression"
+        }
     };
 
     // Define "dbCheckConnection" Custom Editor
     var dbCheckConnection = Backbone.Form.editors.Base.extend({
 
         tagName: 'button',
-        defaultValue : "Check Connection",
+        defaultValue: "Check Connection",
 
-        initialize: function(options) {
+        initialize: function (options) {
             // Call parent constructor
             Backbone.Form.editors.Base.prototype.initialize.call(this, options);
 
@@ -3036,10 +3839,10 @@ function program1(depth0,data) {
             this.login = squid_api.model.login;
         },
         events: {
-            "click" : "checkConnection"
+            "click": "checkConnection"
         },
 
-        checkConnection: function(event) {
+        checkConnection: function (event) {
             var me = this;
 
             // prevent redirect
@@ -3051,12 +3854,12 @@ function program1(depth0,data) {
             this.$el.addClass("in-progress");
             // collect prerequisites
             var dburl = this.form.fields.dbUrl.getValue();
-            var dbPassword =  this.form.fields.dbPassword.getValue();
+            var dbPassword = this.form.fields.dbPassword.getValue();
             var dbUser = this.form.fields.dbUser.getValue();
             var id = this.form.fields.id.getValue();
-            var url = squid_api.apiURL + "/connections/validate" + "?access_token="+this.login.get("accessToken")+"&url="+dburl+"&username="+ dbUser +"&password=" + encodeURIComponent(dbPassword);
+            var url = squid_api.apiURL + "/connections/validate" + "?access_token=" + this.login.get("accessToken") + "&url=" + dburl + "&username=" + dbUser + "&password=" + encodeURIComponent(dbPassword);
             if (id && id.projectId) {
-                url = url + "&projectId="+id.projectId;
+                url = url + "&projectId=" + id.projectId;
             }
 
             $.ajax({
@@ -3065,15 +3868,15 @@ function program1(depth0,data) {
                 dataType: 'json',
                 contentType: 'application/json',
                 success: function (response) {
-                    me.status.set({"error":null});
+                    me.status.set({"error": null});
                     me.$el.removeClass("in-progress");
                     me.$el.removeClass("btn-danger");
                     me.$el.addClass("btn-success");
                     me.form.fields.dbSchemas.editor.setOptions(response.definitions);
                     me.form.fields.dbSchemas.$el.show();
                 },
-                error: function(xhr, textStatus, error){
-                    me.status.set({"error":xhr});
+                error: function (xhr, textStatus, error) {
+                    me.status.set({"error": xhr});
                     me.$el.removeClass("in-progress");
                     me.$el.removeClass("btn-success");
                     me.$el.addClass("btn-danger");
@@ -3082,17 +3885,17 @@ function program1(depth0,data) {
 
             });
         },
-        render: function() {
+        render: function () {
             this.setValue(this.value);
 
             return this;
         },
 
-        getValue: function() {
+        getValue: function () {
             return this.$el.html();
         },
 
-        setValue: function(value) {
+        setValue: function (value) {
             this.$el.html(value);
         }
     });
@@ -3103,11 +3906,11 @@ function program1(depth0,data) {
         modelId: null,
 
         events: {
-            'keyup' : 'renderDialog',
-            'click' : 'renderDialog'
+            'keyup': 'renderDialog',
+            'click': 'renderDialog'
         },
 
-        initialize: function(options) {
+        initialize: function (options) {
             // Call parent constructor
             Backbone.Form.editors.Base.prototype.initialize.call(this, options);
             if (options.schema.modelId) {
@@ -3115,28 +3918,28 @@ function program1(depth0,data) {
             }
         },
 
-        getValue: function() {
+        getValue: function () {
             return this.$el.val();
         },
 
-        setValue: function(value) {
+        setValue: function (value) {
             this.$el.val(value);
         },
 
-        render: function() {
+        render: function () {
             this.setValue(this.value);
 
             return this;
         },
 
-        performRequest: function(url, data) {
+        performRequest: function (url, data) {
             var me = this;
             var request = $.ajax({
                 type: "GET",
                 url: url,
                 dataType: 'json',
                 data: data,
-                success:function(response) {
+                success: function (response) {
                     // remove any existing suggestions dialogs
                     me.$el.parents().find(".squid-api-pre-suggestions").dialog("destroy").remove();
                     // detemine if there is an error or not
@@ -3149,28 +3952,28 @@ function program1(depth0,data) {
                     if (response.suggestions && response.suggestions.length > 0) {
                         // store offset
                         var beginRange = me.$el.prop("selectionStart");
-                        var endRange = me.$el.prop("selectionEnd")-1;
+                        var endRange = me.$el.prop("selectionEnd") - 1;
                         if (response.beginInsertPos !== undefined && response.endInsertPos !== undefined) {
-                            if (response.beginInsertPos<beginRange) {
+                            if (response.beginInsertPos < beginRange) {
                                 beginRange = response.beginInsertPos;
                             }
-                            if (endRange<response.endInsertPos) {
+                            if (endRange < response.endInsertPos) {
                                 endRange = response.endInsertPos;
                             }
                         }
                         // append div
                         me.$el.after("<div class='squid-api-pre-suggestions squid-api-dialog'><ul></ul></div>");
                         var suggestionList = me.$el.siblings(".squid-api-pre-suggestions").find("ul");
-                        for (i=0; i<response.suggestions.length; i++) {
+                        for (i = 0; i < response.suggestions.length; i++) {
                             var suggestionDisplay = response.suggestions[i].suggestion;
                             if (response.suggestions[i].display) {
                                 suggestionDisplay = response.suggestions[i].display;
                             }
-                            var item = $("<li class=\"" + response.suggestions[i].objectType.toString() + " " + response.suggestions[i].valueType.toLowerCase() + "\"><span class='suggestion'>" +  suggestionDisplay + "</span><span class='valueType'>(" + response.suggestions[i].valueType.toLowerCase() + ")</span></li>");
-                            item.data("suggestion-value",response.suggestions[i].suggestion);
+                            var item = $("<li class=\"" + response.suggestions[i].objectType.toString() + " " + response.suggestions[i].valueType.toLowerCase() + "\"><span class='suggestion'>" + suggestionDisplay + "</span><span class='valueType'>(" + response.suggestions[i].valueType.toLowerCase() + ")</span></li>");
+                            item.data("suggestion-value", response.suggestions[i].suggestion);
                             item.appendTo(suggestionList);
                         }
-                        me.$el.siblings(".squid-api-pre-suggestions").find("li").click(me, function(event) {
+                        me.$el.siblings(".squid-api-pre-suggestions").find("li").click(me, function (event) {
                             var item;
                             if ($(event.target).is("li")) {
                                 item = $(event.target).data("suggestion-value");
@@ -3181,16 +3984,16 @@ function program1(depth0,data) {
                             var str = value.substring(0, beginRange);
                             str += item;
                             var newPos = str.length;
-                            str += value.substring(endRange+1);
+                            str += value.substring(endRange + 1);
                             me.setValue(str);
                             me.renderDialog();
-                            me.$el[0].setSelectionRange(newPos,newPos);
+                            me.$el[0].setSelectionRange(newPos, newPos);
                         });
                         me.$el.siblings(".squid-api-pre-suggestions").dialog({
                             dialogClass: "squid-api-suggestion-dialog squid-api-dialog",
                             width: "auto",
-                            position: { my: "left top", at: "left bottom", of: me.$el },
-                            open: function() {
+                            position: {my: "left top", at: "left bottom", of: me.$el},
+                            open: function () {
                                 $(this).width($(me.el).width());
                             },
                             clickOutside: true, // clicking outside the dialog will close it
@@ -3202,11 +4005,11 @@ function program1(depth0,data) {
                     }
                     me.$el.focus();
                 },
-                error: function(response) {
+                error: function (response) {
                     if (response.responseJSON.error) {
-                        squid_api.model.status.set({'message' : response.responseJSON.error});
+                        squid_api.model.status.set({'message': response.responseJSON.error});
                     } else {
-                        squid_api.model.status.set({'error' : response});
+                        squid_api.model.status.set({'error': response});
                     }
                 }
             });
@@ -3218,8 +4021,16 @@ function program1(depth0,data) {
         modelId: null,
         edit: null,
         type: null,
+        previous_matched_word_tooltip: null,
+        previous_matched_info_tooltip: null,
 
-        initialize: function(options) {
+        events: {
+            "keyup":function() {
+                this.trigger('change', this);
+            }
+        },
+
+        initialize: function (options) {
             // Call parent constructor
             Backbone.Form.editors.Base.prototype.initialize.call(this, options);
             if (options.schema.modelId) {
@@ -3228,63 +4039,157 @@ function program1(depth0,data) {
             this.template = options.template || this.constructor.template;
         },
 
-        getValue: function() {
+        getValue: function () {
             return this.edit.getValue();
         },
 
-        setValue: function(value) {
+        setValue: function (value) {
             this.edit.setValue(value);
         },
 
-        uniq: function(a) {
-            var prims = {"boolean":{}, "number":{}, "string":{}}, objs = [];
+        uniq: function (a) {
+            var prims = {"boolean": {}, "number": {}, "string": {}}, objs = [];
 
-            return a.filter(function(item) {
+            return a.filter(function (item) {
                 var type = typeof item;
-                if(type in prims)
+                if (type in prims)
                     return prims[type].hasOwnProperty(item) ? false : (prims[type][item] = true);
                 else
                     return objs.indexOf(item) >= 0 ? false : objs.push(item);
             });
         },
 
-        editor: function() {
+        latest: function (a){
+            var max = 0;
+            var current = [];
+            a.forEach(function (item){
+                if(item.origin && item.origin.length==max){
+                    current.push(item);
+                }else if (item.origin && item.origin.length>max){
+                    max = item.origin.length;
+                    current = [];
+                    current.push(item);
+                }else if(!item.origin){
+                    current.push(item);
+                }
+            });
+            return current;
+        },
+
+        updateTooltip: function (position, text) {
+            //example with container creation via JS
+            var div = document.getElementById('tooltip_0');
+            if (div === null) {
+                div = document.createElement('div');
+                div.setAttribute('id', 'tooltip_0');
+                div.setAttribute('class', 'ace_tooltip_hover'); // and make sure myclass has some styles in css
+                document.body.appendChild(div);
+            } else {
+                document.getElementById('tooltip_0').remove();
+                div = document.createElement('div');
+                div.setAttribute('id', 'tooltip_0');
+                div.setAttribute('class', 'ace_tooltip_hover'); // and make sure myclass has some styles in css
+                document.body.appendChild(div);
+            }
+
+            div.style.left = position.pageX + 'px';
+            div.style.top = position.pageY + 'px';
+            if (text) {
+                div.style.display = "block";
+                div.innerText = text;
+            } else {
+                div.style.display = "none";
+                div.innerText = "";
+            }
+            setTimeout(function () {
+                var div = document.getElementById('tooltip_0');
+                if (div) {
+                    div.remove();
+                }
+            }, 2000);
+        },
+
+        removeTooltip: function () {
+            var div = document.getElementById('tooltip_0');
+            if (div) {
+                div.remove();
+            }
+        },
+
+        editor: function () {
             this.edit = ace.edit("expression-editor");
             this.edit.$blockScrolling = Infinity;
-            if(this.value !== null){
-                this.edit.setValue(""+this.value);
+            if (this.value !== null) {
+                this.edit.setValue("" + this.value);
             }
+            this.edit.getSession().type = this.type;
             this.edit.getSession().setMode("ace/mode/bouquet");
+
             this.edit.setOption("showPrintMargin", false);
-            var me = this;
+
             var langTools = ace.require("ace/ext/language_tools");
-            this.edit.setOptions({enableBasicAutocompletion: true, enableLiveAutocompletion:false, enableSnippets:true});
+            this.edit.setOptions({
+                enableBasicAutocompletion: true,
+                enableLiveAutocompletion: true,
+                enableSnippets: true
+            });
+            var me = this;
+
             var bouquetCompleter = {
                 getCompletions: function (editor, session, pos, prefix, callback) {
                     if (prefix.length === 0) {
                         //By default look for ID
-                        prefix="'";
+                        prefix = "";
                     }
+                    me.prefix = prefix;
                     squid_api.getSelectedProject().then(function (project) {
 
-                        if (me.type === null || me.type === "domains") {
-                            me.url = squid_api.apiURL + "/projects/" + project.id + "/domains-suggestion?access_token=" + squid_api.model.login.get("accessToken") + "&expression=" + encodeURIComponent(prefix);
+                        if (me.type === "relations" || me.type === "domains") {
+                            me.url = squid_api.apiURL + "/projects/" + project.id + "/" + me.type + "-suggestion?access_token=" + squid_api.model.login.get("accessToken") + "&expression=" + encodeURIComponent(prefix);
+                            if (me.type === "relations") {
+                                var leftId = me.$el.parents(".squid-api-relation-model-management").find(".leftId").find("select").val();
+                                var rightId = me.$el.parents(".squid-api-relation-model-management").find(".rightId").find("select").val();
+                                me.url += "&leftDomainId=" + leftId + "&rightDomainId=" + rightId;
+                            }
                             $.getJSON(
                                 me.url,
 
                                 function (suggestionList) {
                                     //{"suggestions":[{"display":"POWER(Numeric n,Numeric exponent)","description":"Function that take two arguments: a number and an exponent","caption":"POWER(Numeric n,Numeric exponent)","suggestion":"POWER(${1:n},${2:p})","objectType":"FORMULA","valueType":"NUMERIC"}],"definitions":["POWER(${1:n},${2:p})"],"validateMessage":"failed to parse expression:\n---\nPOWE\n\n---\n at token 'POWE' \n caused by Encountered \"<EOF>\" at line 1, column 4.\nWas expecting:\n    \"(\" ...\n    ","filterIndex":0,"beginInsertPos":0,"endInsertPos":2,"filter":"POW"}
-                                    callback(null, me.uniq( suggestionList.suggestions.map(function (ea) {
+
+                                    callback(null, me.latest(me.uniq(suggestionList.suggestions.map(function (ea) {
+                                        var caption_default = ea.caption;
+                                        if (!ea.caption && ea.suggestion) {
+                                            caption_default = ea.suggestion;
+                                        }
+                                        if(!suggestionList.prefix){
+                                            suggestionList.prefix = "";
+                                        }
+                                        var prefix_snippet = "";
+                                        if(suggestionList.beginInsertPos){
+                                            var cursor = me.edit.getSession().getSelection().getCursor();
+                                            //var range = new Range(cursor.row, 0, cursor.row, suggestionList.beginInsertPos);
+                                            var range = me.edit.getSession().getWordRange(cursor.row, 0);
+                                            range.start.row = cursor.row;
+                                            range.end.row = cursor.row;
+                                            range.start.column = cursor.column - suggestionList.filterIndex;
+                                            range.end.column = cursor.column;
+                                            prefix_snippet  = suggestionList.prefix  + me.edit.getSession().getTextRange(range);
+                                        }
                                         return {
                                             name: ea.display,
-                                            caption: ea.caption,
+                                            caption: caption_default,
                                             value: ea.suggestion,
-                                            snippet: ea.suggestion,
+                                            snippet: prefix_snippet + ea.suggestion,
                                             description: ea.description,
                                             score: ea.ranking,
-                                            meta: ea.valueType
+                                            meta: ea.valueType,
+                                            origin: me.prefix,
+                                            className: ea.objectType.toUpperCase() + " ." + ea.valueType.toLowerCase()
                                         };
-                                    }) )) ;
+                                    }))).sort(function (a, b) {
+                                        return a.name.localeCompare(b.name);
+                                    }));
                                 }
                             );
                         } else {
@@ -3295,66 +4200,197 @@ function program1(depth0,data) {
 
                                     function (suggestionList) {
                                         //{"suggestions":[{"display":"POWER(Numeric n,Numeric exponent)","description":"Function that take two arguments: a number and an exponent","caption":"POWER(Numeric n,Numeric exponent)","suggestion":"POWER(${1:n},${2:p})","objectType":"FORMULA","valueType":"NUMERIC"}],"definitions":["POWER(${1:n},${2:p})"],"validateMessage":"failed to parse expression:\n---\nPOWE\n\n---\n at token 'POWE' \n caused by Encountered \"<EOF>\" at line 1, column 4.\nWas expecting:\n    \"(\" ...\n    ","filterIndex":0,"beginInsertPos":0,"endInsertPos":2,"filter":"POW"}
-                                        callback(null, me.uniq( suggestionList.suggestions.map(function (ea) {
+                                        callback(null, me.latest(me.uniq(suggestionList.suggestions.map(function (ea) {
+                                            var caption_default = ea.caption;
+                                            if (!ea.caption && ea.suggestion) {
+                                                caption_default = ea.suggestion;
+                                            }
+                                            if(!suggestionList.prefix){
+                                                suggestionList.prefix = "";
+                                            }
+                                            var prefix_snippet = "";
+                                            if(suggestionList.beginInsertPos){
+                                                var cursor = me.edit.getSession().getSelection().getCursor();
+                                                var range = me.edit.getSession().getWordRange(cursor.row, 0);
+                                                range.start.row = cursor.row;
+                                                range.end.row = cursor.row;
+                                                range.start.column = cursor.column - suggestionList.filterIndex;
+                                                range.end.column = cursor.column;
+                                                // + (suggestionList.beginInsertPos - suggestionList.filterIndex) ;
+                                                prefix_snippet  = suggestionList.prefix  + me.edit.getSession().getTextRange(range);
+                                            }
                                             return {
                                                 name: ea.display,
-                                                caption: ea.caption,
+                                                caption: caption_default,
                                                 value: ea.suggestion,
-                                                snippet: ea.suggestion,
+                                                snippet: prefix_snippet + ea.suggestion,
                                                 description: ea.description,
                                                 score: ea.ranking,
-                                                meta: ea.valueType
+                                                meta: ea.valueType,
+                                                origin: me.prefix,
+                                                className: ea.objectType.toUpperCase() + " ." + ea.valueType.toLowerCase()
                                             };
-                                        })));
+                                        }))).sort(function (a, b) {
+                                            return a.name.localeCompare(b.name);
+                                        }));
                                     }
                                 );
                             });
                         }
-
-                        });
+                    });
 
                 },
-                getDocTooltip: function(item) {
+                getDocTooltip: function (item) {
                     if (!item.docHTML) {
-                        if(item.description !== null && item.name !== null)
+                        if (item.description !== null && item.name !== null)
                             item.docHTML = [
                                 "<b>", /*lang.escapeHTML*/item.name, "</b>", "<hr></hr>",
                                 /*lang.escapeHTML*/item.description
                             ].join("");
                     }
                 },
-                identifierRegexps: [/[a-zA-Z_0-9\$\#\@\'\.\-\:\_]/]
+                identifierRegexps: [/[a-zA-Z_0-9\$\#\@\'\.\-\:\_\(]/]
             };
             langTools.addCompleter(bouquetCompleter);
+            /* Incoherent behavior
+             this.edit.on("mousedown", function (e) {
+             e.editor.completer.autoInsert = false;
+             e.editor.completer.showPopup(e.editor);
+             });*/
+            //Overriding the complters;
+            me.edit.completers = [bouquetCompleter];
+
+            this.edit.on("mousemove", function (e) {
+                if (e.editor.completer && e.editor.completer.getPopup().isOpen) {
+                    me.removeTooltip();
+                } else {
+                    var position = e.getDocumentPosition();
+                    if (e.editor.session.getAnnotations()) {
+                        var annotations = e.editor.session.getAnnotations();
+                        if (position) {
+                            if (annotations && annotations.length > 0) {
+                                annotations.forEach(function (annotation) {
+                                    if(annotation.type != "error" && annotation.type != "warning"){ //already present
+                                        var text = annotation.text;
+                                        if (text.length > 0) {
+                                            var pixelPosition = me.edit.renderer.textToScreenCoordinates(position);
+                                            pixelPosition.pageY += me.edit.renderer.lineHeight;
+                                            me.updateTooltip(pixelPosition, text);
+                                        }
+                                    }
+                                });
+                            } else {
+                                me.removeTooltip();
+                                var wordRange = me.edit.getSession().getWordRange(position.row, position.column);
+                                var text = me.edit.session.getTextRange(wordRange);
+                                if (text.length > 0) {
+                                    //Avoid uncessary call
+                                    if (text.localeCompare(me.previous_matched_word_tooltip)!==0 && text.localeCompare("'")!==0 && text.length>2) {
+                                        me.previous_matched_word_tooltip = text;
+                                        squid_api.getSelectedProject().then(function (project) {
+
+                                            if (me.type === "relations" || me.type === "domains") {
+                                                me.url = squid_api.apiURL + "/projects/" + project.id + "/" + me.type + "-suggestion?access_token=" + squid_api.model.login.get("accessToken") + "&expression=" + encodeURIComponent(text);
+                                                $.getJSON(
+                                                    me.url,
+
+                                                    function (suggestionList) {
+                                                        //{"suggestions":[{"display":"POWER(Numeric n,Numeric exponent)","description":"Function that take two arguments: a number and an exponent","caption":"POWER(Numeric n,Numeric exponent)","suggestion":"POWER(${1:n},${2:p})","objectType":"FORMULA","valueType":"NUMERIC"}],"definitions":["POWER(${1:n},${2:p})"],"validateMessage":"failed to parse expression:\n---\nPOWE\n\n---\n at token 'POWE' \n caused by Encountered \"<EOF>\" at line 1, column 4.\nWas expecting:\n    \"(\" ...\n    ","filterIndex":0,"beginInsertPos":0,"endInsertPos":2,"filter":"POW"}
+                                                        var best_match = me.uniq(suggestionList.suggestions).sort(function (a, b) {
+                                                            return b.ranking - a.ranking;
+                                                        })[0];
+                                                        if (best_match) {
+                                                            if (best_match.display.startsWith(text)) {
+                                                                var info = best_match.objectType+":"+ best_match.valueType + "\n";
+                                                                if(best_match.description){
+                                                                    info += best_match.description;
+                                                                }
+                                                                me.previous_matched_word_tooltip = text;
+                                                                me.previous_matched_info_tooltip = info;
+
+                                                                if (info) {
+                                                                    var pixelPosition = me.edit.renderer.textToScreenCoordinates(position);
+                                                                    pixelPosition.pageY += me.edit.renderer.lineHeight;
+                                                                    me.updateTooltip(pixelPosition, info);
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                );
+                                            } else {
+                                                squid_api.getSelectedDomain().then(function (domain) {
+                                                    me.url = squid_api.apiURL + "/projects/" + project.id + "/domains/" + domain.id + "/" + me.type + "-suggestion?access_token=" + squid_api.model.login.get("accessToken") + "&expression=" + encodeURIComponent(text);
+                                                    $.getJSON(
+                                                        me.url,
+
+                                                        function (suggestionList) {
+                                                            //{"suggestions":[{"display":"POWER(Numeric n,Numeric exponent)","description":"Function that take two arguments: a number and an exponent","caption":"POWER(Numeric n,Numeric exponent)","suggestion":"POWER(${1:n},${2:p})","objectType":"FORMULA","valueType":"NUMERIC"}],"definitions":["POWER(${1:n},${2:p})"],"validateMessage":"failed to parse expression:\n---\nPOWE\n\n---\n at token 'POWE' \n caused by Encountered \"<EOF>\" at line 1, column 4.\nWas expecting:\n    \"(\" ...\n    ","filterIndex":0,"beginInsertPos":0,"endInsertPos":2,"filter":"POW"}
+                                                            var best_match = me.uniq(suggestionList.suggestions).sort(function (a, b) {
+                                                                return b.ranking - a.ranking;
+                                                            })[0];
+                                                            if (best_match) {
+                                                                if (best_match.display.startsWith(text)) {
+                                                                    var info = best_match.objectType+":"+ best_match.valueType + "\n";
+                                                                    if(best_match.description){
+                                                                        info += best_match.description;
+                                                                    }
+                                                                    me.previous_matched_word_tooltip = text;
+                                                                    me.previous_matched_info_tooltip = info;
+                                                                    if (info) {
+                                                                        var pixelPosition = me.edit.renderer.textToScreenCoordinates(position);
+                                                                        pixelPosition.pageY += me.edit.renderer.lineHeight;
+                                                                        me.updateTooltip(pixelPosition, info);
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    );
+                                                });
+                                            }
+                                        });
+                                    } else {
+                                        if (me.previous_matched_info_tooltip) {
+                                            var pixelPosition = me.edit.renderer.textToScreenCoordinates(position);
+                                            pixelPosition.pageY += me.edit.renderer.lineHeight;
+                                            me.updateTooltip(pixelPosition, me.previous_matched_info_tooltip);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                }
+            );
         },
 
-        onSave: function(model) {
+        onSave: function (model) {
             console.log(this.value);
         },
 
 
-        render: function() {
+        render: function () {
             var me = this;
 
             var $el = $(this.template());
             this.setElement($el);
 
 
-            setTimeout(function() {
+            setTimeout(function () {
                 me.editor();
             }, 0);
 
             return this;
         },
 
-        performRequest: function(url, data) {
+        performRequest: function (url, data) {
             console.log("perform");
         }
     }, {
         template: _.template('<div id="expression-editor" style="height: 200px;"></div>', null, this.templateSettings)
     });
 
-    var MetricExpressionEditor = AceExpressionEditor.extend({
+    var MetricDomainExpressionEditor = AceExpressionEditor.extend({
         type: 'metrics'
     });
 
@@ -3362,42 +4398,91 @@ function program1(depth0,data) {
         type: 'dimensions'
     });
 
+    var DomainDomainExpressionEditor = AceExpressionEditor.extend({
+        type: 'domains'
+    });
 
+    var RelationDomainExpressionEditor = AceExpressionEditor.extend({
+        type: 'relations'
+    });
 
-
-    var domainExpressionEditor = AceExpressionEditor.extend({
-        renderDialog: function() {
+    var domainExpressionEditor = DomainDomainExpressionEditor.extend({
+        renderDialog: function () {
             var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/domains-suggestion";
-            var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
+            var data = {
+                "expression": this.$el.val(),
+                "offset": this.$el.prop("selectionStart") + 1,
+                "access_token": squid_api.model.login.get("accessToken")
+            };
             this.performRequest(url, data);
 
         }
     });
     var dimensionExpressionEditor = DimensionDomainExpressionEditor.extend({
-        renderDialog: function() {
+        renderDialog: function () {
             var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/domains/" + this.$el.parents("form").find(".id input[name='domainId']").val() + "/dimensions-suggestion";
-            var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
+            var data = {
+                "expression": this.$el.val(),
+                "offset": this.$el.prop("selectionStart") + 1,
+                "access_token": squid_api.model.login.get("accessToken")
+            };
             data.dimensionId = this.modelId;
             this.performRequest(url, data);
 
         }
     });
-    var metricExpressionEditor = MetricExpressionEditor.extend({
-        renderDialog: function() {
+    var metricExpressionEditor = MetricDomainExpressionEditor.extend({
+        renderDialog: function () {
             var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/domains/" + this.$el.parents("form").find(".id input[name='domainId']").val() + "/metrics-suggestion";
-            var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
+            var data = {
+                "expression": this.$el.val(),
+                "offset": this.$el.prop("selectionStart") + 1,
+                "access_token": squid_api.model.login.get("accessToken")
+            };
             this.performRequest(url, data);
 
         }
     });
-    var relationExpressionEditor = baseExpressionEditor.extend({
-        renderDialog: function() {
+    var relationExpressionEditor = RelationDomainExpressionEditor.extend({
+        renderDialog: function () {
             var url = squid_api.apiURL + "/projects/" + this.$el.parents("form").find(".id input[name='projectId']").val() + "/relations-suggestion";
-            var data = {"expression" : this.$el.val(), "offset" : this.$el.prop("selectionStart") + 1, "access_token" : squid_api.model.login.get("accessToken")};
+            var data = {
+                "expression": this.$el.val(),
+                "offset": this.$el.prop("selectionStart") + 1,
+                "access_token": squid_api.model.login.get("accessToken")
+            };
             data.leftDomainId = this.$el.parents("form").find(".leftId select[name='domainId']").val();
             data.rightDomainId = this.$el.parents("form").find(".rightId select[name='domainId']").val();
             this.performRequest(url, data);
+        }
+    });
 
+    
+    var multiSelect = Backbone.Form.editors.Select.extend ({
+
+        getValue: function() {
+            return this.$el.find('option:selected').map(function(i,v) {
+                return this.value;
+            }).get();
+        },
+
+        render: function() {
+            var me = this;
+
+            // set multiple on select
+            this.$el.prop('multiple', true);
+            setTimeout(function() {
+                // use multiselect widget & set default schema
+                me.$el.multiselect({
+                    enableFiltering: true,
+                    enableFullValueFiltering: true,
+                    includeSelectAllOption: true,
+                    maxHeight: 500
+                });
+                me.$el.multiselect("dataprovider", me.schema.options);
+            }, 0);
+
+            return this;
         }
     });
 
@@ -3407,6 +4492,7 @@ function program1(depth0,data) {
     Backbone.Form.editors.MetricExpressionEditor = metricExpressionEditor;
     Backbone.Form.editors.RelationExpressionEditor = relationExpressionEditor;
     Backbone.Form.editors.DbCheckConnection = dbCheckConnection;
+    Backbone.Form.editors.MultiSelect = multiSelect;
 }));
 
 (function (root, factory) {
@@ -3527,6 +4613,11 @@ function program1(depth0,data) {
                 data.parentId.projectId = data.id.projectId;
                 data.parentId.domainId = data.id.domainId;
             }
+            if (data.expression) {
+                if (data.expression.value === null) {
+                    delete data.expression;
+                }
+            }
             return data;
         },
 
@@ -3584,8 +4675,9 @@ function program1(depth0,data) {
         chosen : "chosenDimensions",
         selected : "selectedDimensions",
         afterRender : null,
+        displayAll : null,
         singleSelect : false,
-        singleSelectIndex : 0,
+        singleSelectIndex : null,
         configurationEnabled : false,
         updateMultiQuantity : null,
 
@@ -3616,13 +4708,16 @@ function program1(depth0,data) {
                 if (options.dimensionIndex !== null) {
                     this.dimensionIndex = options.dimensionIndex;
                 }
+                if (options.displayAll) {
+                    this.displayAll = options.displayAll;
+                }
                 if (options.afterRender) {
                     this.afterRender = options.afterRender;
                 }
                 if (options.singleSelect) {
                     this.singleSelect = options.singleSelect;
                 }
-                if (options.singleSelectIndex) {
+                if (options.singleSelectIndex || options.singleSelectIndex === 0) {
                     this.singleSelectIndex = options.singleSelectIndex;
                 }
                 if (options.updateMultiQuantity) {
@@ -3664,8 +4759,31 @@ function program1(depth0,data) {
                 this.events = squid_api.view.CollectionSelectorUtils.events;
             }
 
-            // listen for global status change
+            if (this.displayAll) {
+                this.listenTo(this.config,"change:domain", this.fetchCollection);
+            }
             this.listenTo(this.status,"change:status", this.enable);
+        },
+
+        fetchCollection: function() {
+            var me = this;
+            this.loadCollection().done(function(collection) {
+                me.dimensionCollection = collection;
+                me.render();
+            }).fail(function() {
+                console.error("Error Fetching Dimensions");
+            });
+        },
+
+        loadCollection : function(parentId) {
+            var me = this;
+            return squid_api.getCustomer().then(function(customer) {
+                return customer.get("projects").load(squid_api.model.config.get("project")).then(function(project) {
+                    return project.get("domains").load(squid_api.model.config.get("domain")).then(function(domain) {
+                        return domain.get("dimensions").load();
+                    });
+                });
+            });
         },
 
         enableDisplay: function() {
@@ -3711,7 +4829,7 @@ function program1(depth0,data) {
                 // add an empty (none selected) option
                 jsonData.options.push({"label" : "None"});
             }
-
+            
             // iterate through all filter facets
             var selection = this.filters.get("selection");
             if (selection) {
@@ -3738,22 +4856,30 @@ function program1(depth0,data) {
                                     facetList[idx] = facet;
                                 }
                             } else if (this.available) {
-                                // check this facet is available (or chosen)
+                                // check this facet is available
                                 var availableArray = this.config.get(this.available);
-                                var chosenArray = this.config.get(this.chosen);
-                                var addToArray = true;
-
-                                // don't allow dimension reselection if using a singleSelectIndex
-                                if (this.singleSelectIndex) {
-                                    for (d=0; d<chosenArray.length; d++) {
-                                        if (d !== this.singleSelectIndex && chosenArray[d] === facet.id) {
+                                if (!availableArray) {
+                                    // use chosen
+                                    availableArray = this.config.get(this.chosen);
+                                }
+                                if ((!availableArray) || (availableArray.length === 0)) {
+                                    // use all facets
+                                    facetList.push(facet);
+                                } else {
+                                    var addToArray = true;
+                                    // don't allow dimension reselection if using a singleSelectIndex
+                                    if (this.singleSelectIndex || this.singleSelectIndex === 0) {
+                                        var chosenArray = this.config.get(this.chosen);
+                                        var index = _.indexOf(chosenArray, facet.id);
+                                        if (index > -1 && index !== this.singleSelectIndex) {
                                             addToArray = false;
                                         }
                                     }
-                                }
-
-                                if (addToArray && (availableArray && (availableArray.indexOf(facet.id) > -1) || (chosenArray && chosenArray.indexOf(facet.id) > -1))) {
-                                    facetList.push(facet);
+                                    if (! this.config.get(this.available) && addToArray) {
+                                        facetList.push(facet);
+                                    } else if (addToArray && (this.config.get(this.available) && (this.config.get(this.available).indexOf(facet.id) > -1))) {
+                                        facetList.push(facet);
+                                    }
                                 }
                             } else {
                                 // default unordered behavior
@@ -3783,7 +4909,7 @@ function program1(depth0,data) {
                             } else {
                                 name = facet1.dimension.name;
                             }
-                            var option = {"label" : name, "value" : facet1.id, "selected" : selected, "error" : facetList[dimIdx].error};
+                            var option = {"label" : name, "value" : facet1.id, "selected" : selected, "error" : facetList[dimIdx].error, "oid" : facet1.dimension.oid};
                             jsonData.options.push(option);
                         }
                     }
@@ -3792,6 +4918,39 @@ function program1(depth0,data) {
                 // check if empty
                 if (jsonData.options.length === 0) {
                     jsonData.empty = true;
+                }
+
+                if (this.displayAll) {
+                    if (this.dimensionCollection) {
+                        var notFound = [];
+                        var dims = this.dimensionCollection.models;
+                        for (var d=0; d<dims.length; d++) {
+                            var model = this.dimensionCollection.at(d);
+                            var found = false;
+                            for(var c=0; c<selection.facets.length; c++) {
+                                if (selection.facets[c].dimension.oid == model.get("oid")) {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (! found) {
+                                // jsonData.options.push({
+                                //     "label" : model.get("name"),
+                                //     "value" : "@'" + this.config.get("domain") + ".@'" + model.get("oid") + "'",
+                                //     "selected" : this.isChosen(model),
+                                //     "error" : model.get("error")
+                                // });
+                                notFound.push({
+                                    "id" : model.get("oid"),
+                                    "name" : model.get("name"),
+                                    "valueType" : model.get("valueType")
+                                });
+                            }    
+                        }
+                        for (ix1=0; ix1<notFound.length; ix1++) {
+                            console.log(notFound[ix1].name + " with id " + notFound[ix1].id + " is not found with valueType: " + notFound[ix1].valueType);
+                        }
+                    }
                 }
 
                 this.renderView(jsonData);
@@ -3847,6 +5006,8 @@ function program1(depth0,data) {
                 this.$el.find("select").multiselect('rebuild');
             }
 
+            this.enable();
+
             return this;
         },
 
@@ -3899,8 +5060,10 @@ function program1(depth0,data) {
             var selected = false;
             var dimensions = this.config.get(this.chosen);
             if (this.singleSelect === true) {
-                if (dimensions[this.singleSelectIndex] === facet.id) {
-                    selected = true;
+                if (dimensions) {
+                    if (dimensions[this.singleSelectIndex] === facet.id) {
+                        selected = true;
+                    }
                 }
             } else {
                 if (dimensions) {
@@ -3984,16 +5147,12 @@ function program1(depth0,data) {
             }
         },
 
+        getModelLabel: function(model) {
+            return model.get("name");
+        },
+
         renderRelationView: function(relationView) {
             this.$el.html(relationView.el);
-        },
-        
-        getModelLabel: function(model) {
-            if (model.get("dynamic")) {
-                return "~ " + model.get("name");
-            } else {
-                return model.get("name");
-            }
         },
         
         getModelRoles : function(model) {
@@ -4016,9 +5175,86 @@ function program1(depth0,data) {
         
         template : template,
         
-        render : squid_api.view.CollectionSelectorUtils.renderButton
+        render : function() {
+            squid_api.view.CollectionSelectorUtils.renderButton.call(this);
+            
+            if (this.afterRender) {
+            	this.afterRender.call(this);
+            }
+        }
 
     });
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.MetricCollectionManagementWidget = factory(root.Backbone, root.squid_api);
+
+}(this, function (Backbone, squid_api) {
+
+    var View = squid_api.view.BaseCollectionManagementWidget.extend({
+        type : "Metric",
+        typeLabel : "Metric",
+        typeLabelPlural : "Metrics",
+        configParentId : "project",
+
+        init : function() {
+            var me = this;
+            this.modelView = squid_api.view.BaseModelManagementWidget;
+        },
+
+        loadCollection : function(parentId) {
+            return squid_api.getCustomer().then(function(customer) {
+                return customer.get("projects").load(parentId).then(function(project) {
+                    return project.get("domains").load(parentId).then(function(domain) {
+                        return domain.get(me.typeLabelPlural.toLowerCase()).load();
+                    });
+                });
+            });
+        },
+
+        events: {
+            'mouseenter tr': function(event) {
+                this.eventMouseEnter(event);
+            },
+            'mouseleave tr': function(event) {
+                this.eventMouseLeave(event);
+            },
+            "click .create" : function(event) {
+                this.eventCreate(event);
+            },
+            'input .search' : function(event) {
+                this.eventSearch(event);
+            },
+            "click .edit": function(event) {
+                this.eventEdit(event);
+            },
+            "click .refresh": function(event) {
+                this.eventRefresh(event);
+            },
+            "click .delete": function(event) {
+                this.eventDelete(event);
+            },
+            "click .select": function(event) {
+                this.eventSelect(event);
+            }
+        },
+
+        getModelLabel: function(model) {
+            if (model.get("dynamic")) {
+                return "~ " + model.get("name");
+            } else {
+                return model.get("name");
+            }
+        },
+
+        getModelRoles : function(model) {
+            var roles = squid_api.view.BaseCollectionManagementWidget.prototype.getModelRoles.call(this, model);
+            return roles;
+        }
+
+    });
+
     return View;
 }));
 
@@ -4104,6 +5340,7 @@ function program1(depth0,data) {
         onChangeHandler : null,
         filterBy : null,
         buttonText : null,
+        displayAll : null,
         customView : null,
 
         init: function(options) {
@@ -4135,6 +5372,9 @@ function program1(depth0,data) {
                 }
                 if (options.customView) {
                     this.customView = options.customView;
+                }
+                if (options.displayAll) {
+                    this.displayAll = options.displayAll;
                 }
                 if (options.buttonText) {
                     this.buttonText = options.buttonText;
@@ -4182,7 +5422,7 @@ function program1(depth0,data) {
         },
 
         enable: function() {
-            if (this.status.get("status") !== "DONE") {
+            if (this.status.get("status") == "RUNNING") {
                 this.$el.find("button").prop("disabled", true);
             } else {
                 this.$el.find("button").prop("disabled", false);
@@ -4204,21 +5444,19 @@ function program1(depth0,data) {
 
                     // check dynamic rules
                     var add = false;
-                    if ((domain.get("dynamic") === true) || (item.get("dynamic") === false)) {
-                        if (this.filterBy) {
-                            if (_.contains(this.filterBy, item.get("oid"))) {
-                                add = true;
-                            }
-                        } else {
+                    if (this.filterBy) {
+                        if (_.contains(this.filterBy, item.get("oid"))) {
                             add = true;
                         }
+                    } else {
+                        add = true;
                     }
 
                     if ((add === true) && (this.available || this.chosen)) {
                         // check this metric is available (or chosen)
                         var availableArray = this.config.get(this.available);
                         var chosenArray = this.config.get(this.chosen);
-                        if ((availableArray && availableArray.indexOf(item.get("oid")) < 0) && (chosenArray && chosenArray.indexOf(item.get("oid")) < 0)) {
+                        if ((availableArray && availableArray.length > 0 && availableArray.indexOf(item.get("oid")) < 0) && (chosenArray && chosenArray.indexOf(item.get("oid")) < 0)) {
                             add = false;
                         }
                     }
@@ -4302,6 +5540,8 @@ function program1(depth0,data) {
                 // Remove Button Title Tag
                 this.$el.find("button").removeAttr('title');
             }
+
+            this.enable();
 
             // update view data if render is called after the metric change event
             this.updateView();
@@ -4713,6 +5953,10 @@ function program1(depth0,data) {
         
         render : function() {
             squid_api.view.CollectionSelectorUtils.renderButton.call(this);
+            
+            if (this.afterRender) {
+            	this.afterRender.call(this);
+            }
         }
 
     });
@@ -4733,59 +5977,49 @@ function program1(depth0,data) {
         template: template,
         configParentId : "domain",
 
-        
-        // override initialize size we're not listening to the config
-        initialize : function(options) {
-            this.config = squid_api.model.config;
-            this.status = squid_api.model.status;
-            this.modelView = squid_api.view.RelationModelManagementWidget;
-            this.modelValue = options.modelValue;
+        init: function(options) {
             var me = this;
-            
-            if (options) {
-                if (options.type) {
-                    this.type = options.type;
-                }
-                if (options.comparator) {
-                    this.comparator = options.comparator;
-                } else {
-                    // default is : sort by alpha name and dynamic last
-                    this.comparator =  function(a, b) {
-                        var r = me.dynamicComparator(a,b);
-                        if (r === 0) {
-                            r = me.alphaNameComparator(a,b);
-                        }
-                        return r;
-                    };
-                }
-                if (options.cancelCallback) {
-                    this.cancelCallback = options.cancelCallback;
-                }
-                if (options.onSelect) {
-                    this.onSelect = options.onSelect;
-                }
-            }
-            
+
+            this.modelView = squid_api.view.RelationModelManagementWidget;
+
             // init the relations collection
-            me.loadCollection(this.modelValue).done(function(collection) {
-                me.collection = collection;
-                me.render();
-            }).fail(function() {
-                me.render();
-            });
-            
+            var projectId = this.config.get("project");
+            if (projectId) {
+                this.modelValue = options.modelValue;
+
+                this.loadCollection(options.modelValue).done(function(collection) {
+                    me.collection = collection;
+                    me.render();
+                }).fail(function() {
+                    me.render();
+                });
+            } else {
+                // listen for config change
+                this.listenTo(this.config,"change", function () {
+                    var parentChanged = this.config.hasChanged(me.configParentId);
+                    var selectionChanged = this.config.hasChanged(me.configSelectedId) || (this.config.get(me.configSelectedId) && ! this.selectedModel);
+                    this.initModel(this.config, parentChanged, selectionChanged);
+                    if (this.config.hasChanged("domain")) {
+                        me.modelValue = this.config.get("domain");
+                    }
+                });
+            }
         },
-        
+
         loadCollection : function(parentId) {
             var me = this;
-            // load the project's relations
-            return squid_api.getCustomer().then(function(customer) {
-                return customer.get("projects").load(me.config.get("project")).then(function(project) {
-                    return project.get(me.typeLabelPlural.toLowerCase()).load();
+            var project = this.config.get("project");
+
+            if (project) {
+                // load the project's relations
+                return squid_api.getCustomer().then(function(customer) {
+                    return customer.get("projects").load(me.config.get("project")).then(function(project) {
+                        return project.get(me.typeLabelPlural.toLowerCase()).load();
+                    });
                 });
-            });
+            }
         },
-        
+
         events: {
             'mouseenter tr': function(event) {
                 this.eventMouseEnter(event);
@@ -4815,13 +6049,17 @@ function program1(depth0,data) {
                 }
             }
         },
-        
+
         viewData: function() {
             var filteredModels = [];
             for (i=0; i<this.collection.size(); i++) {
                 if (this.collection.at(i).get("leftId") && this.collection.at(i).get("rightId")) {
+                    var collection = this.collection.at(i);
+                    if (this.collection.at(i).get("rightId").domainId == this.modelValue) {
+                        collection.set("isRight", true);
+                    }
                     if (this.collection.at(i).get("leftId").domainId == this.modelValue || this.collection.at(i).get("rightId").domainId == this.modelValue) {
-                        filteredModels.push(this.collection.at(i));
+                        filteredModels.push(collection);
                     }
                 }
             }
@@ -4832,6 +6070,7 @@ function program1(depth0,data) {
                 obj.leftName = filteredModels[ix].get("leftName");
                 obj.rightName = filteredModels[ix].get("rightName");
                 obj.roles = this.getModelRoles(filteredModels[ix]);
+                obj.isRight = filteredModels[ix].get("isRight");
 
                 // set cardinality booleans for handlebar display
                 var leftCardinality = filteredModels[ix].get("leftCardinality");
@@ -4902,10 +6141,89 @@ function program1(depth0,data) {
                     data[x] = null;
                 }
             }
+
+            data = this.cardinalityManipulate(data);
+
+            return data;
+        },
+
+        beforeRender: function() {
+            var leftCardinality = this.model.get("leftCardinality");
+            var rightCardinality = this.model.get("rightCardinality");
+
+            if (leftCardinality === "MANY" && rightCardinality === "ZERO_OR_ONE") {
+                this.model.set("cardinality", "many to zero or one");
+            }
+            if (leftCardinality === "ZERO_OR_ONE" && rightCardinality === "MANY") {
+                this.model.set("cardinality", "zero or one to many");
+            }
+            if (leftCardinality === "ONE" && rightCardinality === "ONE") {
+                this.model.set("cardinality", "one to one");
+            }
+            if (leftCardinality === "ONE" && rightCardinality === "MANY") {
+                this.model.set("cardinality", "one to many");
+            }
+            if (leftCardinality === "MANY" && rightCardinality === "ONE") {
+                this.model.set("cardinality", "many to one");
+            }
+            if (leftCardinality === "ZERO_OR_ONE" && rightCardinality === "ONE") {
+                this.model.set("cardinality", "zero or one to one");
+            }
+            if (leftCardinality === "ONE" && rightCardinality === "ZERO_OR_ONE") {
+                this.model.set("cardinality", "one to zero or one");
+            }
+        },
+
+        afterRender: function() {
+            var currentDomain = this.config.get("domain");
+            if (this.formContent.getValue("rightId").domainId === currentDomain) {
+                this.formContent.fields.leftId.$el.show();
+                this.formContent.fields.rightId.$el.hide();
+            } else {
+                this.formContent.fields.leftId.$el.hide();
+            }
+        },
+
+        cardinalityManipulate: function(data) {
+            var cardinality = data.cardinality;
+            if (cardinality === "many to zero or one") {
+                data.leftCardinality = "MANY";
+                data.rightCardinality = "ZERO_OR_ONE";
+            }
+            if (cardinality === "zero or one to many") {
+                data.leftCardinality = "ZERO_OR_ONE";
+                data.rightCardinality = "MANY";
+            }
+            if (cardinality === "one to one") {
+                data.leftCardinality = "ONE";
+                data.rightCardinality = "ONE";
+            }
+            if (cardinality === "one to many") {
+                data.leftCardinality = "ONE";
+                data.rightCardinality = "MANY";
+            }
+            if (cardinality === "many to one") {
+                data.leftCardinality = "MANY";
+                data.rightCardinality = "ONE";
+            }
+            if (cardinality === "zero or one to one") {
+                data.leftCardinality = "ZERO_OR_ONE";
+                data.rightCardinality = "ONE";
+            }
+            if (cardinality === "one to zero or one") {
+                data.leftCardinality = "ONE";
+                data.rightCardinality = "ZERO_OR_ONE";
+            }
+            delete data.cardinality;
             return data;
         },
 
         customDataManipulation: function(data) {
+            if (data.joinExpression) {
+                if (data.joinExpression.value === null) {
+                    delete data.joinExpression;
+                }
+            }
             return data;
         },
 
@@ -4916,7 +6234,8 @@ function program1(depth0,data) {
                     this.cancelCallback.call();
                 }
             },
-            "click .btn-save-form" : function() {
+            "click .btn-save-form" : function(e) {
+                e.stopPropagation();
                 var me = this;
                 var error = this.formContent.validate();
                 if (! error) {
@@ -4946,6 +6265,24 @@ function program1(depth0,data) {
                     });
 
                 }
+            },
+            "mouseover .rightId select" : function(e) {
+                this.updateDomains(e);
+            },
+            "mouseover .leftId select" : function(e) {
+                this.updateDomains(e);
+            }
+        },
+
+        updateDomains: function(e) {
+            if ($(e.currentTarget).find("option").length <= 1) {
+                var optionsAsString = "";
+                for(var i=0; i<this.domainList.length; i++) {
+                    if (this.domainList[i].val !== $(e.currentTarget).val()) {
+                        optionsAsString += "<option value='" + this.domainList[i].val + "'>" + this.domainList[i].label + "</option>";
+                    } 
+                }
+                $(e.currentTarget).append(optionsAsString);
             }
         },
 
@@ -4954,6 +6291,27 @@ function program1(depth0,data) {
             this.config.trigger("change:selection");
         },
         formEvents: function() {
+            var me = this;
+
+            // set base values
+            if (this.model.isNew()) {
+                // automatically populate leftId
+                this.formContent.fields.leftId.setValue({
+                    "projectId": this.config.get("project"),
+                    "domainId": this.config.get("domain")
+                });
+                // automatically populate rightId
+                this.formContent.fields.rightId.setValue({
+                    "projectId": this.config.get("project"),
+                    "domainId" : this.domainList[0].val
+                });
+                // auto select default form fields
+                this.formContent.fields.leftName.setValue(this.formContent.fields.leftId.getValue().domainId);
+                this.formContent.fields.rightName.setValue(this.domainList[0].label);
+                this.formContent.fields.cardinality.setValue(this.formContent.fields.cardinality.schema.options[0]);
+            }
+
+            // additional events
             this.formContent.on('leftId:change', function(form) {
                 var rightText = form.$el.find(".leftId").find("select option:selected").text();
                 form.$el.find(".leftName input").val(rightText);
@@ -4984,22 +6342,55 @@ function program1(depth0,data) {
             squid_api.getCustomer().then(function(customer) {
                 customer.get("projects").load(project).then(function(project) {
                     project.get("domains").load().then(function(domains) {
-                        var arr = [];
+                        var domainList = [];
+
+                        var currentLeftDomain = [];
+                        var currentRightDomain = [];
+
                         for (i=0; i<domains.size(); i++) {
+                            var domain = domains.at(i);
+
                             obj = {};
-                            obj.val = domains.at(i).get("oid");
-                            obj.label = domains.at(i).get("name");
-                            arr.push(obj);
+                            obj.val = domain.get("oid");
+                            obj.label = domain.get("name");
+
+                            // push for widget scope array
+                            domainList.push(obj);
+
+                            // current domains
+                            if (me.model.get("leftId")) {
+                                if (domain.get("oid") === me.model.get("leftId").domainId) {
+                                    currentLeftDomain.push(obj);
+                                }
+
+                            }
+                            if (me.model.get("rightId")) {
+                                if (domain.get("oid") === me.model.get("rightId").domainId) {
+                                    currentRightDomain.push(obj);
+                                }
+                            }
+                            if (me.model.isNew()) {
+                                if (domain.get("oid") === me.config.get("domain")) {
+                                    currentLeftDomain.push(obj);
+                                }
+                            }
                         }
-                        schema.leftId.subSchema.domainId.options = arr.sort(me.comparator);
-                        schema.rightId.subSchema.domainId.options = arr.sort(me.comparator);
+
+                        if (me.model.isNew()) {
+                            currentRightDomain.push(domainList[0]);
+                        }
+
+                        schema.leftId.subSchema.domainId.options = currentLeftDomain;
+                        schema.rightId.subSchema.domainId.options = currentRightDomain;
+
+                        me.domainList = domainList.sort(me.comparator);
+
                         dfd.resolve(schema);
                     });
                 });
             });
             return dfd;
         }
-
     });
 
     return View;

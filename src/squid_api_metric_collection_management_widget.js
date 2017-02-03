@@ -1,27 +1,25 @@
 (function (root, factory) {
-    root.squid_api.view.DomainCollectionManagementWidget = factory(root.Backbone, root.squid_api);
+    root.squid_api.view.MetricCollectionManagementWidget = factory(root.Backbone, root.squid_api);
 
 }(this, function (Backbone, squid_api) {
 
     var View = squid_api.view.BaseCollectionManagementWidget.extend({
-        type : "Domain",
-        typeLabel : "Domain",
-        typeLabelPlural : "Domains",
-        modelView : null,
-        collectionLoading : false,
-        configSelectedId : "domain",
+        type : "Metric",
+        typeLabel : "Metric",
+        typeLabelPlural : "Metrics",
         configParentId : "project",
 
         init : function() {
             var me = this;
             this.modelView = squid_api.view.BaseModelManagementWidget;
-            this.relationView = squid_api.view.RelationCollectionManagementWidget;
         },
-        
+
         loadCollection : function(parentId) {
             return squid_api.getCustomer().then(function(customer) {
                 return customer.get("projects").load(parentId).then(function(project) {
-                    return project.get("domains").load();
+                    return project.get("domains").load(parentId).then(function(domain) {
+                        return domain.get(me.typeLabelPlural.toLowerCase()).load();
+                    });
                 });
             });
         },
@@ -50,30 +48,19 @@
             },
             "click .select": function(event) {
                 this.eventSelect(event);
-            },
-            "click .relation": function(event) {
-                var me = this;
-                var modelValue = $(event.target).parents('tr').attr("data-attr");
-                this.renderRelationView(new this.relationView({
-                    modelValue : modelValue,
-                    cancelCallback : function() {
-                        me.render();
-                    }
-                }));
             }
         },
 
         getModelLabel: function(model) {
-            return model.get("name");
+            if (model.get("dynamic")) {
+                return "~ " + model.get("name");
+            } else {
+                return model.get("name");
+            }
         },
 
-        renderRelationView: function(relationView) {
-            this.$el.html(relationView.el);
-        },
-        
         getModelRoles : function(model) {
             var roles = squid_api.view.BaseCollectionManagementWidget.prototype.getModelRoles.call(this, model);
-            roles.relation = true;
             return roles;
         }
 

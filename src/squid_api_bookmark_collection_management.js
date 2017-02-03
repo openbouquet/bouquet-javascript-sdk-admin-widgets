@@ -1,5 +1,5 @@
 (function (root, factory) {
-    root.squid_api.view.BookmarkCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_bookmark_collection_management_widget);
+	root.squid_api.view.BookmarkCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_bookmark_collection_management_widget);
 
 }(this, function (Backbone, squid_api, template) {
 
@@ -16,7 +16,9 @@
         filteredOids: null,
         onChangeHandler : null,
         descriptionHover : null,
+        returnPaths: null,
         hierarchialList: null,
+        disableRightClickOnSelect: null,
 
         init : function(options) {
             var me = this;
@@ -24,6 +26,9 @@
 
             if (options.headerText) {
                 this.headerText = options.headerText;
+            }
+            if (options.config) {
+                this.config = options.config;
             }
             if (options.filteredPaths) {
                 this.filteredPaths = options.filteredPaths;
@@ -34,11 +39,17 @@
             if (options.onChangeHandler) {
                 this.onChangeHandler = options.onChangeHandler;
             }
+            if (options.returnPaths) {
+                this.returnPaths = options.returnPaths;
+            }
             if (options.descriptionHover) {
                 this.descriptionHover = options.descriptionHover;
             }
             if (options.hierarchialList) {
                 this.hierarchialList = options.hierarchialList;
+            }
+            if (options.disableRightClickOnSelect) {
+                this.disableRightClickOnSelect = options.disableRightClickOnSelect;
             }
         },
 
@@ -48,6 +59,15 @@
                     return project.get("bookmarks").load();
                 });
             });
+        },
+
+        statusUpdate: function() {
+            var status = this.status.get("status");
+            if (status === "RUNNING") {
+                this.$el.find("a").addClass("disabled");
+            } else {
+                this.$el.find("a").removeClass("disabled");
+            }
         },
 
         createModel : function() {
@@ -61,19 +81,26 @@
         },
 
         eventSelect : function(event) {
-            var value = $(event.target).parents("li").attr("data-attr");
-            if (! value) {
-                value = $(event.target).attr("data-attr");
-            }
-            //Callback to keep filters selection on Counter apps for ex
-            if (this.onChangeHandler) {
-                this.onChangeHandler(value ,this.collection);
-            }
-            else {
-                squid_api.setBookmarkId(value);
-                if (this.onSelect) {
-                    this.onSelect.call();
+            if (! $(event.target).hasClass("disabled")) {
+                var value = $(event.target).parents("li").attr("data-attr");
+                if (! value) {
+                    value = $(event.target).attr("data-attr");
                 }
+                //Callback to keep filters selection on Counter apps for ex
+            
+                if (this.onChangeHandler) {
+                    if (squid_api.model.config && value != squid_api.model.config.get("bookmark")) {
+                        this.onChangeHandler(value ,this.collection);
+                    }
+                }
+                else {
+                    squid_api.setBookmarkId(value);
+                    if (this.onSelect) {
+                        this.onSelect.call();
+                    }
+                }
+            } else {
+                event.preventDefault();
             }
         },
 
@@ -102,7 +129,6 @@
             var listHtml = $(this.template(filteredCollection)).find(".list").last().html();
             this.$el.find(".list").last().html(listHtml);
 
-            // this.bookmarkFolderStateCheck();
             if (text.length > 0) {
                 this.templateWidgets("open");
             } else {
@@ -221,38 +247,15 @@
             }
             return name;
         },
-        bookmarkFolderStateSet: function(item, action) {
-            var project = this.config.get("project");
-            var bookmarkFolderState = $.extend(true, {}, this.config.get("bookmarkFolderState"));
-            if (action == "show") {
-                if (bookmarkFolderState) {
-                    bookmarkFolderState[project] = item;
-                } else {
-                    var obj = {};
-                    obj[project] = item;
-                    bookmarkFolderState = obj;
-                }
-            } else if (action == "hidden") {
-                if (bookmarkFolderState) {
-                    delete bookmarkFolderState[project];
-                }
-            }
-            this.config.set("bookmarkFolderState", bookmarkFolderState);
-        },
-        bookmarkFolderStateCheck: function() {
-            var bookmarkFolderState = this.config.get("bookmarkFolderState");
-            var project = this.config.get("project");
-            // open folder if stored in config
-            if (bookmarkFolderState) {
-                if (bookmarkFolderState[project]) {
-                    this.$el.find("#" + bookmarkFolderState[project]).collapse('toggle');
-                }
+        bookmarkFolderState: function(item) {
+            if (item || item === 0) {
+                this.$el.find("#bookmark-collapse-" + item).collapse('toggle');
             }
         },
         render: function(activePath) {
             console.log("render CollectionManagementWidget "+this.type);
             var project = this.config.get("project");
-            var bookmarkFolderState = this.config.get("bookmarkFolderState");
+            var currentBookmark = this.config.get("bookmark");
 
             this.jsonData = {
                 collectionLoaded : !this.collectionLoading,
@@ -276,7 +279,7 @@
                 this.jsonData.createRole = this.getCreateRole();
 
                 var selectedId = this.config.get(this.configSelectedId);
-
+                
                 // store model data
                 for (i=0; i<this.collection.size(); i++) {
                     var item = this.collection.at(i);
@@ -369,15 +372,14 @@
                                     if (activePath === collection[x].path.value) {
                                         collection[x].active = true;
                                     }
+                                    if (currentBookmark === bookmark.oid) {
+                                        collection[x].currentBookmarkInside = true;
+                                    }
                                     collection[x].bookmarks.push(bookmark);
                                 }
                             }
                         }
                     }
-                }
-
-                if (_.where(collection, {active: true}).length === 0 && collection.length > 0) {
-                    collection[0].active = true;
                 }
 
                 // sort bookmarks by label
@@ -401,8 +403,13 @@
                     var textB = b.path.value.replace(/\//g, '').replace(/ /g, '').toUpperCase();
                     return (textA > textB) ? 1 : (textA < textB) ? -1 : 0;
                 });
+                if (_.where(collection, {active: true}).length === 0 && collection.length > 0) {
+                    collection[0].active = true;
+                }
                 this.jsonData.collection = collection;
-                console.log(paths);
+                if (this.returnPaths) {
+                    this.returnPaths.call(paths);
+                }
             }
 
             // render template
@@ -411,8 +418,19 @@
 
             this.$el.find("input.search").focus();
 
-            this.bookmarkFolderStateCheck();
-            this.templateWidgets();
+            this.statusUpdate();
+
+            if (this.jsonData.collection) {
+                // if no active collection, open the parent folder of currently selected bookmark
+                if (! activePath) {
+                    var indexToOpen = _.indexOf(_.pluck(this.jsonData.collection, 'currentBookmarkInside'), true);
+                    if (indexToOpen === -1) {
+                        indexToOpen = 0;
+                    }
+                    this.bookmarkFolderState(indexToOpen);
+                }
+                this.templateWidgets();
+            }
 
             return this;
         },
@@ -424,16 +442,6 @@
                     trigger: "hover"
                 });
             }
-            // accordion & events
-            this.$el.find(".collapse").on('hidden.bs.collapse', { context: this }, function (event) {
-                var item = $(this).attr("id");
-                event.data.context.bookmarkFolderStateSet(item, "hidden");
-            });
-            this.$el.find(".collapse").on('show.bs.collapse', { context: this }, function (event) {
-                var item = $(this).attr("id");
-                event.data.context.bookmarkFolderStateSet(item, "show");
-            });
-
             if (collapseState == "open") {
                 var folders = this.$el.find(".collapse");
                 for (var i=0; i<folders.length; i++) {

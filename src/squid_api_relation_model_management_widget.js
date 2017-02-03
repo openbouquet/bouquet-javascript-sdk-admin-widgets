@@ -22,10 +22,89 @@
                     data[x] = null;
                 }
             }
+
+            data = this.cardinalityManipulate(data);
+
+            return data;
+        },
+
+        beforeRender: function() {
+            var leftCardinality = this.model.get("leftCardinality");
+            var rightCardinality = this.model.get("rightCardinality");
+
+            if (leftCardinality === "MANY" && rightCardinality === "ZERO_OR_ONE") {
+                this.model.set("cardinality", "many to zero or one");
+            }
+            if (leftCardinality === "ZERO_OR_ONE" && rightCardinality === "MANY") {
+                this.model.set("cardinality", "zero or one to many");
+            }
+            if (leftCardinality === "ONE" && rightCardinality === "ONE") {
+                this.model.set("cardinality", "one to one");
+            }
+            if (leftCardinality === "ONE" && rightCardinality === "MANY") {
+                this.model.set("cardinality", "one to many");
+            }
+            if (leftCardinality === "MANY" && rightCardinality === "ONE") {
+                this.model.set("cardinality", "many to one");
+            }
+            if (leftCardinality === "ZERO_OR_ONE" && rightCardinality === "ONE") {
+                this.model.set("cardinality", "zero or one to one");
+            }
+            if (leftCardinality === "ONE" && rightCardinality === "ZERO_OR_ONE") {
+                this.model.set("cardinality", "one to zero or one");
+            }
+        },
+
+        afterRender: function() {
+            var currentDomain = this.config.get("domain");
+            if (this.formContent.getValue("rightId").domainId === currentDomain) {
+                this.formContent.fields.leftId.$el.show();
+                this.formContent.fields.rightId.$el.hide();
+            } else {
+                this.formContent.fields.leftId.$el.hide();
+            }
+        },
+
+        cardinalityManipulate: function(data) {
+            var cardinality = data.cardinality;
+            if (cardinality === "many to zero or one") {
+                data.leftCardinality = "MANY";
+                data.rightCardinality = "ZERO_OR_ONE";
+            }
+            if (cardinality === "zero or one to many") {
+                data.leftCardinality = "ZERO_OR_ONE";
+                data.rightCardinality = "MANY";
+            }
+            if (cardinality === "one to one") {
+                data.leftCardinality = "ONE";
+                data.rightCardinality = "ONE";
+            }
+            if (cardinality === "one to many") {
+                data.leftCardinality = "ONE";
+                data.rightCardinality = "MANY";
+            }
+            if (cardinality === "many to one") {
+                data.leftCardinality = "MANY";
+                data.rightCardinality = "ONE";
+            }
+            if (cardinality === "zero or one to one") {
+                data.leftCardinality = "ZERO_OR_ONE";
+                data.rightCardinality = "ONE";
+            }
+            if (cardinality === "one to zero or one") {
+                data.leftCardinality = "ONE";
+                data.rightCardinality = "ZERO_OR_ONE";
+            }
+            delete data.cardinality;
             return data;
         },
 
         customDataManipulation: function(data) {
+            if (data.joinExpression) {
+                if (data.joinExpression.value === null) {
+                    delete data.joinExpression;
+                }
+            }
             return data;
         },
 
@@ -36,7 +115,8 @@
                     this.cancelCallback.call();
                 }
             },
-            "click .btn-save-form" : function() {
+            "click .btn-save-form" : function(e) {
+                e.stopPropagation();
                 var me = this;
                 var error = this.formContent.validate();
                 if (! error) {
@@ -66,6 +146,24 @@
                     });
 
                 }
+            },
+            "mouseover .rightId select" : function(e) {
+                this.updateDomains(e);
+            },
+            "mouseover .leftId select" : function(e) {
+                this.updateDomains(e);
+            }
+        },
+
+        updateDomains: function(e) {
+            if ($(e.currentTarget).find("option").length <= 1) {
+                var optionsAsString = "";
+                for(var i=0; i<this.domainList.length; i++) {
+                    if (this.domainList[i].val !== $(e.currentTarget).val()) {
+                        optionsAsString += "<option value='" + this.domainList[i].val + "'>" + this.domainList[i].label + "</option>";
+                    } 
+                }
+                $(e.currentTarget).append(optionsAsString);
             }
         },
 
@@ -74,6 +172,27 @@
             this.config.trigger("change:selection");
         },
         formEvents: function() {
+            var me = this;
+
+            // set base values
+            if (this.model.isNew()) {
+                // automatically populate leftId
+                this.formContent.fields.leftId.setValue({
+                    "projectId": this.config.get("project"),
+                    "domainId": this.config.get("domain")
+                });
+                // automatically populate rightId
+                this.formContent.fields.rightId.setValue({
+                    "projectId": this.config.get("project"),
+                    "domainId" : this.domainList[0].val
+                });
+                // auto select default form fields
+                this.formContent.fields.leftName.setValue(this.formContent.fields.leftId.getValue().domainId);
+                this.formContent.fields.rightName.setValue(this.domainList[0].label);
+                this.formContent.fields.cardinality.setValue(this.formContent.fields.cardinality.schema.options[0]);
+            }
+
+            // additional events
             this.formContent.on('leftId:change', function(form) {
                 var rightText = form.$el.find(".leftId").find("select option:selected").text();
                 form.$el.find(".leftName input").val(rightText);
@@ -104,22 +223,55 @@
             squid_api.getCustomer().then(function(customer) {
                 customer.get("projects").load(project).then(function(project) {
                     project.get("domains").load().then(function(domains) {
-                        var arr = [];
+                        var domainList = [];
+
+                        var currentLeftDomain = [];
+                        var currentRightDomain = [];
+
                         for (i=0; i<domains.size(); i++) {
+                            var domain = domains.at(i);
+
                             obj = {};
-                            obj.val = domains.at(i).get("oid");
-                            obj.label = domains.at(i).get("name");
-                            arr.push(obj);
+                            obj.val = domain.get("oid");
+                            obj.label = domain.get("name");
+
+                            // push for widget scope array
+                            domainList.push(obj);
+
+                            // current domains
+                            if (me.model.get("leftId")) {
+                                if (domain.get("oid") === me.model.get("leftId").domainId) {
+                                    currentLeftDomain.push(obj);
+                                }
+
+                            }
+                            if (me.model.get("rightId")) {
+                                if (domain.get("oid") === me.model.get("rightId").domainId) {
+                                    currentRightDomain.push(obj);
+                                }
+                            }
+                            if (me.model.isNew()) {
+                                if (domain.get("oid") === me.config.get("domain")) {
+                                    currentLeftDomain.push(obj);
+                                }
+                            }
                         }
-                        schema.leftId.subSchema.domainId.options = arr.sort(me.comparator);
-                        schema.rightId.subSchema.domainId.options = arr.sort(me.comparator);
+
+                        if (me.model.isNew()) {
+                            currentRightDomain.push(domainList[0]);
+                        }
+
+                        schema.leftId.subSchema.domainId.options = currentLeftDomain;
+                        schema.rightId.subSchema.domainId.options = currentRightDomain;
+
+                        me.domainList = domainList.sort(me.comparator);
+
                         dfd.resolve(schema);
                     });
                 });
             });
             return dfd;
         }
-
     });
 
     return View;

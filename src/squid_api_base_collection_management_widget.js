@@ -18,6 +18,8 @@
         cancelCallback : null,
         collectionLoading : false,
         afterRender : null,
+        onFormContentsChange: null,
+        modelViewEl : null,
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -34,17 +36,26 @@
                     // default sorting
                     this.comparator =  squid_api.utils.defaultComparator;
                 }
+                if (options.onFormContentsChange) {
+                    this.onFormContentsChange = options.onFormContentsChange;
+                }
                 if (options.cancelCallback) {
                     this.cancelCallback = options.cancelCallback;
                 }
                 if (options.onSelect) {
                     this.onSelect = options.onSelect;
                 }
+                if (options.onEdit) {
+                    this.onEdit = options.onEdit;
+                }
                 if (options.afterRender) {
                     this.afterRender = options.afterRender;
                 }
                 if (options.template) {
                     this.template = options.template;
+                }
+                if (options.modelViewEl) {
+                    this.modelViewEl = options.modelViewEl;
                 }
             }
 
@@ -57,8 +68,14 @@
                 var selectionChanged = this.config.hasChanged(me.configSelectedId) || (this.config.get(me.configSelectedId) && ! this.selectedModel);
                 this.initModel(this.config, parentChanged, selectionChanged);
             });
+            // listen for status change
+            this.listenTo(this.status, "change:status", this.statusUpdate);
 
             //this.render();
+        },
+
+        statusUpdate: function() {
+            // to be overridden
         },
 
         /**
@@ -136,6 +153,7 @@
                     me.render();
                     me.listenTo(me.selectedModel, "change", me.render);
                 }).fail(function() {
+                    console.error("setSelectedModel - model not found : "+modelId+" in collection "+me.collection);
                     me.render();
                 });
             } else {
@@ -182,7 +200,7 @@
         },
 
         getSelectedModel : function(event) {
-            var id = $(event.target).parents('tr').data("attr");
+            var id = $(event.target).data("attr") || $(event.target).parents('tr').data("attr");
             var model = this.collection.get(id);
             return model;
         },
@@ -206,6 +224,7 @@
                 cancelCallback : function() {
                     me.render();
                 },
+                onFormContentsChange: this.onFormContentsChange,
                 onSave : function(model) {
                     me.collection.add(model);
                     // call any super onSave
@@ -253,10 +272,14 @@
                 });
                 this.renderModelView(new this.modelView({
                     model : model,
+                    onFormContentsChange: this.onFormContentsChange,
                     cancelCallback : function() {
                         me.render();
                     }
                 }));
+            }
+            if (this.onEdit) {
+                this.onEdit.call(event);
             }
         },
 
@@ -408,13 +431,17 @@
         },
 
         renderModelView: function(modelView) {
-            this.$el.html(modelView.el);
+            if (this.modelViewEl) {
+                $(this.modelViewEl).html(modelView.el);
+            } else {
+                this.$el.html(modelView.el);
+            }
+
             // focus on first element
             this.$el.find('input[type=text],textarea,select').filter(":visible:first").focus();
         },
 
         render: function() {
-            console.log("render CollectionManagementWidget "+this.type);
             this.jsonData = {
                 collectionLoaded : !this.collectionLoading,
                 collection : this.collection,
@@ -442,6 +469,7 @@
                             model[att] = item.get(att);
                         }
                         model.visible = true;
+                        model.dynamic = item.get("dynamic");
                         model.roles = this.getModelRoles(item);
                         model.selected = (model.oid === selectedId);
                         models.push(model);

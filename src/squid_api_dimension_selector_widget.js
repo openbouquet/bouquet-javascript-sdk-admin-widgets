@@ -10,8 +10,9 @@
         chosen : "chosenDimensions",
         selected : "selectedDimensions",
         afterRender : null,
+        displayAll : null,
         singleSelect : false,
-        singleSelectIndex : 0,
+        singleSelectIndex : null,
         configurationEnabled : false,
         updateMultiQuantity : null,
 
@@ -42,13 +43,16 @@
                 if (options.dimensionIndex !== null) {
                     this.dimensionIndex = options.dimensionIndex;
                 }
+                if (options.displayAll) {
+                    this.displayAll = options.displayAll;
+                }
                 if (options.afterRender) {
                     this.afterRender = options.afterRender;
                 }
                 if (options.singleSelect) {
                     this.singleSelect = options.singleSelect;
                 }
-                if (options.singleSelectIndex) {
+                if (options.singleSelectIndex || options.singleSelectIndex === 0) {
                     this.singleSelectIndex = options.singleSelectIndex;
                 }
                 if (options.updateMultiQuantity) {
@@ -90,8 +94,31 @@
                 this.events = squid_api.view.CollectionSelectorUtils.events;
             }
 
-            // listen for global status change
+            if (this.displayAll) {
+                this.listenTo(this.config,"change:domain", this.fetchCollection);
+            }
             this.listenTo(this.status,"change:status", this.enable);
+        },
+
+        fetchCollection: function() {
+            var me = this;
+            this.loadCollection().done(function(collection) {
+                me.dimensionCollection = collection;
+                me.render();
+            }).fail(function() {
+                console.error("Error Fetching Dimensions");
+            });
+        },
+
+        loadCollection : function(parentId) {
+            var me = this;
+            return squid_api.getCustomer().then(function(customer) {
+                return customer.get("projects").load(squid_api.model.config.get("project")).then(function(project) {
+                    return project.get("domains").load(squid_api.model.config.get("domain")).then(function(domain) {
+                        return domain.get("dimensions").load();
+                    });
+                });
+            });
         },
 
         enableDisplay: function() {
@@ -137,7 +164,7 @@
                 // add an empty (none selected) option
                 jsonData.options.push({"label" : "None"});
             }
-
+            
             // iterate through all filter facets
             var selection = this.filters.get("selection");
             if (selection) {
@@ -164,22 +191,30 @@
                                     facetList[idx] = facet;
                                 }
                             } else if (this.available) {
-                                // check this facet is available (or chosen)
+                                // check this facet is available
                                 var availableArray = this.config.get(this.available);
-                                var chosenArray = this.config.get(this.chosen);
-                                var addToArray = true;
-
-                                // don't allow dimension reselection if using a singleSelectIndex
-                                if (this.singleSelectIndex) {
-                                    for (d=0; d<chosenArray.length; d++) {
-                                        if (d !== this.singleSelectIndex && chosenArray[d] === facet.id) {
+                                if (!availableArray) {
+                                    // use chosen
+                                    availableArray = this.config.get(this.chosen);
+                                }
+                                if ((!availableArray) || (availableArray.length === 0)) {
+                                    // use all facets
+                                    facetList.push(facet);
+                                } else {
+                                    var addToArray = true;
+                                    // don't allow dimension reselection if using a singleSelectIndex
+                                    if (this.singleSelectIndex || this.singleSelectIndex === 0) {
+                                        var chosenArray = this.config.get(this.chosen);
+                                        var index = _.indexOf(chosenArray, facet.id);
+                                        if (index > -1 && index !== this.singleSelectIndex) {
                                             addToArray = false;
                                         }
                                     }
-                                }
-
-                                if (addToArray && (availableArray && (availableArray.indexOf(facet.id) > -1) || (chosenArray && chosenArray.indexOf(facet.id) > -1))) {
-                                    facetList.push(facet);
+                                    if (! this.config.get(this.available) && addToArray) {
+                                        facetList.push(facet);
+                                    } else if (addToArray && (this.config.get(this.available) && (this.config.get(this.available).indexOf(facet.id) > -1))) {
+                                        facetList.push(facet);
+                                    }
                                 }
                             } else {
                                 // default unordered behavior
@@ -209,7 +244,7 @@
                             } else {
                                 name = facet1.dimension.name;
                             }
-                            var option = {"label" : name, "value" : facet1.id, "selected" : selected, "error" : facetList[dimIdx].error};
+                            var option = {"label" : name, "value" : facet1.id, "selected" : selected, "error" : facetList[dimIdx].error, "oid" : facet1.dimension.oid};
                             jsonData.options.push(option);
                         }
                     }
@@ -218,6 +253,39 @@
                 // check if empty
                 if (jsonData.options.length === 0) {
                     jsonData.empty = true;
+                }
+
+                if (this.displayAll) {
+                    if (this.dimensionCollection) {
+                        var notFound = [];
+                        var dims = this.dimensionCollection.models;
+                        for (var d=0; d<dims.length; d++) {
+                            var model = this.dimensionCollection.at(d);
+                            var found = false;
+                            for(var c=0; c<selection.facets.length; c++) {
+                                if (selection.facets[c].dimension.oid == model.get("oid")) {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (! found) {
+                                // jsonData.options.push({
+                                //     "label" : model.get("name"),
+                                //     "value" : "@'" + this.config.get("domain") + ".@'" + model.get("oid") + "'",
+                                //     "selected" : this.isChosen(model),
+                                //     "error" : model.get("error")
+                                // });
+                                notFound.push({
+                                    "id" : model.get("oid"),
+                                    "name" : model.get("name"),
+                                    "valueType" : model.get("valueType")
+                                });
+                            }    
+                        }
+                        for (ix1=0; ix1<notFound.length; ix1++) {
+                            console.log(notFound[ix1].name + " with id " + notFound[ix1].id + " is not found with valueType: " + notFound[ix1].valueType);
+                        }
+                    }
                 }
 
                 this.renderView(jsonData);
@@ -273,6 +341,8 @@
                 this.$el.find("select").multiselect('rebuild');
             }
 
+            this.enable();
+
             return this;
         },
 
@@ -325,8 +395,10 @@
             var selected = false;
             var dimensions = this.config.get(this.chosen);
             if (this.singleSelect === true) {
-                if (dimensions[this.singleSelectIndex] === facet.id) {
-                    selected = true;
+                if (dimensions) {
+                    if (dimensions[this.singleSelectIndex] === facet.id) {
+                        selected = true;
+                    }
                 }
             } else {
                 if (dimensions) {

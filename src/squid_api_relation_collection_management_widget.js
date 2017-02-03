@@ -11,59 +11,49 @@
         template: template,
         configParentId : "domain",
 
-        
-        // override initialize size we're not listening to the config
-        initialize : function(options) {
-            this.config = squid_api.model.config;
-            this.status = squid_api.model.status;
-            this.modelView = squid_api.view.RelationModelManagementWidget;
-            this.modelValue = options.modelValue;
+        init: function(options) {
             var me = this;
-            
-            if (options) {
-                if (options.type) {
-                    this.type = options.type;
-                }
-                if (options.comparator) {
-                    this.comparator = options.comparator;
-                } else {
-                    // default is : sort by alpha name and dynamic last
-                    this.comparator =  function(a, b) {
-                        var r = me.dynamicComparator(a,b);
-                        if (r === 0) {
-                            r = me.alphaNameComparator(a,b);
-                        }
-                        return r;
-                    };
-                }
-                if (options.cancelCallback) {
-                    this.cancelCallback = options.cancelCallback;
-                }
-                if (options.onSelect) {
-                    this.onSelect = options.onSelect;
-                }
-            }
-            
+
+            this.modelView = squid_api.view.RelationModelManagementWidget;
+
             // init the relations collection
-            me.loadCollection(this.modelValue).done(function(collection) {
-                me.collection = collection;
-                me.render();
-            }).fail(function() {
-                me.render();
-            });
-            
+            var projectId = this.config.get("project");
+            if (projectId) {
+                this.modelValue = options.modelValue;
+
+                this.loadCollection(options.modelValue).done(function(collection) {
+                    me.collection = collection;
+                    me.render();
+                }).fail(function() {
+                    me.render();
+                });
+            } else {
+                // listen for config change
+                this.listenTo(this.config,"change", function () {
+                    var parentChanged = this.config.hasChanged(me.configParentId);
+                    var selectionChanged = this.config.hasChanged(me.configSelectedId) || (this.config.get(me.configSelectedId) && ! this.selectedModel);
+                    this.initModel(this.config, parentChanged, selectionChanged);
+                    if (this.config.hasChanged("domain")) {
+                        me.modelValue = this.config.get("domain");
+                    }
+                });
+            }
         },
-        
+
         loadCollection : function(parentId) {
             var me = this;
-            // load the project's relations
-            return squid_api.getCustomer().then(function(customer) {
-                return customer.get("projects").load(me.config.get("project")).then(function(project) {
-                    return project.get(me.typeLabelPlural.toLowerCase()).load();
+            var project = this.config.get("project");
+
+            if (project) {
+                // load the project's relations
+                return squid_api.getCustomer().then(function(customer) {
+                    return customer.get("projects").load(me.config.get("project")).then(function(project) {
+                        return project.get(me.typeLabelPlural.toLowerCase()).load();
+                    });
                 });
-            });
+            }
         },
-        
+
         events: {
             'mouseenter tr': function(event) {
                 this.eventMouseEnter(event);
@@ -93,13 +83,17 @@
                 }
             }
         },
-        
+
         viewData: function() {
             var filteredModels = [];
             for (i=0; i<this.collection.size(); i++) {
                 if (this.collection.at(i).get("leftId") && this.collection.at(i).get("rightId")) {
+                    var collection = this.collection.at(i);
+                    if (this.collection.at(i).get("rightId").domainId == this.modelValue) {
+                        collection.set("isRight", true);
+                    }
                     if (this.collection.at(i).get("leftId").domainId == this.modelValue || this.collection.at(i).get("rightId").domainId == this.modelValue) {
-                        filteredModels.push(this.collection.at(i));
+                        filteredModels.push(collection);
                     }
                 }
             }
@@ -110,6 +104,7 @@
                 obj.leftName = filteredModels[ix].get("leftName");
                 obj.rightName = filteredModels[ix].get("rightName");
                 obj.roles = this.getModelRoles(filteredModels[ix]);
+                obj.isRight = filteredModels[ix].get("isRight");
 
                 // set cardinality booleans for handlebar display
                 var leftCardinality = filteredModels[ix].get("leftCardinality");

@@ -7,6 +7,9 @@
 
         model : null,
         collectionPluralLabel : null,
+        onFormContentsChange: null,
+        afterRenderCallback: null,
+        externalCollection: null,
 
         initialize: function(options) {
             this.status = squid_api.model.status;
@@ -26,6 +29,18 @@
             }
             if (options.onSave) {
                 this.onSave = options.onSave;
+            }
+            if (options.openModelCallback) {
+                this.openModelCallback = options.openModelCallback;
+            }
+            if (options.afterRenderCallback) {
+                this.afterRenderCallback = options.afterRenderCallback;
+            }
+            if (options.onFormContentsChange) {
+                this.onFormContentsChange = options.onFormContentsChange;
+            }
+            if (options.externalCollection) {
+                this.externalCollection = options.externalCollection;
             }
             if (options.comparator) {
                 this.comparator = options.comparator;
@@ -58,10 +73,9 @@
         },
 
         events: {
-            "click .btn-cancel": function() {
-                // reset parent view if cancel button clicked
-                if (this.cancelCallback) {
-                    this.cancelCallback.call();
+            "click .open-model": function() {
+                if (this.openModelCallback) {
+                    this.openModelCallback(this);
                 }
             },
             "click .btn-save-form" : function() {
@@ -73,25 +87,66 @@
 
                     // for any custom model manipulation before save
                     data = this.customDataManipulation(data);
+                    
+                    var isNewModel = this.model.isNew();
+                    
+                    // prevent from saving children collections
+                    var modelClone = this.model.clone();
+                    var children = this.model.get("_children");
+                    if (children) {
+                        for (var i=0; i<children.length; i++) {
+                            modelClone.set(children[i], []);
+                        }
+                    }
 
                     // save model
-                    this.model.save(data, {
+                    modelClone.save(data, {
                         wait: true,
-                        success: function(model) {
+                        success: function() {
+                            // update the original model with non-children attributes
+                            var excluded = children;
+                            var attributes = modelClone.attributes;
+                            for (var att in attributes) {
+                                if (!excluded || (excluded.indexOf(att)<0)) {
+                                    me.model.set(att, modelClone.get(att));
+                                }
+                            }
+                            
                             // status update
                             if (me.cancelCallback) {
                                 me.cancelCallback.call();
                             }
+
+                            // allow an externalCollection to be updated
+                            if (me.externalCollection) {
+                                if (isNewModel) {
+                                    me.externalCollection.collection.add(me.model);
+                                    me.externalCollection.collection.trigger('add');
+                                } else {
+                                    me.externalCollection.collection.set(me.model,{remove: false});
+                                    me.externalCollection.collection.trigger('sync');
+                                }
+                            }
+
                             // call once saved
                             if (me.onSave) {
-                                me.onSave(model);
+                                me.onSave(me.model);
                             }
+
                             me.status.set("message", "Sucessfully saved");
                         },
                         error: function(xhr) {
                             me.status.set("error", xhr);
                         }
                     });
+                }
+            },
+            "click .btn-cancel-form": function() {
+                this.formContent.render();
+                this.$el.find(".modal-body").html(this.formContent.el);
+                // reset parent view if cancel button clicked
+                if (this.cancelCallback) {
+                    this.cancelCallback.call();
                 }
             },
             "click .copy-id": function() {
@@ -116,7 +171,17 @@
             return dfd.resolve(this.schema);
         },
 
+        removeView: function() {
+            // Unbind view completely
+            this.undelegateEvents();
+            this.$el.removeData().unbind();
+        },
+
         afterRender: function() {
+            // to be overridden from other model management widgets
+        },
+
+        beforeRender: function() {
             // to be overridden from other model management widgets
         },
 
@@ -132,10 +197,14 @@
             if (this.model.isNew()) {
                 jsonData.headerLabel = "Creating a new " + this.model.definition.toLowerCase();
             } else {
-                jsonData.headerLabel = "Editing " + this.model.definition.toLowerCase() + " with name " + this.model.get("name") + " <span data-clipboard-text='" + this.model.get("oid") + "' class='copy-id'>(" + this.model.get("oid") + "</span>)";
+                jsonData.headerLabel = "Editing " + this.model.definition.toLowerCase() + " " +this.model.get("name");
             }
 
+            jsonData.footerLabel = "<div class='object-id'><label>Object ID</label> <br /> <input data-clipboard-text='" + this.model.get("oid") + "' class='copy-id' value='" + this.model.get("oid") + "' /></div>";
+
             this.setSchema().then(function(schema) {
+                me.beforeRender();
+
                 // create form
                 me.formContent = new Backbone.Form({
                     schema: schema,
@@ -145,6 +214,22 @@
                 // append save buttons
                 me.$el.html(me.template(jsonData));
 
+                // expression editor to be updated
+                // me.originalFormContent = me.formContent.getValue();
+
+                me.formContent.on("change", function() {
+
+                    if (me.onFormContentsChange) {
+                        me.onFormContentsChange.call(me);
+                    }
+
+                    // if (me.formContent.getValue() !== me.originalFormContent) {
+                    //     saveBtn.fadeIn();
+                    // } else {
+                    //     saveBtn.fadeOut();
+                    // }
+                });
+
                 // place the form into a backbone view
                 me.$el.find(".modal-body").html(me.formContent.el);
 
@@ -153,6 +238,14 @@
 
                 // after render handler
                 me.afterRender();
+
+                if (me.afterRenderCallback) {
+                    me.afterRenderCallback(me);
+                }
+
+                if (me.model.isNew()) {
+                    me.$el.find(".object-id").hide();
+                }
             });
 
             return this;
