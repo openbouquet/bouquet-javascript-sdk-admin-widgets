@@ -495,14 +495,18 @@
                                                         var complementFacetItems = null;
                                                         if (newFacet.dimension.type === "CONTINUOUS" && newFacet.dimension.valueType === "DATE") {
                                                             //For dates there is only one selection item
-                                                            if (oldSelection.compareTo && oldSelection.compareTo.length === 1) {
+                                                            
+                                                        	if (oldSelection.compareTo && oldSelection.compareTo.length === 1) {
                                                                 var savedNewCompare = $.extend(true, {}, newFacet);
                                                                 savedNewCompare.selectedItems = $.extend(true, [], oldSelection.compareTo[0].selectedItems);
                                                                 forcedSelection.compareTo.push(savedNewCompare);
                                                             } else {
+                                                            	forcedSelection.compareTo = null;
+                                                            	/*We don't copy anymore the new compare
                                                                 if (savedNewConfig.selection.compareTo) {
                                                                     forcedSelection.compareTo = $.extend(true, [], savedNewConfig.selection.compareTo);
                                                                 }
+                                                                */
                                                             }
                                                             complementFacetItems = me.customAddedFacets.get(facetName);
                                                             if (!complementFacetItems) {
