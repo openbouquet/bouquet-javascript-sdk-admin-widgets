@@ -1706,6 +1706,8 @@ function program1(depth0,data) {
         headerText : null,
         filteredPaths: null,
         filteredOids: null,
+        excludedPaths: null,
+        excludedOids: null,
         onChangeHandler : null,
         descriptionHover : null,
         returnPaths: null,
@@ -1727,6 +1729,12 @@ function program1(depth0,data) {
             }
             if (options.filteredOids) {
                 this.filteredOids = options.filteredOids;
+            }
+            if (options.excludedPaths) {
+                this.excludedPaths = options.excludedPaths;
+            }
+            if (options.excludedOids) {
+                this.excludedOids = options.excludedOids;
             }
             if (options.onChangeHandler) {
                 this.onChangeHandler = options.onChangeHandler;
@@ -1985,6 +1993,15 @@ function program1(depth0,data) {
                             }
                         }
                     }
+                    if (this.excludedPaths === null) {
+                        validPath = validPath;
+                    } else {
+                        for (j=0; j<this.excludedPaths.length; j++) {
+                            if (this.excludedPaths[j] === item.get("path")) {
+                                validPath = false;
+                            }
+                        }
+                    }
                     var validOid = false;
                     if (this.filteredOids === null) {
                         validOid = true ;
@@ -1992,6 +2009,15 @@ function program1(depth0,data) {
                         for (j=0; j<this.filteredOids.length; j++) {
                             if (this.filteredOids[j] === item.get("oid")) {
                                  validOid = true;
+                            }
+                        }
+                    }
+                    if (this.excludedOids === null) {
+                        validOid = validPath ;
+                    } else {
+                        for (j=0; j<this.excludedOids.length; j++) {
+                            if (this.excludedOids[j] === item.get("oid")) {
+                                 validOid = false;
                             }
                         }
                     }
