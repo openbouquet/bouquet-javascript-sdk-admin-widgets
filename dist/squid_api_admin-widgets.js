@@ -3148,7 +3148,7 @@ function program1(depth0,data) {
 
                 // Update
                 if (this.onChangeHandler) {
-                    this.onChangeHandler.call(this);
+                    this.onChangeHandler.call(this, chosenNew);
                 } else {
                     this.config.set(this.chosen,chosenNew);
                 }
