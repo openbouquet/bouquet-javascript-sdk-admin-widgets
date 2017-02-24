@@ -5359,14 +5359,14 @@ function program1(depth0,data) {
 
     var View = squid_api.view.MetricCollectionWidget.extend({
         template : null,
-        available : null,
+        available: "availableMetrics",
         chosen : "chosenMetrics",
         selected : "selectedMetrics",
         configurationEnabled : null,
         onChangeHandler : null,
         filterBy : null,
         buttonText : null,
-        displayAll : null,
+        displayAll : true,
         customView : null,
 
         init: function(options) {
@@ -5399,7 +5399,7 @@ function program1(depth0,data) {
                 if (options.customView) {
                     this.customView = options.customView;
                 }
-                if (options.displayAll) {
+                if (options.displayAll !== 'undefined' && options.displayAll !== null) {
                     this.displayAll = options.displayAll;
                 }
                 if (options.buttonText) {
@@ -5478,13 +5478,16 @@ function program1(depth0,data) {
                         add = true;
                     }
 
-                    if ((add === true) && (this.available || this.chosen)) {
-                        // check this metric is available (or chosen)
-                        var availableArray = this.config.get(this.available);
-                        var chosenArray = this.config.get(this.chosen);
-                        if ((availableArray && availableArray.length > 0 && availableArray.indexOf(item.get("oid")) < 0) && (chosenArray && chosenArray.indexOf(item.get("oid")) < 0)) {
-                            add = false;
-                        }
+                    if (!this.displayAll) {
+	                    if ((add === true) && (this.available || this.chosen)) {
+	                        // check this metric is available (or chosen)
+	                        var availableArray = this.config.get(this.available);
+	                        var chosenArray = this.config.get(this.chosen);
+	                        if ((availableArray === 'undefined' || $.isArray(availableArray) ===false || availableArray.indexOf(item.get("oid")) < 0) &&
+	                        		(chosenArray === 'undefined' || $.isArray(chosenArray) ===false || chosenArray.indexOf(item.get("oid")) < 0)) {
+	                            add = false;
+	                        }
+	                    }
                     }
 
                     if (add === true) {
