@@ -2426,7 +2426,7 @@ function program1(depth0,data) {
                 var toAdd = [];
 
                 //Define starting point depending if the user has already used or not the bookmark
-                if (forcedSelection && savedSelection) {
+                if (forcedSelection && !savedSelection) {
                     toAdd = segments.concat(forcedSelection.selectedItems);
                 } else if (bookmarkSelection && bookmarkSelection.selectedItems){
                     toAdd  = segments.concat(bookmarkSelection.selectedItems);
@@ -2446,6 +2446,7 @@ function program1(depth0,data) {
                     for (var i=0; i<savedSelection.length; i++) {
                         var segment = savedSelection[i];
                         var add = true;
+                        /*//Remove this as we don't initalize anymore from forced selection
                         //Do we remove because it is already in the forced config?
                         if (forcedSelection) {
                             for (var j=0; j<forcedSelection.selectedItems.length; j++) {
@@ -2454,6 +2455,7 @@ function program1(depth0,data) {
                                 }
                             }
                         }
+                        */
                         //Do we remove because it is not all segments from the domain (strengthen)
                         if (add === true) {
                             var addItem = false;
