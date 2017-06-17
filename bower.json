@@ -21,7 +21,7 @@
     "d3": "3",
     "backbone.bootstrap-modal": "https://github.com/squidsolutions/backbone.bootstrap-modal.git#master",
     "bootstrap-duallistbox": "~3.0.4",
-    "backbone-forms": "https://github.com/powmedia/backbone-forms.git#24f4e18fcd8b84857d007191135d442db1401156",
+    "backbone-forms": "https://github.com/powmedia/backbone-forms.git#master",
     "clipboard": "~1.5.5",
     "bootstrap-multiselect": "https://github.com/davidstutz/bootstrap-multiselect.git#0.9.13",
     "ace-builds": "https://github.com/openbouquet/ace-builds.git#v1.2.5.0"
