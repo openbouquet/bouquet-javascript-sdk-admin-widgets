@@ -32,6 +32,9 @@
             if (options.config) {
                 this.config = options.config;
             }
+            if (options.configSelectedId) {
+                this.configSelectedId = options.configSelectedId;
+            }
             if (options.filteredPaths) {
                 this.filteredPaths = options.filteredPaths;
             }
@@ -286,7 +289,7 @@
                 this.jsonData.collection = {};
                 this.jsonData.createRole = this.getCreateRole();
 
-                var selectedId = this.config.get(this.configSelectedId);
+                var selectedId = this.configSelectedId;
                 
                 // store model data
                 for (i=0; i<this.collection.size(); i++) {

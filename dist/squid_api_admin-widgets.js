@@ -998,8 +998,11 @@ function program1(depth0,data) {
             // listen for config change
             this.listenTo(this.config,"change", function () {
                 var parentChanged = this.config.hasChanged(me.configParentId);
-                var selectionChanged = this.config.hasChanged(me.configSelectedId) || (this.config.get(me.configSelectedId) && ! this.selectedModel);
-                this.initModel(this.config, parentChanged, selectionChanged);
+                var a =this.config.hasChanged(me.configSelectedId);
+                var b = !this.config.has(me.configSelectedId) || this.config.get(me.configSelectedId);
+                var c = (typeof this.selectedModel === 'undefined' || !this.selectedModel);
+                var selectionChanged = a || (b && c);
+                this.initModel(this.config, parentChanged || selectionChanged, selectionChanged);
             });
             // listen for status change
             this.listenTo(this.status, "change:status", this.statusUpdate);
@@ -1724,6 +1727,9 @@ function program1(depth0,data) {
             if (options.config) {
                 this.config = options.config;
             }
+            if (options.configSelectedId) {
+                this.configSelectedId = options.configSelectedId;
+            }
             if (options.filteredPaths) {
                 this.filteredPaths = options.filteredPaths;
             }
@@ -1978,7 +1984,7 @@ function program1(depth0,data) {
                 this.jsonData.collection = {};
                 this.jsonData.createRole = this.getCreateRole();
 
-                var selectedId = this.config.get(this.configSelectedId);
+                var selectedId = this.configSelectedId;
                 
                 // store model data
                 for (i=0; i<this.collection.size(); i++) {
