@@ -1993,9 +1993,7 @@ function program1(depth0,data) {
                             }
                         }
                     }
-                    if (this.excludedPaths === null) {
-                        validPath = validPath;
-                    } else {
+                    if (this.excludedPaths !== null) {
                         for (j=0; j<this.excludedPaths.length; j++) {
                             if (this.excludedPaths[j] === item.get("path")) {
                                 validPath = false;
@@ -2012,9 +2010,7 @@ function program1(depth0,data) {
                             }
                         }
                     }
-                    if (this.excludedOids === null) {
-                        validOid = validPath ;
-                    } else {
+                    if (this.excludedOids !== null) {
                         for (j=0; j<this.excludedOids.length; j++) {
                             if (this.excludedOids[j] === item.get("oid")) {
                                  validOid = false;
