@@ -107,7 +107,11 @@
                                 // selected also changed
                                 me.setSelectedModel(selectedId);
                             } else {
-                                me.render();
+                            	if (me.selectedModel) {
+                            		me.render();
+                            	} else {
+                            		me.setSelectedModel(selectedId);
+                            	}
                             }
                         }).fail(function() {
                             me.collection = null;

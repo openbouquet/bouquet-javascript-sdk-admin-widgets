@@ -1040,7 +1040,11 @@ function program1(depth0,data) {
                                 // selected also changed
                                 me.setSelectedModel(selectedId);
                             } else {
-                                me.render();
+                            	if (me.selectedModel) {
+                            		me.render();
+                            	} else {
+                            		me.setSelectedModel(selectedId);
+                            	}
                             }
                         }).fail(function() {
                             me.collection = null;
@@ -1962,7 +1966,10 @@ function program1(depth0,data) {
             console.log("render CollectionManagementWidget "+this.type);
             var project = this.config.get("project");
             var currentBookmark = this.config.get("bookmark");
-
+            var selectedId = this.configSelectedId;
+            if (this.config.has("bookmark") && this.configSelectedId === "bookmark") {
+            	selectedId = currentBookmark;
+            }
             this.jsonData = {
                 collectionLoaded : !this.collectionLoading,
                 collection : this.collection,
@@ -1984,7 +1991,7 @@ function program1(depth0,data) {
                 this.jsonData.collection = {};
                 this.jsonData.createRole = this.getCreateRole();
 
-                var selectedId = this.configSelectedId;
+                
                 
                 // store model data
                 for (i=0; i<this.collection.size(); i++) {
