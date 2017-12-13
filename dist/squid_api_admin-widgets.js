@@ -4161,25 +4161,59 @@ function program1(depth0,data) {
             this.edit.$blockScrolling = Infinity;
             if (this.value !== null) {
                 this.edit.setValue("" + this.value);
+            }else{
+                this.edit.setValue("");
             }
             this.edit.getSession().type = this.type;
             this.edit.getSession().setMode("ace/mode/bouquet");
 
             this.edit.setOption("showPrintMargin", false);
+            this.edit.setOption("maxLines", 5);
+            this.edit.setOption("minLines", 5);
+
+            var row = this.edit.session.getLength() - 1;
+            var column = this.edit.session.getLine(row).length;
+            this.edit.gotoLine(row + 1, column);
 
             var langTools = ace.require("ace/ext/language_tools");
             this.edit.setOptions({
                 enableBasicAutocompletion: true,
-                enableLiveAutocompletion: true,
+                enableLiveAutocompletion: false,
                 enableSnippets: true
             });
             var me = this;
 
             var bouquetCompleter = {
+                identifierRegexps: [/[a-zA-Z_0-9\$\#\@\'\.\-\:\_\(]/],
+                separatorRegexps: [/[\$\#\@\'\.\-\:\_\(\)]/],
+                alphaRegexps: [/[a-zA-Z_0-9]/],
                 getCompletions: function (editor, session, pos, prefix, callback) {
                     if (prefix.length === 0) {
                         //By default look for ID
                         prefix = "";
+                        me.enclosing="";
+                    } else {
+                     	var wordRange = editor.selection.getWordRange();
+                    	var range = editor.selection.getRange();
+                  	  	var line = editor.session.getLine(pos.row);
+                        var suffix = line.substring(wordRange.start.column,wordRange.end.column );
+                          
+                   	  	if (suffix.length < prefix.length && pos.column === wordRange.end.column && wordRange.start.column !== range.end.column && wordRange.start.column === range.start.column && wordRange.end.column === range.end.column) {
+                          prefix = prefix.substring(0,prefix.length - suffix.length);
+                    	}
+                  	  	var preChar =line.substring(wordRange.start.column-1,wordRange.start.column );
+                  	    var postChar =line.substring(wordRange.end.column,wordRange.end.column+1 );
+                  	    if (preChar === postChar) {
+                  	    	me.enclosing = preChar;
+                  	    } else {
+                   	   		var c1 = line[pos.column];
+                  	    	var c2 = line[pos.column+1];
+                   	    	this.separatorRegexps.forEach(function (regexp) {
+                  	    		if (regexp.test(c1) && regexp.test(c2)) {
+                  	    			me.enclosing = c2;
+                  	    		}
+                  	    	});
+                  	    }
                     }
                     me.prefix = prefix;
                     squid_api.getSelectedProject().then(function (project) {
@@ -4205,22 +4239,36 @@ function program1(depth0,data) {
                                         if(!suggestionList.prefix){
                                             suggestionList.prefix = "";
                                         }
+                                        /*
                                         var prefix_snippet = "";
                                         if(suggestionList.beginInsertPos){
                                             var cursor = me.edit.getSession().getSelection().getCursor();
-                                            //var range = new Range(cursor.row, 0, cursor.row, suggestionList.beginInsertPos);
                                             var range = me.edit.getSession().getWordRange(cursor.row, 0);
                                             range.start.row = cursor.row;
                                             range.end.row = cursor.row;
-                                            range.start.column = cursor.column - suggestionList.filterIndex;
-                                            range.end.column = cursor.column;
+                                            //range.start.column = cursor.column - suggestionList.filterIndex;
+                                            //range.end.column = cursor.column;
+                                            range.start.column =  cursor.column - (suggestionList.filterIndex + suggestionList.filter.length);
+                                            range.end.column = cursor.column - suggestionList.filter.length;
+                                            // + (suggestionList.beginInsertPos - suggestionList.filterIndex) ;
                                             prefix_snippet  = suggestionList.prefix  + me.edit.getSession().getTextRange(range);
+                                        }
+                                        */
+                                        var snippet = ea.suggestion;
+                                        if (ea.suggestion.substring(ea.suggestion.length-1, ea.suggestion.length) === me.enclosing) {
+                                        	snippet = snippet.substring(0, snippet.length-1);
+                                        }
+                                        if (ea.suggestion.substring(0, 1) === me.enclosing && me.prefix.substring(me.prefix.length-1, me.prefix.length) === me.enclosing) {
+                                        	snippet = snippet.substring(1, snippet.length);
+                                        }
+                                        if(suggestionList.beginInsertPos){
+                                        	snippet = me.prefix + snippet;
                                         }
                                         return {
                                             name: ea.display,
                                             caption: caption_default,
                                             value: ea.suggestion,
-                                            snippet: prefix_snippet + ea.suggestion,
+                                            snippet: snippet,
                                             description: ea.description,
                                             score: ea.ranking,
                                             meta: ea.valueType,
@@ -4248,22 +4296,36 @@ function program1(depth0,data) {
                                             if(!suggestionList.prefix){
                                                 suggestionList.prefix = "";
                                             }
+                                            /*
                                             var prefix_snippet = "";
                                             if(suggestionList.beginInsertPos){
                                                 var cursor = me.edit.getSession().getSelection().getCursor();
                                                 var range = me.edit.getSession().getWordRange(cursor.row, 0);
                                                 range.start.row = cursor.row;
                                                 range.end.row = cursor.row;
-                                                range.start.column = cursor.column - suggestionList.filterIndex;
-                                                range.end.column = cursor.column;
+                                                //range.start.column = cursor.column - suggestionList.filterIndex;
+                                                //range.end.column = cursor.column;
+                                                range.start.column =  cursor.column - (suggestionList.filterIndex + suggestionList.filter.length);
+                                                range.end.column = cursor.column - suggestionList.filter.length;
                                                 // + (suggestionList.beginInsertPos - suggestionList.filterIndex) ;
                                                 prefix_snippet  = suggestionList.prefix  + me.edit.getSession().getTextRange(range);
+                                            }
+                                            */
+                                            var snippet = ea.suggestion;
+                                            if (ea.suggestion.substring(ea.suggestion.length-1, ea.suggestion.length) === me.enclosing) {
+                                            	snippet = snippet.substring(0, snippet.length-1);
+                                            }
+                                            if (ea.suggestion.substring(0, 1) === me.enclosing && me.prefix.substring(me.prefix.length-1, me.prefix.length) === me.enclosing) {
+                                            	snippet = snippet.substring(1, snippet.length);
+                                            }
+                                            if(suggestionList.beginInsertPos){
+                                            	snippet = me.prefix + snippet;
                                             }
                                             return {
                                                 name: ea.display,
                                                 caption: caption_default,
                                                 value: ea.suggestion,
-                                                snippet: prefix_snippet + ea.suggestion,
+                                                snippet: snippet,
                                                 description: ea.description,
                                                 score: ea.ranking,
                                                 meta: ea.valueType,
@@ -4288,8 +4350,7 @@ function program1(depth0,data) {
                                 /*lang.escapeHTML*/item.description
                             ].join("");
                     }
-                },
-                identifierRegexps: [/[a-zA-Z_0-9\$\#\@\'\.\-\:\_\(]/]
+                }
             };
             langTools.addCompleter(bouquetCompleter);
             /* Incoherent behavior
@@ -4400,7 +4461,7 @@ function program1(depth0,data) {
                         }
                     }
                 }
-                }
+            }
             );
         },
 
