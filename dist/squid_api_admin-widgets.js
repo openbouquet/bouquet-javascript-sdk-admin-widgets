@@ -4188,10 +4188,11 @@ function program1(depth0,data) {
                 separatorRegexps: [/[\$\#\@\'\.\-\:\_\(\)]/],
                 alphaRegexps: [/[a-zA-Z_0-9]/],
                 getCompletions: function (editor, session, pos, prefix, callback) {
+                    me.startEnclosing="";
+                    me.endEnclosing="";
                     if (prefix.length === 0) {
                         //By default look for ID
                         prefix = "";
-                        me.enclosing="";
                     } else {
                      	var wordRange = editor.selection.getWordRange();
                     	var range = editor.selection.getRange();
@@ -4204,13 +4205,21 @@ function program1(depth0,data) {
                   	  	var preChar =line.substring(wordRange.start.column-1,wordRange.start.column );
                   	    var postChar =line.substring(wordRange.end.column,wordRange.end.column+1 );
                   	    if (preChar === postChar) {
-                  	    	me.enclosing = preChar;
-                  	    } else {
-                   	   		var c1 = line[pos.column];
-                  	    	var c2 = line[pos.column+1];
                    	    	this.separatorRegexps.forEach(function (regexp) {
-                  	    		if (regexp.test(c1) && regexp.test(c2)) {
-                  	    			me.enclosing = c2;
+                   	    		if (regexp.test(preChar) && regexp.test(postChar)) {
+                   	    			me.startEnclosing = preChar;
+                   	    			me.endEnclosing = postChar;
+                   	    		}
+                  	    	});
+                   	    } else {
+                   	   		var c1 = line[pos.column-1];
+                  	    	var c2 = line[pos.column];
+                   	    	this.separatorRegexps.forEach(function (regexp) {
+                  	    		if (regexp.test(c1)) {
+                  	    			me.startEnclosing = c1;
+                  	    		}
+                  	    		if (regexp.test(c2)) {
+                  	    			me.endEnclosing = c2;
                   	    		}
                   	    	});
                   	    }
@@ -4255,8 +4264,11 @@ function program1(depth0,data) {
                                         }
                                         */
                                         var snippet = ea.suggestion;
-                                        if (ea.suggestion.substring(ea.suggestion.length-1, ea.suggestion.length) === me.enclosing) {
+                                        if (ea.suggestion.substring(ea.suggestion.length-1, ea.suggestion.length) === me.endEnclosing) {
                                         	snippet = snippet.substring(0, snippet.length-1);
+                                        }
+                                        if (ea.suggestion[0] === me.startEnclosing) {
+                                        	snippet = snippet.substring(1, snippet.length);
                                         }
                                         if (ea.suggestion.substring(0, 1) === me.enclosing && me.prefix.substring(me.prefix.length-1, me.prefix.length) === me.enclosing) {
                                         	snippet = snippet.substring(1, snippet.length);
@@ -4275,9 +4287,7 @@ function program1(depth0,data) {
                                             origin: me.prefix,
                                             className: ea.objectType.toUpperCase() + " ." + ea.valueType.toLowerCase()
                                         };
-                                    }))).sort(function (a, b) {
-                                        return a.name.localeCompare(b.name);
-                                    }));
+                                    }))));
                                 }
                             );
                         } else {
@@ -4312,10 +4322,10 @@ function program1(depth0,data) {
                                             }
                                             */
                                             var snippet = ea.suggestion;
-                                            if (ea.suggestion.substring(ea.suggestion.length-1, ea.suggestion.length) === me.enclosing) {
+                                            if (snippet[snippet.length-1]  === me.endEnclosing) {
                                             	snippet = snippet.substring(0, snippet.length-1);
                                             }
-                                            if (ea.suggestion.substring(0, 1) === me.enclosing && me.prefix.substring(me.prefix.length-1, me.prefix.length) === me.enclosing) {
+                                            if (ea.suggestion[0] === me.startEnclosing) {
                                             	snippet = snippet.substring(1, snippet.length);
                                             }
                                             if(suggestionList.beginInsertPos){
@@ -4332,9 +4342,7 @@ function program1(depth0,data) {
                                                 origin: me.prefix,
                                                 className: ea.objectType.toUpperCase() + " ." + ea.valueType.toLowerCase()
                                             };
-                                        }))).sort(function (a, b) {
-                                            return a.name.localeCompare(b.name);
-                                        }));
+                                        }))));
                                     }
                                 );
                             });
