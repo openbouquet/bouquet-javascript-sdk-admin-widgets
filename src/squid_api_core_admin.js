@@ -609,7 +609,7 @@
             this.edit.getSession().setMode("ace/mode/bouquet");
 
             this.edit.setOption("showPrintMargin", false);
-            this.edit.setOption("maxLines", 5);
+            this.edit.setOption("maxLines", 10);
             this.edit.setOption("minLines", 5);
 
             var row = this.edit.session.getLength() - 1;
@@ -625,9 +625,39 @@
             var me = this;
 
             var bouquetCompleter = {
-                identifierRegexps: [/[a-zA-Z_0-9\$\#\@\'\.\-\:\_\(]/],
+                identifierRegexps: [/[ a-zA-Z_0-9\$\#\@\'\.\-\:\_\(]/],
                 separatorRegexps: [/[\$\#\@\'\.\-\:\_\(\)]/],
-                alphaRegexps: [/[a-zA-Z_0-9]/],
+                alphaRegexps: [/[a-zA-Z_0-9 ]/],
+                getWordRange: function(editor, pos) {
+                	var wordRange = editor.selection.getWordRange();
+            		var start = 0;
+              	  	var line = editor.session.getLine(pos.row);
+            		var end = line.length;
+                	if (pos.column >0) {
+	               		this.alphaRegexps.forEach(function (regexp) {
+	            			for (var i=pos.column-1; i>=0; i--) {
+	               	    		var t = line[i];
+	            				if (regexp.test(t)==false && i+1>start) {
+	               	    			start = i+1;
+	               	    			break;
+	               	    		}
+	            			}
+	          	    	});
+                	}
+                	if (pos.column < line.length-1) {
+                		this.alphaRegexps.forEach(function (regexp) {
+                			for (var i=pos.column; i<line.length; i++) {
+	               	    		var t = line[i];
+                				if (regexp.test(t)==false && i<end) {
+	               	    			end = i;
+	               	    			break;
+	               	    		}
+                			}
+              	    	});
+                	}
+                	var tt = line.substring(start, end);
+                 	return {"start":{"row":pos.row, "column":start}, "end":{"row": pos.row, "column":end}};
+                },
                 getCompletions: function (editor, session, pos, prefix, callback) {
                     me.startEnclosing="";
                     me.endEnclosing="";
@@ -635,7 +665,7 @@
                         //By default look for ID
                         prefix = "";
                     } else {
-                     	var wordRange = editor.selection.getWordRange();
+                     	var wordRange = this.getWordRange(editor, pos);
                     	var range = editor.selection.getRange();
                   	  	var line = editor.session.getLine(pos.row);
                         var suffix = line.substring(wordRange.start.column,wordRange.end.column );
@@ -671,8 +701,8 @@
                         if (me.type === "relations" || me.type === "domains") {
                             me.url = squid_api.apiURL + "/projects/" + project.id + "/" + me.type + "-suggestion?access_token=" + squid_api.model.login.get("accessToken") + "&expression=" + encodeURIComponent(prefix);
                             if (me.type === "relations") {
-                                var leftId = me.$el.parents(".squid-api-relation-model-management").find(".leftId").find("select").val();
-                                var rightId = me.$el.parents(".squid-api-relation-model-management").find(".rightId").find("select").val();
+                            	var leftId = squid_api.model.config.get("domain");;
+                                var rightId = document.getElementById('related-input').options[document.getElementById('related-input').selectedIndex].value;
                                 me.url += "&leftDomainId=" + leftId + "&rightDomainId=" + rightId;
                             }
                             $.getJSON(
@@ -793,7 +823,7 @@
                 },
                 getDocTooltip: function (item) {
                     if (!item.docHTML) {
-                        if (item.description !== null && item.name !== null)
+                        if (typeof item.description !== "undefined" && item.description !== null && item.description.length>0 && item.name !== null)
                             item.docHTML = [
                                 "<b>", /*lang.escapeHTML*/item.name, "</b>", "<hr></hr>",
                                 /*lang.escapeHTML*/item.description
