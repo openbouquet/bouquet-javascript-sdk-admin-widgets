@@ -637,7 +637,7 @@
 	               		this.alphaRegexps.forEach(function (regexp) {
 	            			for (var i=pos.column-1; i>=0; i--) {
 	               	    		var t = line[i];
-	            				if (regexp.test(t)==false && i+1>start) {
+	            				if (regexp.test(t) === false && i+1>start) {
 	               	    			start = i+1;
 	               	    			break;
 	               	    		}
@@ -648,7 +648,7 @@
                 		this.alphaRegexps.forEach(function (regexp) {
                 			for (var i=pos.column; i<line.length; i++) {
 	               	    		var t = line[i];
-                				if (regexp.test(t)==false && i<end) {
+                				if (regexp.test(t) === false && i<end) {
 	               	    			end = i;
 	               	    			break;
 	               	    		}
@@ -701,7 +701,7 @@
                         if (me.type === "relations" || me.type === "domains") {
                             me.url = squid_api.apiURL + "/projects/" + project.id + "/" + me.type + "-suggestion?access_token=" + squid_api.model.login.get("accessToken") + "&expression=" + encodeURIComponent(prefix);
                             if (me.type === "relations") {
-                            	var leftId = squid_api.model.config.get("domain");;
+                            	var leftId = squid_api.model.config.get("domain");
                                 var rightId = document.getElementById('related-input').options[document.getElementById('related-input').selectedIndex].value;
                                 me.url += "&leftDomainId=" + leftId + "&rightDomainId=" + rightId;
                             }
