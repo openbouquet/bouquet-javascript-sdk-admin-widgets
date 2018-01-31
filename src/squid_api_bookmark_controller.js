@@ -431,12 +431,13 @@
 														 if (facetForItems && facetForItems.selectedItems) {
 															 if (facetForItems.id === "__segments" && me.getSegmentFacet(newFacets)) {
 																 availableItems = me.getSegmentFacet(newFacets).items;
+															 } else {
+																 selectedItems = facetForItems.selectedItems;
 															 }
-															 selectedItems = facetForItems.selectedItems;
 														 } 
+														 var diffItems = null;
 														 if (bookmarkFacet) {
-															 var diffItems = me.getCustomSelection(selectedItems, bookmarkFacet.selectedItems);   
-															 
+															 diffItems = me.getCustomSelection(selectedItems, bookmarkFacet.selectedItems);   
 															 if (diffItems && diffItems.length>0) {
 																 selectedItems=diffItems;
 															 }
@@ -476,7 +477,7 @@
 																 }		
 															 }
 														 }
-														 if (selectedItems && selectedItems.length>0 && diffItems && diffItems.length>0) {
+														 if (selectedItems && selectedItems.length>0) {
 															 me.customAddedFacets.set(facetName, selectedItems);
 														 } else {
 															 if (me.customAddedFacets.get(facetName)) {
