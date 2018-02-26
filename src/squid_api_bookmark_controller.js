@@ -431,9 +431,10 @@
 														 if (facetForItems && facetForItems.selectedItems) {
 															 if (facetForItems.id === "__segments" && me.getSegmentFacet(newFacets)) {
 																 availableItems = me.getSegmentFacet(newFacets).items;
-															 } else {
-																 selectedItems = facetForItems.selectedItems;
-															 }
+															 } 
+															 //else {
+															 selectedItems = facetForItems.selectedItems;
+															 //}
 														 } 
 														 var diffItems = null;
 														 if (bookmarkFacet) {
@@ -463,7 +464,7 @@
 																 me.customDeletedFacets.set(facetName, me.cleanItems(me.customDeletedFacets.get(facetName), diffItems));
 															 }
 
-															 diffItems = me.getCustomSelection(bookmarkFacet.selectedItems, selectedItems, availableItems);
+															 //diffItems = me.getCustomSelection(bookmarkFacet.selectedItems, selectedItems, availableItems);
 
 															 //Now we copy back remaining deleted items if segments as it is shared among bookmarks on same domain
 															 if (availableFacet.id === "__segments" && me.customDeletedFacets.get(facetName)) {
@@ -477,8 +478,8 @@
 																 }		
 															 }
 														 }
-														 if (selectedItems && selectedItems.length>0) {
-															 me.customAddedFacets.set(facetName, selectedItems);
+														 if (diffItems && diffItems.length>0) {
+															 me.customAddedFacets.set(facetName, diffItems);
 														 } else {
 															 if (me.customAddedFacets.get(facetName)) {
 																 deletedItems =  me.customAddedFacets.get(facetName);
