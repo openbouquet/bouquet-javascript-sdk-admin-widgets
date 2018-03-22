@@ -424,9 +424,8 @@
 														 var selectedItems = [];
 														 var deletedItems = [];
 
-														 var bookmarkFacet = me.findFacetByName(previousBookmark.get("config").selection.facets, availableFacet);
 														 facetForItems = me.findFacetByName(oldSelection.facets, availableFacet);
-
+														 
 														 var availableItems = null;
 														 if (facetForItems && facetForItems.selectedItems) {
 															 if (facetForItems.id === "__segments" && me.getSegmentFacet(newFacets)) {
@@ -436,49 +435,55 @@
 															 selectedItems = facetForItems.selectedItems;
 															 //}
 														 } 
-														 var diffItems = null;
+														 														 
+														 var bookmarkFacet = me.findFacetByName(previousBookmark.get("config").selection.facets, availableFacet);
+														 var diffItems = [];
 														 if (bookmarkFacet) {
 															 diffItems = me.getCustomSelection(selectedItems, bookmarkFacet.selectedItems);   
-															 if (diffItems && diffItems.length>0) {
-																 selectedItems=diffItems;
-															 }
-															 /* T1778 - non needed code but may be useful at some points
-                                                            if (previousBookmark.get("config").domain === newConfig.domain && newConfig.period) {
-                                                            	if (Object.keys(newConfig.period) && Object.keys(previousBookmark.get("config").period)) {
-                                                            		if (facetForItems.id === previousBookmark.get("config").period[newConfig.domain] && 
-                                                            				newConfig.period[newConfig.domain] !== previousBookmark.get("config").period[newConfig.domain]) {
-                                                            			selectedItems = [];
-                                                            			if (savedNewConfig.selection.facets && savedNewConfig.selection.facets.length) {
-                                                            				for (var l=0; l<savedNewConfig.selection.facets.length; l++) {
-                                                            					if (savedNewConfig.selection.facets[l].id === newConfig.period[newConfig.domain] && savedNewConfig.selection.facets[l].selectedItems) {
-                                                            						selectedItems = savedNewConfig.selection.facets[l].selectedItems;
-                                                            					}
-                                                            				}
-                                                            			}
-                                                            		}
-                                                            	}
-                                                            }
-															  */
-															 //Now we clean deleted items if segments as it is shared among bookmarks on same domain
-															 if (availableFacet.id === "__segments" && me.customDeletedFacets.get(facetName) && diffItems.length>0) {
-																 me.customDeletedFacets.set(facetName, me.cleanItems(me.customDeletedFacets.get(facetName), diffItems));
-															 }
-
-															 //diffItems = me.getCustomSelection(bookmarkFacet.selectedItems, selectedItems, availableItems);
-
-															 //Now we copy back remaining deleted items if segments as it is shared among bookmarks on same domain
-															 if (availableFacet.id === "__segments" && me.customDeletedFacets.get(facetName)) {
-																 diffItems = diffItems.concat(me.customDeletedFacets.get(facetName));
-															 }
-
-															 //No need for period as it is a single selection
-															 if ((availableFacet.dimension.type === "CONTINUOUS" && availableFacet.dimension.valueType === "DATE") === false) {
-																 if (diffItems && diffItems.length>0) {
-																	 deletedItems=diffItems;
-																 }		
-															 }
+														 } else {
+															 diffItems = selectedItems;
 														 }
+
 														 if (diffItems && diffItems.length>0) {
+															 selectedItems=diffItems;
+														 }
+														 /* T1778 - non needed code but may be useful at some points
+                                                        if (previousBookmark.get("config").domain === newConfig.domain && newConfig.period) {
+                                                        	if (Object.keys(newConfig.period) && Object.keys(previousBookmark.get("config").period)) {
+                                                        		if (facetForItems.id === previousBookmark.get("config").period[newConfig.domain] && 
+                                                        				newConfig.period[newConfig.domain] !== previousBookmark.get("config").period[newConfig.domain]) {
+                                                        			selectedItems = [];
+                                                        			if (savedNewConfig.selection.facets && savedNewConfig.selection.facets.length) {
+                                                        				for (var l=0; l<savedNewConfig.selection.facets.length; l++) {
+                                                        					if (savedNewConfig.selection.facets[l].id === newConfig.period[newConfig.domain] && savedNewConfig.selection.facets[l].selectedItems) {
+                                                        						selectedItems = savedNewConfig.selection.facets[l].selectedItems;
+                                                        					}
+                                                        				}
+                                                        			}
+                                                        		}
+                                                        	}
+                                                        }
+														  */
+														 //Now we clean deleted items if segments as it is shared among bookmarks on same domain
+														 if (availableFacet.id === "__segments" && me.customDeletedFacets.get(facetName) && diffItems.length>0) {
+															 me.customDeletedFacets.set(facetName, me.cleanItems(me.customDeletedFacets.get(facetName), diffItems));
+														 }
+
+														 //diffItems = me.getCustomSelection(bookmarkFacet.selectedItems, selectedItems, availableItems);
+
+														 //Now we copy back remaining deleted items if segments as it is shared among bookmarks on same domain
+														 if (availableFacet.id === "__segments" && me.customDeletedFacets.get(facetName)) {
+															 diffItems = diffItems.concat(me.customDeletedFacets.get(facetName));
+														 }
+
+														 //No need for period as it is a single selection
+														 if ((availableFacet.dimension.type === "CONTINUOUS" && availableFacet.dimension.valueType === "DATE") === false) {
+															 if (diffItems && diffItems.length>0) {
+																 deletedItems=diffItems;
+															 }		
+														 }
+
+														if (diffItems && diffItems.length>0) {
 															 me.customAddedFacets.set(facetName, diffItems);
 														 } else {
 															 if (me.customAddedFacets.get(facetName)) {
