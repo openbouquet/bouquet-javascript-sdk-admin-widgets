@@ -409,8 +409,10 @@
 												 newConfig.chosenMetrics = savedNewConfig.chosenMetrics;
 												 newConfig.orderBy = savedNewConfig.orderBy;
 											 }
-											 var forcedSelection = { "compareTo" : [], "facets" : []};
-
+											 var forcedSelection = { "compareTo" : [], "facets" : [], "rootFacets" : []};
+											 if (newConfig.selection.rootFacets && newConfig.selection.rootFacets) {
+												 forcedSelection.rootFacets =  newConfig.selection.rootFacets;
+											 }
 											 if (oldSelection && oldSelection.facets) {
 												 //Save/update any facet selected
 												 if (oldFacets) {
