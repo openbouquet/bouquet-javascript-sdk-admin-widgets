@@ -196,7 +196,7 @@
             "editorClass": "form-control",
             "fieldClass": "description"
         },
-        "type": {
+       "type": {
             "type": "Checkboxes",
             "editorClass": " ",
             "options": [{
@@ -235,7 +235,13 @@
             "position": 2,
             "fieldClass": "parentId"
         },
-        "expression": {
+        "displayFormat": {
+            "type": "Text",
+            "editorClass": "form-control",
+            "title": "Display Format",
+            "fieldClass": "name"
+        },
+       "expression": {
             "type": "Object",
             title: "",
             "subSchema": {
@@ -289,6 +295,12 @@
             "type": "TextArea",
             "editorClass": "form-control",
             "fieldClass": "description"
+        },
+        "displayFormat": {
+            "type": "Text",
+            "editorClass": "form-control",
+            "title": "Display Format",
+            "fieldClass": "name"
         },
         "expression": {
             "title": "",

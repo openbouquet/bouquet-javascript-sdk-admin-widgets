@@ -3764,7 +3764,7 @@ function program1(depth0,data) {
             "editorClass": "form-control",
             "fieldClass": "description"
         },
-        "type": {
+       "type": {
             "type": "Checkboxes",
             "editorClass": " ",
             "options": [{
@@ -3803,7 +3803,13 @@ function program1(depth0,data) {
             "position": 2,
             "fieldClass": "parentId"
         },
-        "expression": {
+        "displayFormat": {
+            "type": "Text",
+            "editorClass": "form-control",
+            "title": "Display Format",
+            "fieldClass": "displayFormat"
+        },
+       "expression": {
             "type": "Object",
             title: "",
             "subSchema": {
@@ -3857,6 +3863,12 @@ function program1(depth0,data) {
             "type": "TextArea",
             "editorClass": "form-control",
             "fieldClass": "description"
+        },
+        "displayFormat": {
+            "type": "Text",
+            "editorClass": "form-control",
+            "title": "Display Format",
+            "fieldClass": "displayFormat"
         },
         "expression": {
             "title": "",
