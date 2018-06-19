@@ -2541,7 +2541,8 @@ function program1(depth0,data) {
 					 var newFacets = Controller.loadFacets(copyConfig.get("project"), newBookmark.get("config").domain);
 
 					 var cleanedItems;
-					 if (squid_api.model.config.get("bookmark") === bookmarkId) {
+					 if (squid_api.model.config.get("bookmark") === bookmarkId && (
+							 typeof attributes === 'undefined')) {
 						 // force bookmark reset
 						 $.when(oldFacets).done(function(oldFacets)  {
 							 if (oldFacets) {
@@ -3807,7 +3808,7 @@ function program1(depth0,data) {
             "type": "Text",
             "editorClass": "form-control",
             "title": "Display Format",
-            "fieldClass": "displayFormat"
+            "fieldClass": "name"
         },
        "expression": {
             "type": "Object",
@@ -3868,7 +3869,7 @@ function program1(depth0,data) {
             "type": "Text",
             "editorClass": "form-control",
             "title": "Display Format",
-            "fieldClass": "displayFormat"
+            "fieldClass": "name"
         },
         "expression": {
             "title": "",

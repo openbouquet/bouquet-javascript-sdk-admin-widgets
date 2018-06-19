@@ -356,7 +356,8 @@
 					 var newFacets = Controller.loadFacets(copyConfig.get("project"), newBookmark.get("config").domain);
 
 					 var cleanedItems;
-					 if (squid_api.model.config.get("bookmark") === bookmarkId) {
+					 if (squid_api.model.config.get("bookmark") === bookmarkId && (
+							 typeof attributes === 'undefined')) {
 						 // force bookmark reset
 						 $.when(oldFacets).done(function(oldFacets)  {
 							 if (oldFacets) {
