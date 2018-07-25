@@ -6021,6 +6021,12 @@ function program1(depth0,data) {
                 "position" : 5,
                 "fieldClass" : "dbSchemas checkbox"
             },
+            "credentials" : {
+                "title" : "Credentials ",
+                "type" : "Credentials",
+                "editorClass" : "hidden",
+                "fieldClass" : "hidden"
+            },
             "id" : {
                 "title" : "Object ID",
                 "type" : "ProjectObjectID",
