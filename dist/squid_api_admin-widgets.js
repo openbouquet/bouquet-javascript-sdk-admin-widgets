@@ -2700,12 +2700,14 @@ function program1(depth0,data) {
 																var bookmarkCompare = null;
 																if (previousBookmark.get("config").selection) {
 																	bookmarkCompare = previousBookmark.get("config").selection.compareTo;
-																	if (bookmarkCompare.length === 1 && bookmarkCompare[0].selectedItems && bookmarkCompare[0].selectedItems.length ===1 &&oldSelection.compareTo[0].selectedItems && oldSelection.compareTo[0].selectedItems.length ===1) {
+																	if (bookmarkCompare && bookmarkCompare.length === 1 && bookmarkCompare[0].selectedItems && bookmarkCompare[0].selectedItems.length ===1 &&oldSelection.compareTo[0].selectedItems && oldSelection.compareTo[0].selectedItems.length ===1) {
 																		if (newConfig.selection && bookmarkCompare[0].id === oldSelection.compareTo[0].id && bookmarkCompare[0].selectedItems[0].lowerBound === oldSelection.compareTo[0].selectedItems[0].lowerBound && bookmarkCompare[0].selectedItems[0].upperBound === oldSelection.compareTo[0].selectedItems[0].upperBound) {
 																			forcedSelection.compareTo = newConfig.selection.compareTo;
 																		} else {
 																			bookmarkCompare = null;
 																		}
+																	} else if (!bookmarkCompare && oldSelection.compareTo) {
+																		bookmarkCompare = null;								
 																	} else {
 																		bookmarkCompare = null;
 																	}
