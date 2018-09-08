@@ -2534,7 +2534,7 @@ function program1(depth0,data) {
 					var me = Controller;
 					var bookmarkId = bookmark.id;
 					var config = squid_api.model.config;
-					var copyConfig = $.extend(true, {}, config);
+					var copyConfig = $.extend(false, {}, config);
 
 					var oldFacets = Controller.loadFacets(copyConfig.get("project"), copyConfig.get("domain"));
 					var newBookmark = bookmark;
