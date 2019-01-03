@@ -32,6 +32,9 @@
             if (options.config) {
                 this.config = options.config;
             }
+            if (options.configSelectedId) {
+                this.configSelectedId = options.configSelectedId;
+            }
             if (options.filteredPaths) {
                 this.filteredPaths = options.filteredPaths;
             }
@@ -264,7 +267,10 @@
             console.log("render CollectionManagementWidget "+this.type);
             var project = this.config.get("project");
             var currentBookmark = this.config.get("bookmark");
-
+            var selectedId = this.configSelectedId;
+            if (this.config.has("bookmark") && this.configSelectedId === "bookmark") {
+            	selectedId = currentBookmark;
+            }
             this.jsonData = {
                 collectionLoaded : !this.collectionLoading,
                 collection : this.collection,
@@ -286,7 +292,7 @@
                 this.jsonData.collection = {};
                 this.jsonData.createRole = this.getCreateRole();
 
-                var selectedId = this.config.get(this.configSelectedId);
+                
                 
                 // store model data
                 for (i=0; i<this.collection.size(); i++) {
@@ -301,9 +307,7 @@
                             }
                         }
                     }
-                    if (this.excludedPaths === null) {
-                        validPath = validPath;
-                    } else {
+                    if (this.excludedPaths !== null) {
                         for (j=0; j<this.excludedPaths.length; j++) {
                             if (this.excludedPaths[j] === item.get("path")) {
                                 validPath = false;
@@ -320,9 +324,7 @@
                             }
                         }
                     }
-                    if (this.excludedOids === null) {
-                        validOid = validPath ;
-                    } else {
+                    if (this.excludedOids !== null) {
                         for (j=0; j<this.excludedOids.length; j++) {
                             if (this.excludedOids[j] === item.get("oid")) {
                                  validOid = false;
@@ -457,7 +459,9 @@
                 }
                 this.templateWidgets();
             }
-
+            if (typeof $.i18n !== "undefined") {
+            	$(".ob-analysis-select").localize();
+            }
             return this;
         },
         templateWidgets: function(collapseState) {

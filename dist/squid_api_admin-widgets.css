@@ -430,6 +430,11 @@
     -webkit-animation: spin .7s infinite linear;
 }
 
+.ace_content {
+  	/*font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  	font-size: 1.1em;*/
+}
+  	
 .ace_line span:before {
     font-family: FontAwesome;
     margin-right: 15px;
@@ -438,140 +443,72 @@
     color: #fff;
     border-radius: 8px;
 }
+
 .ace_content .ace_TABLE:before {
-    content: "\f0db";
-}
-
-.ace_content .ace_COLUMN:before {
-    content: "\f198";
-}
-
-.ace_content .ace_DOMAIN:before {
-    content: "\f1c0";
-}
-
-.ace_content .ace_valueType {
-    font-size: 11px;
-    padding-left: 5px;
-}
-
-.ace_content .ace_table:before {
-    background: black;
-}
-
-.ace_content .ace_table:after{
-    background: black;
-}
-
-.ace_content .ace_date:before {
-    background: black;
-}
-
-.ace_content .ace_date:after{
-    background: black;
-}
-
-.ace_content .ace_domain:before {
-    background: black;
-}
-
-.ace_content .ace_domain:after{
-    background: black;
-}
-
-.ace_content .ace_string:before {
-    background: black;
-}
-
-.ace_content .ace_string:after{
-    background: black;
-    /*ace_string is already defined in ace editor default theme*/
-    color: #000000 !important;
-}
-
-.ace_content .ace_other:before {
-    background: black;
-}
-
-.ace_content .ace_other:after{
-    background: black;
-}
-
-.ace_content .ace_numeric:before {
-    background: black;
-}
-
-.ace_content .ace_numeric:after{
-    background: black;
-}
-
-.ace_content .ace_condition:before {
-    background: black;
-}
-
-.ace_content .ace_condition:after{
-    background: black;
-}
-
-.ace_content .ace_DOMAIN:before {
-    content: "\f1c0";
-}
-
-.ace_content .ace_FORMULA:before {
-    content:  "\f1b2";
-}
-
-.ace_content .ace_FUNCTION:before {
-    content:  "\f280";
-}
-
-.ace_content .ace_RELATION:before {
-    content:  "\f079";
+    content: "\f0ce"; /*table*/
+    color: #405d27;
 }
 
 .ace_content .ace_VIEW:before {
-    content:  "\f06e";
+    content:  "\f06e"; /*eye*/
+    color:  #588c7e;
+}
+
+.ace_content .ace_COLUMN:before {
+    content: "\f0db"; /*column*/
+    color: #54449D;
+}
+
+.ace_content .ace_DOMAIN:before {
+    content: "\f02d"; /* book*/
+    color: #667292;
+}
+
+.ace_content .ace_FORMULA:before {
+    content:  "\f1b2";  /*cube*/
+    color: #625750;
+}
+
+.ace_content .ace_FUNCTION:before {
+    content:  "\f013"; /*cog - wheel*/
+    color: #625750;
+}
+
+.ace_content .ace_RELATION:before {
+    content:  "\f0c1"; /*link*/
+    color: #325E32;
 }
 
 .ace_content .ace_METRIC:before {
-    content:  "\f1b2";
+    content:  "\f1b2"; /*cube*/
+    color: #71A434;
+}
+
+.ace_content .ace_DIMENSION:before {
+    content:  "\f121"; /*cube*/
+    color: #034f84;
 }
 
 .ace_content .ace_CONDITION:before {
-    content:  "\f128";
+    content:  "\f128"; /*question*/
 }
 
 .ace_content .ace_NUMERIC:before {
-    content:  "\f067";
+    content:  "\f067"; /*plus*/
 }
 
 .ace_content .ace_OTHER:before {
-    content:  "\f249";
+    content:  "\f249"; /*sticky-note*/
 }
 
 .ace_content .ace_DATE:before {
-    content:  "\f017";
+    content:  "\f017"; /*clock-o*/
 }
 
 .ace_content .ace_STRING:before {
-    content:  "\f10e";
+    content:  "\f10e"; /*quote right*/
 }
 
-.ace_content .ace_view:before {
-   background: black;
-}
-
-.ace_content .ace_view:after{
-    background: black;
-}
-
-.ace_content .ace_metric:before {
-    background: black;
-}
-
-.ace_content .ace_metric:after{
-    background: black;
-}
 
 
 .ace_tooltip_hover {

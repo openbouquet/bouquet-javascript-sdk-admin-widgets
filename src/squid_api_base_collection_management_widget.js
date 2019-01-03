@@ -65,8 +65,11 @@
             // listen for config change
             this.listenTo(this.config,"change", function () {
                 var parentChanged = this.config.hasChanged(me.configParentId);
-                var selectionChanged = this.config.hasChanged(me.configSelectedId) || (this.config.get(me.configSelectedId) && ! this.selectedModel);
-                this.initModel(this.config, parentChanged, selectionChanged);
+                var a =this.config.hasChanged(me.configSelectedId);
+                var b = !this.config.has(me.configSelectedId) || this.config.get(me.configSelectedId);
+                var c = (typeof this.selectedModel === 'undefined' || !this.selectedModel);
+                var selectionChanged = a || (b && c);
+                this.initModel(this.config, parentChanged || selectionChanged, selectionChanged);
             });
             // listen for status change
             this.listenTo(this.status, "change:status", this.statusUpdate);
@@ -104,7 +107,11 @@
                                 // selected also changed
                                 me.setSelectedModel(selectedId);
                             } else {
-                                me.render();
+                            	if (me.selectedModel) {
+                            		me.render();
+                            	} else {
+                            		me.setSelectedModel(selectedId);
+                            	}
                             }
                         }).fail(function() {
                             me.collection = null;

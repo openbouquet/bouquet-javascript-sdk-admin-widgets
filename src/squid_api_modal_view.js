@@ -69,7 +69,9 @@
             this.view.render();
             // display the modal
             this.$el.modal();
-
+            if (typeof $.i18n !== "undefined") {
+            	$(".modal-footer").localize();
+            }
             return this;
         }
     });

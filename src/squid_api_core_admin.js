@@ -196,7 +196,7 @@
             "editorClass": "form-control",
             "fieldClass": "description"
         },
-        "type": {
+       "type": {
             "type": "Checkboxes",
             "editorClass": " ",
             "options": [{
@@ -235,7 +235,13 @@
             "position": 2,
             "fieldClass": "parentId"
         },
-        "expression": {
+        "displayFormat": {
+            "type": "Text",
+            "editorClass": "form-control",
+            "title": "Display Format",
+            "fieldClass": "name"
+        },
+       "expression": {
             "type": "Object",
             title: "",
             "subSchema": {
@@ -289,6 +295,12 @@
             "type": "TextArea",
             "editorClass": "form-control",
             "fieldClass": "description"
+        },
+        "displayFormat": {
+            "type": "Text",
+            "editorClass": "form-control",
+            "title": "Display Format",
+            "fieldClass": "name"
         },
         "expression": {
             "title": "",
@@ -602,25 +614,98 @@
             this.edit.$blockScrolling = Infinity;
             if (this.value !== null) {
                 this.edit.setValue("" + this.value);
+            }else{
+                this.edit.setValue("");
             }
             this.edit.getSession().type = this.type;
             this.edit.getSession().setMode("ace/mode/bouquet");
 
             this.edit.setOption("showPrintMargin", false);
+            this.edit.setOption("maxLines", 10);
+            this.edit.setOption("minLines", 5);
+
+            var row = this.edit.session.getLength() - 1;
+            var column = this.edit.session.getLine(row).length;
+            this.edit.gotoLine(row + 1, column);
 
             var langTools = ace.require("ace/ext/language_tools");
             this.edit.setOptions({
                 enableBasicAutocompletion: true,
-                enableLiveAutocompletion: true,
+                enableLiveAutocompletion: false,
                 enableSnippets: true
             });
             var me = this;
 
             var bouquetCompleter = {
+                identifierRegexps: [/[ a-zA-Z_0-9\$\#\@\'\.\-\:\_\(]/],
+                separatorRegexps: [/[\$\#\@\'\.\-\:\_\(\)]/],
+                alphaRegexps: [/[a-zA-Z_0-9 ]/],
+                getWordRange: function(editor, pos) {
+                	var wordRange = editor.selection.getWordRange();
+            		var start = 0;
+              	  	var line = editor.session.getLine(pos.row);
+            		var end = line.length;
+                	if (pos.column >0) {
+	               		this.alphaRegexps.forEach(function (regexp) {
+	            			for (var i=pos.column-1; i>=0; i--) {
+	               	    		var t = line[i];
+	            				if (regexp.test(t) === false && i+1>start) {
+	               	    			start = i+1;
+	               	    			break;
+	               	    		}
+	            			}
+	          	    	});
+                	}
+                	if (pos.column < line.length-1) {
+                		this.alphaRegexps.forEach(function (regexp) {
+                			for (var i=pos.column; i<line.length; i++) {
+	               	    		var t = line[i];
+                				if (regexp.test(t) === false && i<end) {
+	               	    			end = i;
+	               	    			break;
+	               	    		}
+                			}
+              	    	});
+                	}
+                	var tt = line.substring(start, end);
+                 	return {"start":{"row":pos.row, "column":start}, "end":{"row": pos.row, "column":end}};
+                },
                 getCompletions: function (editor, session, pos, prefix, callback) {
+                    me.startEnclosing="";
+                    me.endEnclosing="";
                     if (prefix.length === 0) {
                         //By default look for ID
                         prefix = "";
+                    } else {
+                     	var wordRange = this.getWordRange(editor, pos);
+                    	var range = editor.selection.getRange();
+                  	  	var line = editor.session.getLine(pos.row);
+                        var suffix = line.substring(wordRange.start.column,wordRange.end.column );
+                          
+                   	  	if (suffix.length < prefix.length && pos.column === wordRange.end.column && wordRange.start.column !== range.end.column && wordRange.start.column === range.start.column && wordRange.end.column === range.end.column) {
+                          prefix = prefix.substring(0,prefix.length - suffix.length);
+                    	}
+                  	  	var preChar =line.substring(wordRange.start.column-1,wordRange.start.column );
+                  	    var postChar =line.substring(wordRange.end.column,wordRange.end.column+1 );
+                  	    if (preChar === postChar) {
+                   	    	this.separatorRegexps.forEach(function (regexp) {
+                   	    		if (regexp.test(preChar) && regexp.test(postChar)) {
+                   	    			me.startEnclosing = preChar;
+                   	    			me.endEnclosing = postChar;
+                   	    		}
+                  	    	});
+                   	    } else {
+                   	   		var c1 = line[pos.column-1];
+                  	    	var c2 = line[pos.column];
+                   	    	this.separatorRegexps.forEach(function (regexp) {
+                  	    		if (regexp.test(c1)) {
+                  	    			me.startEnclosing = c1;
+                  	    		}
+                  	    		if (regexp.test(c2)) {
+                  	    			me.endEnclosing = c2;
+                  	    		}
+                  	    	});
+                  	    }
                     }
                     me.prefix = prefix;
                     squid_api.getSelectedProject().then(function (project) {
@@ -628,8 +713,8 @@
                         if (me.type === "relations" || me.type === "domains") {
                             me.url = squid_api.apiURL + "/projects/" + project.id + "/" + me.type + "-suggestion?access_token=" + squid_api.model.login.get("accessToken") + "&expression=" + encodeURIComponent(prefix);
                             if (me.type === "relations") {
-                                var leftId = me.$el.parents(".squid-api-relation-model-management").find(".leftId").find("select").val();
-                                var rightId = me.$el.parents(".squid-api-relation-model-management").find(".rightId").find("select").val();
+                            	var leftId = squid_api.model.config.get("domain");
+                                var rightId = document.getElementById('related-input').options[document.getElementById('related-input').selectedIndex].value;
                                 me.url += "&leftDomainId=" + leftId + "&rightDomainId=" + rightId;
                             }
                             $.getJSON(
@@ -646,31 +731,46 @@
                                         if(!suggestionList.prefix){
                                             suggestionList.prefix = "";
                                         }
+                                        /*
                                         var prefix_snippet = "";
                                         if(suggestionList.beginInsertPos){
                                             var cursor = me.edit.getSession().getSelection().getCursor();
-                                            //var range = new Range(cursor.row, 0, cursor.row, suggestionList.beginInsertPos);
                                             var range = me.edit.getSession().getWordRange(cursor.row, 0);
                                             range.start.row = cursor.row;
                                             range.end.row = cursor.row;
-                                            range.start.column = cursor.column - suggestionList.filterIndex;
-                                            range.end.column = cursor.column;
+                                            //range.start.column = cursor.column - suggestionList.filterIndex;
+                                            //range.end.column = cursor.column;
+                                            range.start.column =  cursor.column - (suggestionList.filterIndex + suggestionList.filter.length);
+                                            range.end.column = cursor.column - suggestionList.filter.length;
+                                            // + (suggestionList.beginInsertPos - suggestionList.filterIndex) ;
                                             prefix_snippet  = suggestionList.prefix  + me.edit.getSession().getTextRange(range);
+                                        }
+                                        */
+                                        var snippet = ea.suggestion;
+                                        if (ea.suggestion.substring(ea.suggestion.length-1, ea.suggestion.length) === me.endEnclosing) {
+                                        	snippet = snippet.substring(0, snippet.length-1);
+                                        }
+                                        if (ea.suggestion[0] === me.startEnclosing) {
+                                        	snippet = snippet.substring(1, snippet.length);
+                                        }
+                                        if (ea.suggestion.substring(0, 1) === me.enclosing && me.prefix.substring(me.prefix.length-1, me.prefix.length) === me.enclosing) {
+                                        	snippet = snippet.substring(1, snippet.length);
+                                        }
+                                        if(suggestionList.beginInsertPos){
+                                        	snippet = me.prefix + snippet;
                                         }
                                         return {
                                             name: ea.display,
                                             caption: caption_default,
                                             value: ea.suggestion,
-                                            snippet: prefix_snippet + ea.suggestion,
+                                            snippet: snippet,
                                             description: ea.description,
                                             score: ea.ranking,
                                             meta: ea.valueType,
                                             origin: me.prefix,
                                             className: ea.objectType.toUpperCase() + " ." + ea.valueType.toLowerCase()
                                         };
-                                    }))).sort(function (a, b) {
-                                        return a.name.localeCompare(b.name);
-                                    }));
+                                    }))));
                                 }
                             );
                         } else {
@@ -689,31 +789,43 @@
                                             if(!suggestionList.prefix){
                                                 suggestionList.prefix = "";
                                             }
+                                            /*
                                             var prefix_snippet = "";
                                             if(suggestionList.beginInsertPos){
                                                 var cursor = me.edit.getSession().getSelection().getCursor();
                                                 var range = me.edit.getSession().getWordRange(cursor.row, 0);
                                                 range.start.row = cursor.row;
                                                 range.end.row = cursor.row;
-                                                range.start.column = cursor.column - suggestionList.filterIndex;
-                                                range.end.column = cursor.column;
+                                                //range.start.column = cursor.column - suggestionList.filterIndex;
+                                                //range.end.column = cursor.column;
+                                                range.start.column =  cursor.column - (suggestionList.filterIndex + suggestionList.filter.length);
+                                                range.end.column = cursor.column - suggestionList.filter.length;
                                                 // + (suggestionList.beginInsertPos - suggestionList.filterIndex) ;
                                                 prefix_snippet  = suggestionList.prefix  + me.edit.getSession().getTextRange(range);
+                                            }
+                                            */
+                                            var snippet = ea.suggestion;
+                                            if (snippet[snippet.length-1]  === me.endEnclosing) {
+                                            	snippet = snippet.substring(0, snippet.length-1);
+                                            }
+                                            if (ea.suggestion[0] === me.startEnclosing) {
+                                            	snippet = snippet.substring(1, snippet.length);
+                                            }
+                                            if(suggestionList.beginInsertPos){
+                                            	snippet = me.prefix + snippet;
                                             }
                                             return {
                                                 name: ea.display,
                                                 caption: caption_default,
                                                 value: ea.suggestion,
-                                                snippet: prefix_snippet + ea.suggestion,
+                                                snippet: snippet,
                                                 description: ea.description,
                                                 score: ea.ranking,
                                                 meta: ea.valueType,
                                                 origin: me.prefix,
                                                 className: ea.objectType.toUpperCase() + " ." + ea.valueType.toLowerCase()
                                             };
-                                        }))).sort(function (a, b) {
-                                            return a.name.localeCompare(b.name);
-                                        }));
+                                        }))));
                                     }
                                 );
                             });
@@ -723,14 +835,13 @@
                 },
                 getDocTooltip: function (item) {
                     if (!item.docHTML) {
-                        if (item.description !== null && item.name !== null)
+                        if (typeof item.description !== "undefined" && item.description !== null && item.description.length>0 && item.name !== null)
                             item.docHTML = [
                                 "<b>", /*lang.escapeHTML*/item.name, "</b>", "<hr></hr>",
                                 /*lang.escapeHTML*/item.description
                             ].join("");
                     }
-                },
-                identifierRegexps: [/[a-zA-Z_0-9\$\#\@\'\.\-\:\_\(]/]
+                }
             };
             langTools.addCompleter(bouquetCompleter);
             /* Incoherent behavior
@@ -841,7 +952,7 @@
                         }
                     }
                 }
-                }
+            }
             );
         },
 
