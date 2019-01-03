@@ -1,936 +1,484 @@
 this["squid_api"] = this["squid_api"] || {};
 this["squid_api"]["template"] = this["squid_api"]["template"] || {};
 
-Handlebars.registerPartial("squid_api_navigator-list", Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); partials = this.merge(partials, Handlebars.partials); data = data || {};
-  var stack1, self=this, functionType="function", escapeExpression=this.escapeExpression;
+Handlebars.registerPartial("squid_api_navigator-list", Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\r\n<li>\r\n    ";
-  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + " <a href=\"";
-  if (helper = helpers.url) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.url); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\">";
-  if (helper = helpers.url) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.url); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</a>\r\n    ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.nodes), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n</li>\r\n";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\r\n    <ul>\r\n    ";
-  stack1 = self.invokePartial(partials['squid_api_navigator-list'], 'squid_api_navigator-list', depth0, helpers, partials, data);
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += " \r\n    </ul>\r\n    ";
-  return buffer;
-  }
+  return "<li>\r\n    "
+    + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
+    + " <a href=\""
+    + alias4(((helper = (helper = helpers.url || (depth0 != null ? depth0.url : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"url","hash":{},"data":data}) : helper)))
+    + "\">"
+    + alias4(((helper = (helper = helpers.url || (depth0 != null ? depth0.url : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"url","hash":{},"data":data}) : helper)))
+    + "</a>\r\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.nodes : depth0),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "</li>\r\n";
+},"2":function(container,depth0,helpers,partials,data) {
+    var stack1;
 
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.nodes), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { return stack1; }
-  else { return ''; }
-  }));
+  return "    <ul>\r\n    "
+    + ((stack1 = container.invokePartial(partials["squid_api_navigator-list"],depth0,{"name":"squid_api_navigator-list","data":data,"helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
+    + " \r\n    </ul>\r\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1;
 
-this["squid_api"]["template"]["squid_api_base_collection_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
+  return ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.nodes : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+},"usePartial":true,"useData":true}));
 
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n                <button type=\"button\"  class=\"create btn btn-default\">\n                    <i class=\"fa fa-plus\"></i> New ";
-  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\n                </button>\n            ";
-  return buffer;
-  }
+this["squid_api"]["template"]["squid_api_base_collection_management_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var helper;
 
-function program3(depth0,data) {
-  
-  
-  return " ";
-  }
+  return "                <button type=\"button\"  class=\"create btn btn-default\">\n                    <i class=\"fa fa-plus\"></i> New "
+    + container.escapeExpression(((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"type","hash":{},"data":data}) : helper)))
+    + "\n                </button>\n";
+},"3":function(container,depth0,helpers,partials,data) {
+    return " ";
+},"5":function(container,depth0,helpers,partials,data) {
+    return " class=\"no-values\" ";
+},"7":function(container,depth0,helpers,partials,data) {
+    var stack1;
 
-function program5(depth0,data) {
-  
-  
-  return " class=\"no-values\" ";
-  }
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),((stack1 = (depth0 != null ? depth0.collection : depth0)) != null ? stack1.models : stack1),{"name":"if","hash":{},"fn":container.program(8, data, 0),"inverse":container.program(22, data, 0),"data":data})) != null ? stack1 : "");
+},"8":function(container,depth0,helpers,partials,data) {
+    var stack1;
 
-function program7(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n                            ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.collection)),stack1 == null || stack1 === false ? stack1 : stack1.models), {hash:{},inverse:self.program(22, program22, data),fn:self.program(8, program8, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                        ";
-  return buffer;
-  }
-function program8(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n                                ";
-  stack1 = helpers.each.call(depth0, ((stack1 = (depth0 && depth0.collection)),stack1 == null || stack1 === false ? stack1 : stack1.models), {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                            ";
-  return buffer;
-  }
-function program9(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n                                    ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.visible), {hash:{},inverse:self.noop,fn:self.program(10, program10, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                ";
-  return buffer;
-  }
-function program10(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n                                        <tr ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(11, program11, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += " data-attr=\"";
-  if (helper = helpers.oid) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.oid); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\">\n                                                                                <td class=\"select selected\">\n                                                                                    ";
-  if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\n                                                                                </td>\n                                                                                ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.roles), {hash:{},inverse:self.noop,fn:self.program(13, program13, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                                                            </tr>\n                                    ";
-  return buffer;
-  }
-function program11(depth0,data) {
-  
-  
-  return " class=\"selected\" ";
-  }
+  return ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),((stack1 = (depth0 != null ? depth0.collection : depth0)) != null ? stack1.models : stack1),{"name":"each","hash":{},"fn":container.program(9, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+},"9":function(container,depth0,helpers,partials,data) {
+    var stack1;
 
-function program13(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n                                                                                    ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.relation), {hash:{},inverse:self.noop,fn:self.program(14, program14, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                                                                    ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.refresh), {hash:{},inverse:self.noop,fn:self.program(16, program16, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                                                                    ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(18, program18, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                        	                                        ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(20, program20, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                                                                ";
-  return buffer;
-  }
-function program14(depth0,data) {
-  
-  
-  return "\n                                                                                        <td class=\"relation collection-option\">\n                                                                                            <svg title=\"relations\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"16.5\" height=\"21\" viewBox=\"0 0 44.09 50.85\" version=\"1.1\">\n                                                                                            <defs>\n                                                                                            <clipPath id=\"clip1\">\n                                                                                              <path d=\"M 14 0 L 44.089844 0 L 44.089844 22 L 14 22 Z M 14 0 \"/>\n                                                                                            </clipPath>\n                                                                                            <clipPath id=\"clip2\">\n                                                                                              <path d=\"M 22 9 L 44.089844 9 L 44.089844 42 L 22 42 Z M 22 9 \"/>\n                                                                                            </clipPath>\n                                                                                            <clipPath id=\"clip3\">\n                                                                                              <path d=\"M 14 29 L 44.089844 29 L 44.089844 50.851562 L 14 50.851562 Z M 14 29 \"/>\n                                                                                            </clipPath>\n                                                                                            <clipPath id=\"clip4\">\n                                                                                              <path d=\"M 6 21 L 38 21 L 38 50.851562 L 6 50.851562 Z M 6 21 \"/>\n                                                                                            </clipPath>\n                                                                                            </defs>\n                                                                                            <g id=\"surface1\">\n                                                                                            <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:50;\" d=\"M 66.658125 -0.001875 C 66.658125 5.502031 62.197187 9.962969 56.693281 9.962969 C 51.189375 9.962969 46.732344 5.502031 46.732344 -0.001875 C 46.732344 -5.501875 51.189375 -9.962812 56.693281 -9.962812 C 62.197187 -9.962812 66.658125 -5.501875 66.658125 -0.001875 Z M 66.658125 -0.001875 \" transform=\"matrix(1,0,0,-1,-44.33,27.42)\"/>\n                                                                                            <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 56.693281 10.361406 L 56.693281 10.361406 \" transform=\"matrix(1,0,0,-1,-46.33,25.42)\"/>\n                                                                                            <g clip-path=\"url(#clip1)\" clip-rule=\"nonzero\">\n                                                                                            <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 81.720625 20.045 C 81.720625 22.795 79.490156 25.025469 76.73625 25.025469 C 73.98625 25.025469 71.755781 22.795 71.755781 20.045 C 71.755781 17.295 73.98625 15.064531 76.73625 15.064531 C 79.490156 15.064531 81.720625 17.295 81.720625 20.045 Z M 81.720625 20.045 \" transform=\"matrix(1,0,0,-1,-48.33,27.42)\"/>\n                                                                                            </g>\n                                                                                            <g clip-path=\"url(#clip2)\" clip-rule=\"nonzero\">\n                                                                                            <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 90.021406 -0.001875 C 90.021406 2.752031 87.790937 4.9825 85.040937 4.9825 C 82.290937 4.9825 80.060469 2.752031 80.060469 -0.001875 C 80.060469 -2.751875 82.290937 -4.982344 85.040937 -4.982344 C 87.790937 -4.982344 90.021406 -2.751875 90.021406 -0.001875 Z M 90.021406 -0.001875 \" transform=\"matrix(1,0,0,-1,-48.33,25.42)\"/>\n                                                                                            </g>\n                                                                                            <g clip-path=\"url(#clip3)\" clip-rule=\"nonzero\">\n                                                                                            <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 81.720625 -20.044844 C 81.720625 -17.294844 79.490156 -15.064375 76.73625 -15.064375 C 73.98625 -15.064375 71.755781 -17.294844 71.755781 -20.044844 C 71.755781 -22.794844 73.98625 -25.025312 76.73625 -25.025312 C 79.490156 -25.025312 81.720625 -22.794844 81.720625 -20.044844 Z M 81.720625 -20.044844 \" transform=\"matrix(1,0,0,-1,-47.33,23.42)\"/>\n                                                                                            </g>\n                                                                                            <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 64.021406 7.32625 L 72.931562 16.240313 \" transform=\"matrix(1,0,0,-1,-46.33,25.42)\"/>\n                                                                                            <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 67.056562 -0.001875 L 79.662031 -0.001875 \" transform=\"matrix(1,0,0,-1,-46.33,25.42)\"/>\n                                                                                            <g clip-path=\"url(#clip4)\" clip-rule=\"nonzero\">\n                                                                                            <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 64.021406 -7.326094 L 72.931562 -16.240156 \" transform=\"matrix(1,0,0,-1,-45.33,25.42)\"/>\n                                                                                            </g>\n                                                                                            </g>\n                                                                                            </svg>\n                                                                                        </td>\n                                                                                    ";
-  }
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.visible : depth0),{"name":"if","hash":{},"fn":container.program(10, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+},"10":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-function program16(depth0,data) {
-  
-  
-  return "\n                                                                                        <td class=\"refresh collection-option\"><i class=\"fa fa-refresh\" title=\"force refresh\"></i></td>\n                                                                                    ";
-  }
+  return "                                        <tr "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.selected : depth0),{"name":"if","hash":{},"fn":container.program(11, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + " data-attr=\""
+    + alias4(((helper = (helper = helpers.oid || (depth0 != null ? depth0.oid : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"oid","hash":{},"data":data}) : helper)))
+    + "\">\n                                                                                <td class=\"select selected\">\n                                                                                    "
+    + alias4(((helper = (helper = helpers.label || (depth0 != null ? depth0.label : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"label","hash":{},"data":data}) : helper)))
+    + "\n                                                                                </td>\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.roles : depth0),{"name":"if","hash":{},"fn":container.program(13, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "                                                                            </tr>\n";
+},"11":function(container,depth0,helpers,partials,data) {
+    return " class=\"selected\" ";
+},"13":function(container,depth0,helpers,partials,data) {
+    var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
-function program18(depth0,data) {
-  
-  
-  return "\n                                                                                        <td class=\"edit collection-option\" ><i class=\"fa fa-pencil-square-o\" title=\"edit\"></i></td>\n                                                                                    ";
-  }
+  return ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.roles : depth0)) != null ? stack1.relation : stack1),{"name":"if","hash":{},"fn":container.program(14, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.roles : depth0)) != null ? stack1.refresh : stack1),{"name":"if","hash":{},"fn":container.program(16, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.roles : depth0)) != null ? stack1.edit : stack1),{"name":"if","hash":{},"fn":container.program(18, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.roles : depth0)) != null ? stack1["delete"] : stack1),{"name":"if","hash":{},"fn":container.program(20, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+},"14":function(container,depth0,helpers,partials,data) {
+    return "                                                                                        <td class=\"relation collection-option\">\n                                                                                            <svg title=\"relations\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"16.5\" height=\"21\" viewBox=\"0 0 44.09 50.85\" version=\"1.1\">\n                                                                                            <defs>\n                                                                                            <clipPath id=\"clip1\">\n                                                                                              <path d=\"M 14 0 L 44.089844 0 L 44.089844 22 L 14 22 Z M 14 0 \"/>\n                                                                                            </clipPath>\n                                                                                            <clipPath id=\"clip2\">\n                                                                                              <path d=\"M 22 9 L 44.089844 9 L 44.089844 42 L 22 42 Z M 22 9 \"/>\n                                                                                            </clipPath>\n                                                                                            <clipPath id=\"clip3\">\n                                                                                              <path d=\"M 14 29 L 44.089844 29 L 44.089844 50.851562 L 14 50.851562 Z M 14 29 \"/>\n                                                                                            </clipPath>\n                                                                                            <clipPath id=\"clip4\">\n                                                                                              <path d=\"M 6 21 L 38 21 L 38 50.851562 L 6 50.851562 Z M 6 21 \"/>\n                                                                                            </clipPath>\n                                                                                            </defs>\n                                                                                            <g id=\"surface1\">\n                                                                                            <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:50;\" d=\"M 66.658125 -0.001875 C 66.658125 5.502031 62.197187 9.962969 56.693281 9.962969 C 51.189375 9.962969 46.732344 5.502031 46.732344 -0.001875 C 46.732344 -5.501875 51.189375 -9.962812 56.693281 -9.962812 C 62.197187 -9.962812 66.658125 -5.501875 66.658125 -0.001875 Z M 66.658125 -0.001875 \" transform=\"matrix(1,0,0,-1,-44.33,27.42)\"/>\n                                                                                            <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 56.693281 10.361406 L 56.693281 10.361406 \" transform=\"matrix(1,0,0,-1,-46.33,25.42)\"/>\n                                                                                            <g clip-path=\"url(#clip1)\" clip-rule=\"nonzero\">\n                                                                                            <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 81.720625 20.045 C 81.720625 22.795 79.490156 25.025469 76.73625 25.025469 C 73.98625 25.025469 71.755781 22.795 71.755781 20.045 C 71.755781 17.295 73.98625 15.064531 76.73625 15.064531 C 79.490156 15.064531 81.720625 17.295 81.720625 20.045 Z M 81.720625 20.045 \" transform=\"matrix(1,0,0,-1,-48.33,27.42)\"/>\n                                                                                            </g>\n                                                                                            <g clip-path=\"url(#clip2)\" clip-rule=\"nonzero\">\n                                                                                            <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 90.021406 -0.001875 C 90.021406 2.752031 87.790937 4.9825 85.040937 4.9825 C 82.290937 4.9825 80.060469 2.752031 80.060469 -0.001875 C 80.060469 -2.751875 82.290937 -4.982344 85.040937 -4.982344 C 87.790937 -4.982344 90.021406 -2.751875 90.021406 -0.001875 Z M 90.021406 -0.001875 \" transform=\"matrix(1,0,0,-1,-48.33,25.42)\"/>\n                                                                                            </g>\n                                                                                            <g clip-path=\"url(#clip3)\" clip-rule=\"nonzero\">\n                                                                                            <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 81.720625 -20.044844 C 81.720625 -17.294844 79.490156 -15.064375 76.73625 -15.064375 C 73.98625 -15.064375 71.755781 -17.294844 71.755781 -20.044844 C 71.755781 -22.794844 73.98625 -25.025312 76.73625 -25.025312 C 79.490156 -25.025312 81.720625 -22.794844 81.720625 -20.044844 Z M 81.720625 -20.044844 \" transform=\"matrix(1,0,0,-1,-47.33,23.42)\"/>\n                                                                                            </g>\n                                                                                            <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 64.021406 7.32625 L 72.931562 16.240313 \" transform=\"matrix(1,0,0,-1,-46.33,25.42)\"/>\n                                                                                            <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 67.056562 -0.001875 L 79.662031 -0.001875 \" transform=\"matrix(1,0,0,-1,-46.33,25.42)\"/>\n                                                                                            <g clip-path=\"url(#clip4)\" clip-rule=\"nonzero\">\n                                                                                            <path style=\"fill:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(102,102,102);stroke-opacity:1;stroke-miterlimit:10;\" d=\"M 64.021406 -7.326094 L 72.931562 -16.240156 \" transform=\"matrix(1,0,0,-1,-45.33,25.42)\"/>\n                                                                                            </g>\n                                                                                            </g>\n                                                                                            </svg>\n                                                                                        </td>\n";
+},"16":function(container,depth0,helpers,partials,data) {
+    return "                                                                                        <td class=\"refresh collection-option\"><i class=\"fa fa-refresh\" title=\"force refresh\"></i></td>\n";
+},"18":function(container,depth0,helpers,partials,data) {
+    return "                                                                                        <td class=\"edit collection-option\" ><i class=\"fa fa-pencil-square-o\" title=\"edit\"></i></td>\n";
+},"20":function(container,depth0,helpers,partials,data) {
+    return "                                        	                                            <td class=\"delete collection-option\"><i class=\"fa fa-trash-o\" title=\"delete\"></i></td>\n";
+},"22":function(container,depth0,helpers,partials,data) {
+    var helper;
 
-function program20(depth0,data) {
-  
-  
-  return "\n                                        	                                            <td class=\"delete collection-option\"><i class=\"fa fa-trash-o\" title=\"delete\"></i></td>\n                                        	                                        ";
-  }
+  return "                                <div class=\"no-data\">\n                                    No "
+    + container.escapeExpression(((helper = (helper = helpers.typeLabelPlural || (depth0 != null ? depth0.typeLabelPlural : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"typeLabelPlural","hash":{},"data":data}) : helper)))
+    + " available\n                                </div>\n";
+},"24":function(container,depth0,helpers,partials,data) {
+    var helper;
 
-function program22(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n                                <div class=\"no-data\">\n                                    No ";
-  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + " available\n                                </div>\n                            ";
-  return buffer;
-  }
+  return "                        	<div class=\"no-data\">\n                            	<i class=\"fa fa-refresh fa-spin\"></i> "
+    + container.escapeExpression(((helper = (helper = helpers.typeLabelPlural || (depth0 != null ? depth0.typeLabelPlural : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"typeLabelPlural","hash":{},"data":data}) : helper)))
+    + " loading in progress...\n                            </div>\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-function program24(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n                        	<div class=\"no-data\">\n                            	<i class=\"fa fa-refresh fa-spin\"></i> ";
-  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + " loading in progress...\n                            </div>\n                        ";
-  return buffer;
-  }
+  return "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n  <h4 class=\"modal-title\" id=\"myModalLabel\">"
+    + alias4(((helper = (helper = helpers.typeLabelPlural || (depth0 != null ? depth0.typeLabelPlural : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"typeLabelPlural","hash":{},"data":data}) : helper)))
+    + "</h4>\n</div>\n<div class=\"modal-body\">\n    <div class=\"squid-api-collection-management-widget\">\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.createRole : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "            <div class=\"input-group search-wrapper\">\n                            <input type=\"text\" class=\"form-control search\" placeholder=\"Search for...\" value=\""
+    + alias4(((helper = (helper = helpers.searchText || (depth0 != null ? depth0.searchText : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"searchText","hash":{},"data":data}) : helper)))
+    + "\">\n                                <span class=\"input-group-btn\">\n                                    <button class=\"btn btn-default\" type=\"button\"><i class=\"fa fa-search\"></i></button>\n                                </span>\n                        </div>\n            <div class=\"squid-api-"
+    + alias4(((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"type","hash":{},"data":data}) : helper)))
+    + "-collection-management list\">\n                    <table style=\"width:100%\">\n                        <tbody "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.valueSelected : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.program(5, data, 0),"data":data})) != null ? stack1 : "")
+    + ">\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.collectionLoaded : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.program(24, data, 0),"data":data})) != null ? stack1 : "")
+    + "                        </tbody>\n                </table>\n            </div>\n    </div>\n</div>\n<div class=\"squid-api-model-management-footer\">\n  	<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
+},"useData":true});
 
-  buffer += "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n  <h4 class=\"modal-title\" id=\"myModalLabel\">";
-  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</h4>\n</div>\n<div class=\"modal-body\">\n    <div class=\"squid-api-collection-management-widget\">\n            ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.createRole), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n            <div class=\"input-group search-wrapper\">\n                            <input type=\"text\" class=\"form-control search\" placeholder=\"Search for...\" value=\"";
-  if (helper = helpers.searchText) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.searchText); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\">\n                                <span class=\"input-group-btn\">\n                                    <button class=\"btn btn-default\" type=\"button\"><i class=\"fa fa-search\"></i></button>\n                                </span>\n                        </div>\n            <div class=\"squid-api-";
-  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "-collection-management list\">\n                    <table style=\"width:100%\">\n                        <tbody ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.valueSelected), {hash:{},inverse:self.program(5, program5, data),fn:self.program(3, program3, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">\n                        ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionLoaded), {hash:{},inverse:self.program(24, program24, data),fn:self.program(7, program7, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                        </tbody>\n                </table>\n            </div>\n    </div>\n</div>\n<div class=\"squid-api-model-management-footer\">\n  	<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
-  return buffer;
-  });
+this["squid_api"]["template"]["squid_api_base_model_management_widget"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function";
 
-this["squid_api"]["template"]["squid_api_base_model_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
+  return "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n  <h4 class=\"modal-title\" id=\"myModalLabel\">"
+    + ((stack1 = ((helper = (helper = helpers.headerLabel || (depth0 != null ? depth0.headerLabel : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"headerLabel","hash":{},"data":data}) : helper))) != null ? stack1 : "")
+    + "</h4>\n</div>\n<div class=\"modal-body squid-api-"
+    + container.escapeExpression(((helper = (helper = helpers.modelDefinition || (depth0 != null ? depth0.modelDefinition : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"modelDefinition","hash":{},"data":data}) : helper)))
+    + "-model-management squid-api-model-management\">\n\n</div>\n<div class=\"modal-footer\">\n  "
+    + ((stack1 = ((helper = (helper = helpers.footerLabel || (depth0 != null ? depth0.footerLabel : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"footerLabel","hash":{},"data":data}) : helper))) != null ? stack1 : "")
+    + "\n</div>\n<div class=\"squid-api-model-management-footer\">\n      <button type=\"button\" class=\"btn btn-default btn-cancel-form\">Cancel</button>\n    <button type=\"button\" class=\"btn btn-primary btn-save-form\">Save</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
+},"useData":true});
 
+this["squid_api"]["template"]["squid_api_bookmark_collection_management_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var helper;
 
-  buffer += "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n  <h4 class=\"modal-title\" id=\"myModalLabel\">";
-  if (helper = helpers.headerLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.headerLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "</h4>\n</div>\n<div class=\"modal-body squid-api-";
-  if (helper = helpers.modelDefinition) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.modelDefinition); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "-model-management squid-api-model-management\">\n\n</div>\n<div class=\"modal-footer\">\n  ";
-  if (helper = helpers.footerLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.footerLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</div>\n<div class=\"squid-api-model-management-footer\">\n      <button type=\"button\" class=\"btn btn-default btn-cancel-form\">Cancel</button>\n    <button type=\"button\" class=\"btn btn-primary btn-save-form\">Save</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
-  return buffer;
-  });
+  return "                <button type=\"button\"  class=\"create btn btn-default\">\n                    <i class=\"fa fa-plus\"></i> New "
+    + container.escapeExpression(((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"type","hash":{},"data":data}) : helper)))
+    + "\n                </button>\n";
+},"3":function(container,depth0,helpers,partials,data) {
+    return " ";
+},"5":function(container,depth0,helpers,partials,data) {
+    return " class=\"no-values\" ";
+},"7":function(container,depth0,helpers,partials,data) {
+    var stack1;
 
-this["squid_api"]["template"]["squid_api_bookmark_collection_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.collection : depth0),{"name":"if","hash":{},"fn":container.program(8, data, 0),"inverse":container.program(18, data, 0),"data":data})) != null ? stack1 : "");
+},"8":function(container,depth0,helpers,partials,data) {
+    var stack1;
 
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n                <button type=\"button\"  class=\"create btn btn-default\">\n                    <i class=\"fa fa-plus\"></i> New ";
-  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\n                </button>\n            ";
-  return buffer;
-  }
+  return "                             <div class=\"panel-group\" id=\"accordion\" role=\"tablist\" aria-multiselectable=\"true\">\n"
+    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.collection : depth0),{"name":"each","hash":{},"fn":container.program(9, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "                             </div>\n";
+},"9":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=container.lambda, alias2=container.escapeExpression, alias3=depth0 != null ? depth0 : (container.nullContext || {}), alias4=helpers.helperMissing, alias5="function";
 
-function program3(depth0,data) {
-  
-  
-  return " ";
-  }
-
-function program5(depth0,data) {
-  
-  
-  return " class=\"no-values\" ";
-  }
-
-function program7(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n                            ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collection), {hash:{},inverse:self.program(18, program18, data),fn:self.program(8, program8, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                        ";
-  return buffer;
-  }
-function program8(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n                             <div class=\"panel-group\" id=\"accordion\" role=\"tablist\" aria-multiselectable=\"true\">\n                                ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.collection), {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                             </div>\n                            ";
-  return buffer;
-  }
-function program9(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n                                    <div class=\"panel panel-default "
-    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.path)),stack1 == null || stack1 === false ? stack1 : stack1.type)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+  return "                                    <div class=\"panel panel-default "
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.path : depth0)) != null ? stack1.type : stack1), depth0))
     + "\">\n                                        <div class=\"panel-heading\" role=\"tab\">\n                                            <h4 class=\"panel-title\">\n                                                <a role=\"button\" data-toggle=\"collapse\" href=\"#bookmark-collapse-"
-    + escapeExpression(((stack1 = (data == null || data === false ? data : data.index)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" aria-expanded=\"false\" aria-controls=\"collapseOne\">\n                                                    ";
-  stack1 = ((stack1 = ((stack1 = (depth0 && depth0.path)),stack1 == null || stack1 === false ? stack1 : stack1.userFriendlyName)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1);
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                                </a>\n                                            </h4>\n                                        </div>\n                                        <div id=\"bookmark-collapse-"
-    + escapeExpression(((stack1 = (data == null || data === false ? data : data.index)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" class=\"panel-collapse collapse\" role=\"tabpanel\" aria-labelledby=\"headingOne\">\n                                            <div class=\"panel-body\">\n                                                ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.bookmarks), {hash:{},inverse:self.noop,fn:self.program(10, program10, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                            </div>\n                                        </div>\n                                    </div>\n                                ";
-  return buffer;
-  }
-function program10(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n                                                    ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.visible), {hash:{},inverse:self.noop,fn:self.program(11, program11, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n\n                                                ";
-  return buffer;
-  }
-function program11(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n                                                        <li data-toggle=\"tooltip\" title=\"";
-  if (helper = helpers.description) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.description); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(12, program12, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += " data-attr=\"";
-  if (helper = helpers.oid) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.oid); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\">\n                                                            <span class=\"select\">\n                                                                <i class=\"fa fa-bookmark-o\"></i> ";
-  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\n                                                            </span>\n                                                            ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(14, program14, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                                            ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(16, program16, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                                        </li>\n                                                    ";
-  return buffer;
-  }
-function program12(depth0,data) {
-  
-  
-  return " class=\"selected\" ";
-  }
+    + alias2(((helper = (helper = helpers.index || (data && data.index)) != null ? helper : alias4),(typeof helper === alias5 ? helper.call(alias3,{"name":"index","hash":{},"data":data}) : helper)))
+    + "\" aria-expanded=\"false\" aria-controls=\"collapseOne\">\n                                                    "
+    + ((stack1 = alias1(((stack1 = (depth0 != null ? depth0.path : depth0)) != null ? stack1.userFriendlyName : stack1), depth0)) != null ? stack1 : "")
+    + "\n                                                </a>\n                                            </h4>\n                                        </div>\n                                        <div id=\"bookmark-collapse-"
+    + alias2(((helper = (helper = helpers.index || (data && data.index)) != null ? helper : alias4),(typeof helper === alias5 ? helper.call(alias3,{"name":"index","hash":{},"data":data}) : helper)))
+    + "\" class=\"panel-collapse collapse\" role=\"tabpanel\" aria-labelledby=\"headingOne\">\n                                            <div class=\"panel-body\">\n"
+    + ((stack1 = helpers.each.call(alias3,(depth0 != null ? depth0.bookmarks : depth0),{"name":"each","hash":{},"fn":container.program(10, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "                                            </div>\n                                        </div>\n                                    </div>\n";
+},"10":function(container,depth0,helpers,partials,data) {
+    var stack1;
 
-function program14(depth0,data) {
-  
-  
-  return "\n                                                                <span class=\"delete collection-option\">\n                                                                    <i class=\"fa fa-trash-o\" title=\"delete\"></i>\n                                                                </span>\n                                                            ";
-  }
-
-function program16(depth0,data) {
-  
-  
-  return "\n                                                                <span class=\"edit collection-option\">\n                                                                    <i class=\"fa fa-pencil-square-o\" title=\"edit\"></i>\n                                                                </span>\n                                                            ";
-  }
-
-function program18(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n                                <div class=\"no-data\">\n                                    No ";
-  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + " available\n                                </div>\n                            ";
-  return buffer;
-  }
-
-function program20(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n                        	<div class=\"no-data\">\n                            	<i class=\"fa fa-refresh fa-spin\"></i> ";
-  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + " loading in progress...\n                            </div>\n                        ";
-  return buffer;
-  }
-
-  buffer += "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n  <h4 class=\"modal-title\" id=\"myModalLabel\">";
-  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</h4>\n</div>\n<div class=\"modal-body\">\n    <div class=\"squid-api-collection-management-widget\">\n            ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.createRole), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n            <div class=\"input-group search-wrapper\">\n                <input type=\"text\" class=\"form-control search\" placeholder=\"Search for...\" value=\"";
-  if (helper = helpers.searchText) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.searchText); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\">\n                    <span class=\"input-group-btn\">\n                        <button class=\"btn btn-default\" type=\"button\"><i class=\"fa fa-search\"></i></button>\n                    </span>\n            </div>\n            <div class=\"squid-api-";
-  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "-collection-management list\">\n                    <table style=\"width:100%\">\n                        <tbody ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.valueSelected), {hash:{},inverse:self.program(5, program5, data),fn:self.program(3, program3, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">\n                        ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionLoaded), {hash:{},inverse:self.program(20, program20, data),fn:self.program(7, program7, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                        </tbody>\n                </table>\n            </div>\n    </div>\n</div>\n<div class=\"squid-api-model-management-footer\">\n  	<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
-  return buffer;
-  });
-
-this["squid_api"]["template"]["squid_api_bookmark_config_editor"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
-
-
-  buffer += "<div style=\"\n  display: block;\n  width: 100%;\n  padding: 6px 12px;\n  margin-bottom: 10px;\n  font-size: 14px;\n  line-height: 1.42857143;\n  color: #555;\n  background-color: #fff;\n  background-image: none;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n  -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;\n       -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;\n          transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;\n\">\n	<a id=\"view\" role=\"button\"  data-toggle=\"collapse\" aria-expanded=\"false\" href=\"#bookmark-configPanel\">View</a>\n	<br>\n	<div id=\"bookmark-configPanel\" class=\"collapse\">\n		<br>\n		<textarea rows=3 id=\"";
-  if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" name=\"";
-  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" class=\"form-control\"></textarea>\n		<br>\n		<a class=\"btn btn-default\" id=\"set\" role=\"button\" >Replace with current config</a>\n	</div>\n</div>";
-  return buffer;
-  });
-
-this["squid_api"]["template"]["squid_api_bookmark_save_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, self=this;
-
-function program1(depth0,data) {
-  
-  
-  return " class=\"btn btn-success save\" ";
-  }
-
-function program3(depth0,data) {
-  
-  
-  return " class=\"btn\" ";
-  }
-
-  buffer += "<button ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.usable), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">Save</button>\n";
-  return buffer;
-  });
-
-this["squid_api"]["template"]["squid_api_button_view"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
-
-function program1(depth0,data) {
-  
-  
-  return "selected";
-  }
-
-function program3(depth0,data) {
-  
-  
-  return " disabled=\"true\" ";
-  }
-
-function program5(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n    ";
-  if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.visible : depth0),{"name":"if","hash":{},"fn":container.program(11, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\n";
-  return buffer;
-  }
+},"11":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-function program7(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n    <i class=\"fa fa-refresh fa-spin\"></i> ";
-  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
+  return "                                                        <li data-toggle=\"tooltip\" title=\""
+    + alias4(((helper = (helper = helpers.description || (depth0 != null ? depth0.description : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"description","hash":{},"data":data}) : helper)))
+    + "\" "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.selected : depth0),{"name":"if","hash":{},"fn":container.program(12, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + " data-attr=\""
+    + alias4(((helper = (helper = helpers.oid || (depth0 != null ? depth0.oid : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"oid","hash":{},"data":data}) : helper)))
+    + "\">\n                                                            <span class=\"select\">\n                                                                <i class=\"fa fa-bookmark-o\"></i> "
+    + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
+    + "\n                                                            </span>\n"
+    + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.roles : depth0)) != null ? stack1["delete"] : stack1),{"name":"if","hash":{},"fn":container.program(14, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.roles : depth0)) != null ? stack1.edit : stack1),{"name":"if","hash":{},"fn":container.program(16, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "                                                        </li>\n";
+},"12":function(container,depth0,helpers,partials,data) {
+    return " class=\"selected\" ";
+},"14":function(container,depth0,helpers,partials,data) {
+    return "                                                                <span class=\"delete collection-option\">\n                                                                    <i class=\"fa fa-trash-o\" title=\"delete\"></i>\n                                                                </span>\n";
+},"16":function(container,depth0,helpers,partials,data) {
+    return "                                                                <span class=\"edit collection-option\">\n                                                                    <i class=\"fa fa-pencil-square-o\" title=\"edit\"></i>\n                                                                </span>\n";
+},"18":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "                                <div class=\"no-data\">\n                                    No "
+    + container.escapeExpression(((helper = (helper = helpers.typeLabelPlural || (depth0 != null ? depth0.typeLabelPlural : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"typeLabelPlural","hash":{},"data":data}) : helper)))
+    + " available\n                                </div>\n";
+},"20":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "                        	<div class=\"no-data\">\n                            	<i class=\"fa fa-refresh fa-spin\"></i> "
+    + container.escapeExpression(((helper = (helper = helpers.typeLabelPlural || (depth0 != null ? depth0.typeLabelPlural : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"typeLabelPlural","hash":{},"data":data}) : helper)))
+    + " loading in progress...\n                            </div>\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n  <h4 class=\"modal-title\" id=\"myModalLabel\">"
+    + alias4(((helper = (helper = helpers.typeLabelPlural || (depth0 != null ? depth0.typeLabelPlural : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"typeLabelPlural","hash":{},"data":data}) : helper)))
+    + "</h4>\n</div>\n<div class=\"modal-body\">\n    <div class=\"squid-api-collection-management-widget\">\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.createRole : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "            <div class=\"input-group search-wrapper\">\n                <input type=\"text\" class=\"form-control search\" placeholder=\"Search for...\" value=\""
+    + alias4(((helper = (helper = helpers.searchText || (depth0 != null ? depth0.searchText : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"searchText","hash":{},"data":data}) : helper)))
+    + "\">\n                    <span class=\"input-group-btn\">\n                        <button class=\"btn btn-default\" type=\"button\"><i class=\"fa fa-search\"></i></button>\n                    </span>\n            </div>\n            <div class=\"squid-api-"
+    + alias4(((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"type","hash":{},"data":data}) : helper)))
+    + "-collection-management list\">\n                    <table style=\"width:100%\">\n                        <tbody "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.valueSelected : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.program(5, data, 0),"data":data})) != null ? stack1 : "")
+    + ">\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.collectionLoaded : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.program(20, data, 0),"data":data})) != null ? stack1 : "")
+    + "                        </tbody>\n                </table>\n            </div>\n    </div>\n</div>\n<div class=\"squid-api-model-management-footer\">\n  	<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
+},"useData":true});
+
+this["squid_api"]["template"]["squid_api_bookmark_config_editor"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "<div style=\"\n  display: block;\n  width: 100%;\n  padding: 6px 12px;\n  margin-bottom: 10px;\n  font-size: 14px;\n  line-height: 1.42857143;\n  color: #555;\n  background-color: #fff;\n  background-image: none;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n  -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;\n       -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;\n          transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;\n\">\n	<a id=\"view\" role=\"button\"  data-toggle=\"collapse\" aria-expanded=\"false\" href=\"#bookmark-configPanel\">View</a>\n	<br>\n	<div id=\"bookmark-configPanel\" class=\"collapse\">\n		<br>\n		<textarea rows=3 id=\""
+    + alias4(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data}) : helper)))
+    + "\" name=\""
+    + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
+    + "\" class=\"form-control\"></textarea>\n		<br>\n		<a class=\"btn btn-default\" id=\"set\" role=\"button\" >Replace with current config</a>\n	</div>\n</div>";
+},"useData":true});
+
+this["squid_api"]["template"]["squid_api_bookmark_save_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    return " class=\"btn btn-success save\" ";
+},"3":function(container,depth0,helpers,partials,data) {
+    return " class=\"btn\" ";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return "<button "
+    + ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.usable : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(3, data, 0),"data":data})) != null ? stack1 : "")
+    + ">Save</button>\n";
+},"useData":true});
+
+this["squid_api"]["template"]["squid_api_button_view"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    return "selected";
+},"3":function(container,depth0,helpers,partials,data) {
+    return " disabled=\"true\" ";
+},"5":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "    "
+    + container.escapeExpression(((helper = (helper = helpers.label || (depth0 != null ? depth0.label : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"label","hash":{},"data":data}) : helper)))
+    + "\n";
+},"7":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "    <i class=\"fa fa-refresh fa-spin\"></i> "
+    + container.escapeExpression(((helper = (helper = helpers.typeLabelPlural || (depth0 != null ? depth0.typeLabelPlural : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"typeLabelPlural","hash":{},"data":data}) : helper)))
     + " loading\n";
-  return buffer;
-  }
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
-  buffer += "<button class=\"form-control squid-api-button-view ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selectedModel), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\" ";
-  stack1 = helpers.unless.call(depth0, (depth0 && depth0.usable), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">\n";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.collectionLoaded), {hash:{},inverse:self.program(7, program7, data),fn:self.program(5, program5, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</button>\n\n";
-  return buffer;
-  });
+  return "<button class=\"form-control squid-api-button-view "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.selectedModel : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "\" "
+    + ((stack1 = helpers.unless.call(alias1,(depth0 != null ? depth0.usable : depth0),{"name":"unless","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ">\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.collectionLoaded : depth0),{"name":"if","hash":{},"fn":container.program(5, data, 0),"inverse":container.program(7, data, 0),"data":data})) != null ? stack1 : "")
+    + "</button>\n\n";
+},"useData":true});
 
-this["squid_api"]["template"]["squid_api_columns_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, self=this, functionType="function", escapeExpression=this.escapeExpression;
+this["squid_api"]["template"]["squid_api_columns_management_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n                    <option ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.parentId), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += " value=\"";
-  if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\">";
-  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</option>\n                ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  
-  return " class=\"child\" ";
-  }
+  return "                    <option "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.parentId : depth0),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + " value=\""
+    + alias4(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data}) : helper)))
+    + "\">"
+    + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
+    + "</option>\n";
+},"2":function(container,depth0,helpers,partials,data) {
+    return " class=\"child\" ";
+},"4":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-function program4(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n                    <option value=\"";
-  if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
+  return "                    <option value=\""
+    + alias4(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data}) : helper)))
+    + "\" "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.parentId : depth0),{"name":"if","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + " selected=\"selected\">"
+    + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
+    + "</option>\n";
+},"5":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return " class=\"child"
+    + container.escapeExpression(((helper = (helper = helpers.depth || (depth0 != null ? depth0.depth : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"depth","hash":{},"data":data}) : helper)))
     + "\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.parentId), {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += " selected=\"selected\">";
-  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</option>\n                ";
-  return buffer;
-  }
-function program5(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += " class=\"child";
-  if (helper = helpers.depth) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.depth); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" ";
-  return buffer;
-  }
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
-  buffer += "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n  <h4 class=\"modal-title\" id=\"myModalLabel\">";
-  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</h4>\n</div>\n<div class=\"modal-body\">\n    <div class=\"squid-api-collection-management-widget\">\n        <div class=\"squid-api-admin-widget-columns-management\">\n            <select multiple=\"multiple\">\n                ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.dynamic), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.nonDynamic), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n            </select>\n            <div class=\"management\">\n                <button type=\"button\" class=\"btn btn-default create\">\n                    Create\n                </button>\n                <button type=\"button\" class=\"btn btn-default edit\" disabled=\"true\">\n                    Edit\n                </button>\n                <button type=\"button\" class=\"btn btn-default delete\" disabled=\"true\">\n                    Delete\n                </button>\n                <button type=\"button\" class=\"btn btn-default close-modal\" data-dismiss=\"modal\">\n                    Close\n                </button>\n            </div>\n        </div>\n    </div>\n</div>\n<!--  end of modal - -->\n</div>\n";
-  return buffer;
-  });
+  return "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n  <h4 class=\"modal-title\" id=\"myModalLabel\">"
+    + container.escapeExpression(((helper = (helper = helpers.typeLabelPlural || (depth0 != null ? depth0.typeLabelPlural : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"typeLabelPlural","hash":{},"data":data}) : helper)))
+    + "</h4>\n</div>\n<div class=\"modal-body\">\n    <div class=\"squid-api-collection-management-widget\">\n        <div class=\"squid-api-admin-widget-columns-management\">\n            <select multiple=\"multiple\">\n"
+    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.dynamic : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.nonDynamic : depth0),{"name":"each","hash":{},"fn":container.program(4, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "            </select>\n            <div class=\"management\">\n                <button type=\"button\" class=\"btn btn-default create\">\n                    Create\n                </button>\n                <button type=\"button\" class=\"btn btn-default edit\" disabled=\"true\">\n                    Edit\n                </button>\n                <button type=\"button\" class=\"btn btn-default delete\" disabled=\"true\">\n                    Delete\n                </button>\n                <button type=\"button\" class=\"btn btn-default close-modal\" data-dismiss=\"modal\">\n                    Close\n                </button>\n            </div>\n        </div>\n    </div>\n</div>\n<!--  end of modal - -->\n</div>\n";
+},"useData":true});
 
-this["squid_api"]["template"]["squid_api_dimension_selector_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+this["squid_api"]["template"]["squid_api_dimension_selector_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    return "multiple";
+},"3":function(container,depth0,helpers,partials,data) {
+    return "        <option>No dimensions available</option>\r\n";
+},"5":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-function program1(depth0,data) {
-  
-  
-  return "multiple";
-  }
+  return "        <option value=\""
+    + alias4(((helper = (helper = helpers.value || (depth0 != null ? depth0.value : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"value","hash":{},"data":data}) : helper)))
+    + "\" "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.selected : depth0),{"name":"if","hash":{},"fn":container.program(6, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + " "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.error : depth0),{"name":"if","hash":{},"fn":container.program(8, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ">\r\n            "
+    + alias4(((helper = (helper = helpers.label || (depth0 != null ? depth0.label : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"label","hash":{},"data":data}) : helper)))
+    + "\r\n        </option>\r\n";
+},"6":function(container,depth0,helpers,partials,data) {
+    return "selected";
+},"8":function(container,depth0,helpers,partials,data) {
+    return " disabled ";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
-function program3(depth0,data) {
-  
-  
-  return "\r\n        <option>No dimensions available</option>\r\n    ";
-  }
+  return "<select class=\"sq-select form-control\" "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.multiple : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ">\r\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.empty : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.options : depth0),{"name":"each","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "</select>\r\n";
+},"useData":true});
 
-function program5(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\r\n        <option value=\"";
-  if (helper = helpers.value) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.value); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += " ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.error), {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">\r\n            ";
-  if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\r\n        </option>\r\n    ";
-  return buffer;
-  }
-function program6(depth0,data) {
-  
-  
-  return "selected";
-  }
+this["squid_api"]["template"]["squid_api_metric_selector_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    return "        <option disabled=\"true\">No metrics available</option>\r\n";
+},"3":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-function program8(depth0,data) {
-  
-  
-  return " disabled ";
-  }
+  return "        <option value=\""
+    + alias4(((helper = (helper = helpers.value || (depth0 != null ? depth0.value : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"value","hash":{},"data":data}) : helper)))
+    + "\" "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.selected : depth0),{"name":"if","hash":{},"fn":container.program(4, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ">\r\n            "
+    + alias4(((helper = (helper = helpers.label || (depth0 != null ? depth0.label : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"label","hash":{},"data":data}) : helper)))
+    + "\r\n        </option>\r\n";
+},"4":function(container,depth0,helpers,partials,data) {
+    return "selected";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
-  buffer += "<select class=\"sq-select form-control\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.multiple), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">\r\n    ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.empty), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n    ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.options), {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n</select>\r\n";
-  return buffer;
-  });
+  return "<select class=\"sq-select form-control squid-api-data-widgets-metric-selector\" multiple>\r\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.empty : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.options : depth0),{"name":"each","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "</select>\r\n";
+},"useData":true});
 
-this["squid_api"]["template"]["squid_api_metric_selector_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+this["squid_api"]["template"]["squid_api_modal_view"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    return "fade";
+},"3":function(container,depth0,helpers,partials,data) {
+    var helper;
 
-function program1(depth0,data) {
-  
-  
-  return "\r\n        <option disabled=\"true\">No metrics available</option>\r\n    ";
-  }
+  return "        <div class=\"modal-header\">\n          <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">×</span></button>\n          <h4 class=\"modal-title\" id=\"myModalLabel\">"
+    + container.escapeExpression(((helper = (helper = helpers.headerTitle || (depth0 != null ? depth0.headerTitle : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"headerTitle","hash":{},"data":data}) : helper)))
+    + "</h4>\n        </div>\n";
+},"5":function(container,depth0,helpers,partials,data) {
+    return "        <div class=\"modal-footer\">\n          	<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n        </div>\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
-function program3(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\r\n        <option value=\"";
-  if (helper = helpers.value) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.value); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">\r\n            ";
-  if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\r\n        </option>\r\n    ";
-  return buffer;
-  }
-function program4(depth0,data) {
-  
-  
-  return "selected";
-  }
+  return "<div class=\"squid-api-modal-view squid-api-modal-view-"
+    + container.escapeExpression(((helper = (helper = helpers.modalCount || (depth0 != null ? depth0.modalCount : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"modalCount","hash":{},"data":data}) : helper)))
+    + " modal "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.fadeAnimation : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "\" id=\"myModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"myModalLabel\">\n  <div class=\"modal-dialog modal-lg\" role=\"document\">\n    <div class=\"modal-content\">\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.header : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "      <div class=\"content\">\n\n      </div>\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.footer : depth0),{"name":"if","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "  </div>\n</div>\n";
+},"useData":true});
 
-  buffer += "<select class=\"sq-select form-control squid-api-data-widgets-metric-selector\" multiple>\r\n    ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.empty), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n    ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.options), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n</select>\r\n";
-  return buffer;
-  });
+this["squid_api"]["template"]["squid_api_navigator"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1;
 
-this["squid_api"]["template"]["squid_api_modal_view"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
+  return "<ul>\r\n"
+    + ((stack1 = container.invokePartial(partials["squid_api_navigator-list"],depth0,{"name":"squid_api_navigator-list","data":data,"helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
+    + "</ul>";
+},"usePartial":true,"useData":true});
 
-function program1(depth0,data) {
-  
-  
-  return "fade";
-  }
+this["squid_api"]["template"]["squid_api_relation_collection_management_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var helper;
 
-function program3(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n        <div class=\"modal-header\">\n          <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">×</span></button>\n          <h4 class=\"modal-title\" id=\"myModalLabel\">";
-  if (helper = helpers.headerTitle) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.headerTitle); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</h4>\n        </div>\n      ";
-  return buffer;
-  }
+  return "				<button type=\"button\"  class=\"create btn btn-default\">\n					<i class=\"fa fa-plus\"></i> New "
+    + container.escapeExpression(((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"type","hash":{},"data":data}) : helper)))
+    + "\n				</button>\n";
+},"3":function(container,depth0,helpers,partials,data) {
+    return " ";
+},"5":function(container,depth0,helpers,partials,data) {
+    return " class=\"no-values\" ";
+},"7":function(container,depth0,helpers,partials,data) {
+    var stack1;
 
-function program5(depth0,data) {
-  
-  
-  return "\n        <div class=\"modal-footer\">\n          	<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n        </div>\n      ";
-  }
+  return ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.models : depth0),{"name":"each","hash":{},"fn":container.program(8, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+},"8":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-  buffer += "<div class=\"squid-api-modal-view squid-api-modal-view-";
-  if (helper = helpers.modalCount) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.modalCount); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + " modal ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.fadeAnimation), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\" id=\"myModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"myModalLabel\">\n  <div class=\"modal-dialog modal-lg\" role=\"document\">\n    <div class=\"modal-content\">\n      ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.header), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n      <div class=\"content\">\n\n      </div>\n      ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.footer), {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  </div>\n</div>\n";
-  return buffer;
-  });
+  return "            						<tr class=\"no-background\" data-attr="
+    + alias4(((helper = (helper = helpers.oid || (depth0 != null ? depth0.oid : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"oid","hash":{},"data":data}) : helper)))
+    + ">\n            							<td class=\"domain\">"
+    + alias4(((helper = (helper = helpers.leftName || (depth0 != null ? depth0.leftName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"leftName","hash":{},"data":data}) : helper)))
+    + "</td>\n            							<td class=\"leftIcon\">\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.leftMany : depth0),{"name":"if","hash":{},"fn":container.program(9, data, 0),"inverse":container.program(11, data, 0),"data":data})) != null ? stack1 : "")
+    + "            							</td>\n            							<td class=\"rightIcon\">\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.rightMany : depth0),{"name":"if","hash":{},"fn":container.program(17, data, 0),"inverse":container.program(19, data, 0),"data":data})) != null ? stack1 : "")
+    + "                                        <td class=\"domain\">"
+    + alias4(((helper = (helper = helpers.rightName || (depth0 != null ? depth0.rightName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"rightName","hash":{},"data":data}) : helper)))
+    + "</td>\n            							</td>\n"
+    + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.roles : depth0)) != null ? stack1.edit : stack1),{"name":"if","hash":{},"fn":container.program(24, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.roles : depth0)) != null ? stack1["delete"] : stack1),{"name":"if","hash":{},"fn":container.program(26, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "            						</tr>\n";
+},"9":function(container,depth0,helpers,partials,data) {
+    return "            									<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n              										<ellipse stroke=\"#666\" ry=\"0.15625\" rx=\"42.53032\" id=\"svg_8\" cy=\"10.62595\" cx=\"65.93316\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n              										<ellipse stroke=\"#666\" transform=\"rotate(23.859294891357422 14.261151313781737,6.493025302886963) \" ry=\"0.15625\" rx=\"9.98315\" id=\"svg_10\" cy=\"6.49303\" cx=\"14.26115\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n              										<ellipse stroke=\"#666\" transform=\"rotate(0.7375706434249878 14.573644638061372,10.555437088012791) \" ry=\"0.15625\" rx=\"9.98315\" id=\"svg_11\" cy=\"10.55544\" cx=\"14.57365\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n              										<ellipse stroke=\"#666\" transform=\"rotate(-20.462926864624023 14.4486494064331,14.430353164672844) \" ry=\"0.15625\" rx=\"9.98315\" id=\"svg_13\" cy=\"14.43035\" cx=\"14.44865\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n            									</svg>\n";
+},"11":function(container,depth0,helpers,partials,data) {
+    var stack1;
 
-this["squid_api"]["template"]["squid_api_navigator"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); partials = this.merge(partials, Handlebars.partials); data = data || {};
-  var buffer = "", stack1, self=this;
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.leftZeroOrOne : depth0),{"name":"if","hash":{},"fn":container.program(12, data, 0),"inverse":container.program(14, data, 0),"data":data})) != null ? stack1 : "");
+},"12":function(container,depth0,helpers,partials,data) {
+    return "            								<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n            										<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"51.62104\" cy=\"10.37595\" id=\"svg_8\" rx=\"46.84273\" ry=\"0.15625\" stroke=\"#666\"/>\n            										<ellipse fill=\"none\" stroke-width=\"12\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"22.24682\" cy=\"10.28729\" id=\"svg_15\" rx=\"1.71832\" ry=\"1.53145\" transform=\"rotate(-0.039470430463552475 22.246822357181806,10.287289619445572) \" stroke=\"#666\"/>\n            										<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"60.32387\" cy=\"54.48737\" id=\"svg_16\" rx=\"29.16739\" ry=\"0.15625\" transform=\"rotate(90.55730438232422 60.323867797851555,54.48736953735351) \" stroke=\"#666\"/>\n            										<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"10.70595\" cy=\"10.10935\" id=\"svg_17\" rx=\"6.82828\" ry=\"0.15625\" transform=\"rotate(89.25360107421875 10.705955505371094,10.109351158142088) \" stroke=\"#666\"/>\n            								</svg>\n";
+},"14":function(container,depth0,helpers,partials,data) {
+    var stack1;
 
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.leftOne : depth0),{"name":"if","hash":{},"fn":container.program(15, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+},"15":function(container,depth0,helpers,partials,data) {
+    return "            									<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n            										<ellipse stroke=\"#000\" ry=\"0.15625\" rx=\"46.84273\" id=\"svg_8\" cy=\"10.18846\" cx=\"55.99588\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n            										<ellipse stroke=\"#000\" transform=\"rotate(90.55730438232422 60.323867797851555,54.48736953735351) \" ry=\"0.15625\" rx=\"29.16739\" id=\"svg_16\" cy=\"54.48737\" cx=\"60.32387\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n            									</svg>\n";
+},"17":function(container,depth0,helpers,partials,data) {
+    return "            							<svg width=\"110.00000000000001\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n            								<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"65.93316\" cy=\"10.62595\" id=\"svg_8\" rx=\"42.53032\" ry=\"0.15625\" stroke=\"#666\"/>\n            								<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"98.59446\" cy=\"6.49303\" id=\"svg_10\" rx=\"9.98315\" ry=\"0.15625\" transform=\"rotate(-20.98859405517578 98.59446716308595,6.493030071258536) \" stroke=\"#666\"/>\n            								<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"14.57365\" cy=\"10.55544\" id=\"svg_11\" rx=\"9.98315\" ry=\"0.15625\" transform=\"rotate(0.7375706434249878 14.573644638061372,10.555437088012791) \" stroke=\"#666\"/>\n            								<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"98.28197\" cy=\"14.76368\" id=\"svg_13\" rx=\"9.98315\" ry=\"0.15625\" transform=\"rotate(19.652103424072266 98.28196716308591,14.763684272766087) \" stroke=\"#666\"/>\n            							</svg>\n";
+},"19":function(container,depth0,helpers,partials,data) {
+    var stack1;
 
-  buffer += "<ul>\r\n";
-  stack1 = self.invokePartial(partials['squid_api_navigator-list'], 'squid_api_navigator-list', depth0, helpers, partials, data);
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n</ul>";
-  return buffer;
-  });
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.rightZeroOrOne : depth0),{"name":"if","hash":{},"fn":container.program(20, data, 0),"inverse":container.program(22, data, 0),"data":data})) != null ? stack1 : "");
+},"20":function(container,depth0,helpers,partials,data) {
+    return "            									<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n            										<ellipse stroke=\"#666\" ry=\"0.15625\" rx=\"46.84273\" id=\"svg_8\" cy=\"10.37595\" cx=\"60.37079\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n            										<ellipse stroke=\"#666\" transform=\"rotate(-0.039470430463552475 88.36991882324197,10.287286758425585) \" ry=\"1.53145\" rx=\"1.71832\" id=\"svg_15\" cy=\"10.28729\" cx=\"88.36992\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"12\" fill=\"none\"/>\n            										<ellipse stroke=\"#666\" transform=\"rotate(90.55730438232422 60.323867797851555,54.48736953735351) \" ry=\"0.15625\" rx=\"29.16739\" id=\"svg_16\" cy=\"54.48737\" cx=\"60.32387\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n            										<ellipse stroke=\"#666\" transform=\"rotate(89.25360107421875 100.32839202880858,10.109345436096195) \" ry=\"0.15625\" rx=\"6.82828\" id=\"svg_17\" cy=\"10.10935\" cx=\"100.32839\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n            									</svg>\n";
+},"22":function(container,depth0,helpers,partials,data) {
+    var stack1;
 
-this["squid_api"]["template"]["squid_api_relation_collection_management_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.rightOne : depth0),{"name":"if","hash":{},"fn":container.program(15, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+},"24":function(container,depth0,helpers,partials,data) {
+    return "											<td class=\"edit collection-option\"><i class=\"fa fa-pencil-square-o\"  title=\"edit\"></i></td>\n";
+},"26":function(container,depth0,helpers,partials,data) {
+    return "                                            <td class=\"delete collection-option\"><i class=\"fa fa-trash-o\"  title=\"delete\"></i></td>\n";
+},"28":function(container,depth0,helpers,partials,data) {
+    var helper;
 
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n				<button type=\"button\"  class=\"create btn btn-default\">\n					<i class=\"fa fa-plus\"></i> New ";
-  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\n				</button>\n			";
-  return buffer;
-  }
+  return "                                <div class=\"no-data\">\n                                    No "
+    + container.escapeExpression(((helper = (helper = helpers.typeLabelPlural || (depth0 != null ? depth0.typeLabelPlural : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"typeLabelPlural","hash":{},"data":data}) : helper)))
+    + " available\n                                </div>\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-function program3(depth0,data) {
-  
-  
-  return " ";
-  }
+  return "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n  <h4 class=\"modal-title\" id=\"myModalLabel\">"
+    + alias4(((helper = (helper = helpers.typeLabelPlural || (depth0 != null ? depth0.typeLabelPlural : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"typeLabelPlural","hash":{},"data":data}) : helper)))
+    + "</h4>\n</div>\n<div class=\"modal-body\">\n    <div class=\"squid-api-collection-management-widget\">\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.createRole : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "            <div class=\"squid-api-"
+    + alias4(((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"type","hash":{},"data":data}) : helper)))
+    + "-collection-management list\">\n                    <table style=\"width:100%\">\n                        <tbody "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.valueSelected : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.program(5, data, 0),"data":data})) != null ? stack1 : "")
+    + ">\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.models : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.program(28, data, 0),"data":data})) != null ? stack1 : "")
+    + "                        </tbody>\n                </table>\n            </div>\n    </div>\n</div>\n<div class=\"squid-api-model-management-footer\">\n    <button type=\"button\" class=\"btn btn-default cancel\">Cancel</button>\n  	<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
+},"useData":true});
 
-function program5(depth0,data) {
-  
-  
-  return " class=\"no-values\" ";
-  }
+this["squid_api"]["template"]["squid_api_shortcuts_admin_widget"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "<div id=\"squid-api-shortcuts-widgets\">\n<form>\n<div class=\"form-group\">\n    <label for=\"shortcutId\">Id</label>\n    <p class=\"help-block\">\n    This is the shortcut identifier which will be used as a URL parameter (\"index.html?shortcut=myid\").\n    If not set it will automatically be generated.</p>\n    <input type=\"text\" class=\"form-control\" id=\"shortcutId\">\n</div>\n<div class=\"form-group\">\n    <label for=\"shortcutName\">Name</label>\n    <p class=\"help-block\">This is a descriptive name for your shortcut. (Optional)</p>\n    <input type=\"text\" class=\"form-control\" id=\"shortcutName\">\n</div>\n<a href=\"#\" class=\"btn btn-primary\" id=\"saveBtn\">Save</a>\n</form>\n</div>";
+},"useData":true});
 
-function program7(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n                                ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.models), {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                            ";
-  return buffer;
-  }
-function program8(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n            						<tr class=\"no-background\" data-attr=";
-  if (helper = helpers.oid) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.oid); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + ">\n            							<td class=\"domain\">";
-  if (helper = helpers.leftName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.leftName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</td>\n            							<td class=\"leftIcon\">\n            							";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.leftMany), {hash:{},inverse:self.program(11, program11, data),fn:self.program(9, program9, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n            							</td>\n            							<td class=\"rightIcon\">\n            							";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.rightMany), {hash:{},inverse:self.program(19, program19, data),fn:self.program(17, program17, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                        <td class=\"domain\">";
-  if (helper = helpers.rightName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.rightName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</td>\n            							</td>\n            							";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1.edit), {hash:{},inverse:self.noop,fn:self.program(24, program24, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                                        ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.roles)),stack1 == null || stack1 === false ? stack1 : stack1['delete']), {hash:{},inverse:self.noop,fn:self.program(26, program26, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n            						</tr>\n            					";
-  return buffer;
-  }
-function program9(depth0,data) {
-  
-  
-  return "\n            									<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n              										<ellipse stroke=\"#666\" ry=\"0.15625\" rx=\"42.53032\" id=\"svg_8\" cy=\"10.62595\" cx=\"65.93316\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n              										<ellipse stroke=\"#666\" transform=\"rotate(23.859294891357422 14.261151313781737,6.493025302886963) \" ry=\"0.15625\" rx=\"9.98315\" id=\"svg_10\" cy=\"6.49303\" cx=\"14.26115\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n              										<ellipse stroke=\"#666\" transform=\"rotate(0.7375706434249878 14.573644638061372,10.555437088012791) \" ry=\"0.15625\" rx=\"9.98315\" id=\"svg_11\" cy=\"10.55544\" cx=\"14.57365\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n              										<ellipse stroke=\"#666\" transform=\"rotate(-20.462926864624023 14.4486494064331,14.430353164672844) \" ry=\"0.15625\" rx=\"9.98315\" id=\"svg_13\" cy=\"14.43035\" cx=\"14.44865\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n            									</svg>\n            								";
-  }
+this["squid_api"]["template"]["squid_api_users_admin_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    return "        <tr data-attr=\"add\">\n            <td><input class=\"add form-control input-sm\" placeholder=\"Login Value...\" data-attribute=\"login\"></td>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Email Value...\" data-attribute=\"email\"></td>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Password...\" data-attribute=\"password\" type=\"password\"></td>\n            <td class=\"user-value group-section\"><i class='field-icon fa fa-plus-square'></i><select class=\"add form-control input-sm\" data-attribute=\"groups\"></select></td>\n            <td class=\"action-section\"><span class=\"send-email-label\">Send Email: </span><input class=\"email-checkbox\" type=\"checkbox\" data-attribute=\"sendemail\"><button class=\"add btn btn-default\" data-value=\"add\">Add</button></td>\n        </tr>\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1;
 
-function program11(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n            								";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.leftZeroOrOne), {hash:{},inverse:self.program(14, program14, data),fn:self.program(12, program12, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n            							";
-  return buffer;
-  }
-function program12(depth0,data) {
-  
-  
-  return "\n            								<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n            										<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"51.62104\" cy=\"10.37595\" id=\"svg_8\" rx=\"46.84273\" ry=\"0.15625\" stroke=\"#666\"/>\n            										<ellipse fill=\"none\" stroke-width=\"12\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"22.24682\" cy=\"10.28729\" id=\"svg_15\" rx=\"1.71832\" ry=\"1.53145\" transform=\"rotate(-0.039470430463552475 22.246822357181806,10.287289619445572) \" stroke=\"#666\"/>\n            										<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"60.32387\" cy=\"54.48737\" id=\"svg_16\" rx=\"29.16739\" ry=\"0.15625\" transform=\"rotate(90.55730438232422 60.323867797851555,54.48736953735351) \" stroke=\"#666\"/>\n            										<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"10.70595\" cy=\"10.10935\" id=\"svg_17\" rx=\"6.82828\" ry=\"0.15625\" transform=\"rotate(89.25360107421875 10.705955505371094,10.109351158142088) \" stroke=\"#666\"/>\n            								</svg>\n            									";
-  }
-
-function program14(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n            									";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.leftOne), {hash:{},inverse:self.noop,fn:self.program(15, program15, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n            							 	";
-  return buffer;
-  }
-function program15(depth0,data) {
-  
-  
-  return "\n            									<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n            										<ellipse stroke=\"#000\" ry=\"0.15625\" rx=\"46.84273\" id=\"svg_8\" cy=\"10.18846\" cx=\"55.99588\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n            										<ellipse stroke=\"#000\" transform=\"rotate(90.55730438232422 60.323867797851555,54.48736953735351) \" ry=\"0.15625\" rx=\"29.16739\" id=\"svg_16\" cy=\"54.48737\" cx=\"60.32387\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n            									</svg>\n            									";
-  }
-
-function program17(depth0,data) {
-  
-  
-  return "\n            							<svg width=\"110.00000000000001\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n            								<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"65.93316\" cy=\"10.62595\" id=\"svg_8\" rx=\"42.53032\" ry=\"0.15625\" stroke=\"#666\"/>\n            								<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"98.59446\" cy=\"6.49303\" id=\"svg_10\" rx=\"9.98315\" ry=\"0.15625\" transform=\"rotate(-20.98859405517578 98.59446716308595,6.493030071258536) \" stroke=\"#666\"/>\n            								<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"14.57365\" cy=\"10.55544\" id=\"svg_11\" rx=\"9.98315\" ry=\"0.15625\" transform=\"rotate(0.7375706434249878 14.573644638061372,10.555437088012791) \" stroke=\"#666\"/>\n            								<ellipse fill=\"none\" stroke-width=\"1.5\" stroke-opacity=\"null\" fill-opacity=\"null\" cx=\"98.28197\" cy=\"14.76368\" id=\"svg_13\" rx=\"9.98315\" ry=\"0.15625\" transform=\"rotate(19.652103424072266 98.28196716308591,14.763684272766087) \" stroke=\"#666\"/>\n            							</svg>\n            								";
-  }
-
-function program19(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n            								";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.rightZeroOrOne), {hash:{},inverse:self.program(22, program22, data),fn:self.program(20, program20, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n            							";
-  return buffer;
-  }
-function program20(depth0,data) {
-  
-  
-  return "\n            									<svg width=\"110\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\n            										<ellipse stroke=\"#666\" ry=\"0.15625\" rx=\"46.84273\" id=\"svg_8\" cy=\"10.37595\" cx=\"60.37079\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n            										<ellipse stroke=\"#666\" transform=\"rotate(-0.039470430463552475 88.36991882324197,10.287286758425585) \" ry=\"1.53145\" rx=\"1.71832\" id=\"svg_15\" cy=\"10.28729\" cx=\"88.36992\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"12\" fill=\"none\"/>\n            										<ellipse stroke=\"#666\" transform=\"rotate(90.55730438232422 60.323867797851555,54.48736953735351) \" ry=\"0.15625\" rx=\"29.16739\" id=\"svg_16\" cy=\"54.48737\" cx=\"60.32387\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n            										<ellipse stroke=\"#666\" transform=\"rotate(89.25360107421875 100.32839202880858,10.109345436096195) \" ry=\"0.15625\" rx=\"6.82828\" id=\"svg_17\" cy=\"10.10935\" cx=\"100.32839\" fill-opacity=\"null\" stroke-opacity=\"null\" stroke-width=\"1.5\" fill=\"none\"/>\n            									</svg>\n            									";
-  }
-
-function program22(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n            									";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.rightOne), {hash:{},inverse:self.noop,fn:self.program(15, program15, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n            							 	";
-  return buffer;
-  }
-
-function program24(depth0,data) {
-  
-  
-  return "\n											<td class=\"edit collection-option\"><i class=\"fa fa-pencil-square-o\"  title=\"edit\"></i></td>\n										";
-  }
-
-function program26(depth0,data) {
-  
-  
-  return "\n                                            <td class=\"delete collection-option\"><i class=\"fa fa-trash-o\"  title=\"delete\"></i></td>\n                                        ";
-  }
-
-function program28(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n                                <div class=\"no-data\">\n                                    No ";
-  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + " available\n                                </div>\n                            ";
-  return buffer;
-  }
-
-  buffer += "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n  <h4 class=\"modal-title\" id=\"myModalLabel\">";
-  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</h4>\n</div>\n<div class=\"modal-body\">\n    <div class=\"squid-api-collection-management-widget\">\n    		";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.createRole), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n            <div class=\"squid-api-";
-  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "-collection-management list\">\n                    <table style=\"width:100%\">\n                        <tbody ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.valueSelected), {hash:{},inverse:self.program(5, program5, data),fn:self.program(3, program3, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">\n                            ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.models), {hash:{},inverse:self.program(28, program28, data),fn:self.program(7, program7, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                        </tbody>\n                </table>\n            </div>\n    </div>\n</div>\n<div class=\"squid-api-model-management-footer\">\n    <button type=\"button\" class=\"btn btn-default cancel\">Cancel</button>\n  	<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n</div>\n<!--  end of modal - -->\n</div>\n";
-  return buffer;
-  });
-
-this["squid_api"]["template"]["squid_api_shortcuts_admin_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  
-
-
-  return "<div id=\"squid-api-shortcuts-widgets\">\n<form>\n<div class=\"form-group\">\n    <label for=\"shortcutId\">Id</label>\n    <p class=\"help-block\">\n    This is the shortcut identifier which will be used as a URL parameter (\"index.html?shortcut=myid\").\n    If not set it will automatically be generated.</p>\n    <input type=\"text\" class=\"form-control\" id=\"shortcutId\">\n</div>\n<div class=\"form-group\">\n    <label for=\"shortcutName\">Name</label>\n    <p class=\"help-block\">This is a descriptive name for your shortcut. (Optional)</p>\n    <input type=\"text\" class=\"form-control\" id=\"shortcutName\">\n</div>\n<a href=\"#\" class=\"btn btn-primary\" id=\"saveBtn\">Save</a>\n</form>\n</div>";
-  });
-
-this["squid_api"]["template"]["squid_api_users_admin_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, self=this;
-
-function program1(depth0,data) {
-  
-  
-  return "\n        <tr data-attr=\"add\">\n            <td><input class=\"add form-control input-sm\" placeholder=\"Login Value...\" data-attribute=\"login\"></td>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Email Value...\" data-attribute=\"email\"></td>\n            <td><input class=\"add form-control input-sm\" placeholder=\"Password...\" data-attribute=\"password\" type=\"password\"></td>\n            <td class=\"user-value group-section\"><i class='field-icon fa fa-plus-square'></i><select class=\"add form-control input-sm\" data-attribute=\"groups\"></select></td>\n            <td class=\"action-section\"><span class=\"send-email-label\">Send Email: </span><input class=\"email-checkbox\" type=\"checkbox\" data-attribute=\"sendemail\"><button class=\"add btn btn-default\" data-value=\"add\">Add</button></td>\n        </tr>\n    ";
-  }
-
-  buffer += "<div class='sq-loading' style='position:absolute; width:100%; top:40%; z-index: 1;'>\n    <div class=\"spinner\">\n    <div class=\"rect5\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect1\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect5\"></div>\n    </div>\n</div>\n<div id=\"squid-api-admin-widgets-user-table\">\n<div class=\"api-feedback\"></div>\n<table class=\"sq-table\">\n    <thead>\n        <tr>\n            <th>Login</th>\n            <th>Email</th>\n            <th>Password</th>\n            <th>Groups</th>\n            <th>Action</th>\n        </tr>\n    </thead>\n    <tbody>\n    ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.addUser), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n    </tbody>\n</table>\n</div>";
-  return buffer;
-  });
+  return "<div class='sq-loading' style='position:absolute; width:100%; top:40%; z-index: 1;'>\n    <div class=\"spinner\">\n    <div class=\"rect5\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect1\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect5\"></div>\n    </div>\n</div>\n<div id=\"squid-api-admin-widgets-user-table\">\n<div class=\"api-feedback\"></div>\n<table class=\"sq-table\">\n    <thead>\n        <tr>\n            <th>Login</th>\n            <th>Email</th>\n            <th>Password</th>\n            <th>Groups</th>\n            <th>Action</th>\n        </tr>\n    </thead>\n    <tbody>\n"
+    + ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.addUser : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "    </tbody>\n</table>\n</div>";
+},"useData":true});
 (function (root, factory) {
     root.squid_api.view.BaseCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_base_collection_management_widget);
 
