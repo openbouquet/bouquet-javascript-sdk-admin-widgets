@@ -459,7 +459,9 @@
                 }
                 this.templateWidgets();
             }
-
+            if (typeof $.i18n !== "undefined") {
+            	$(".ob-analysis-select").localize();
+            }
             return this;
         },
         templateWidgets: function(collapseState) {

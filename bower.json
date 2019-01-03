@@ -24,7 +24,8 @@
     "backbone-forms": "https://github.com/powmedia/backbone-forms.git#master",
     "clipboard": "~2.0.1",
     "bootstrap-multiselect": "https://github.com/davidstutz/bootstrap-multiselect.git#0.9.15",
-    "ace-builds": "https://github.com/openbouquet/ace-builds.git#v1.2.9.2"
+    "ace-builds": "https://github.com/openbouquet/ace-builds.git#v1.2.9.2",
+    "treeview": "https://github.com/jonmiles/bootstrap-treeview.git#v1.2.0"
   },
   "resolutions": {
     "jquery": "3.3.1"

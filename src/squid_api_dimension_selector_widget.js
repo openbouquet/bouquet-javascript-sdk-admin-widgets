@@ -162,7 +162,7 @@
 
             if (this.singleSelect) {
                 // add an empty (none selected) option
-                jsonData.options.push({"label" : "None"});
+                jsonData.options.push({"label" : "None", "value":"none"});
             }
             
             // iterate through all filter facets
@@ -356,7 +356,7 @@
                 if (this.singleSelect) {
                     chosenNew = _.clone(chosen);
                     var value = oid.val();
-                    if (value) {
+                    if (value && value !== "none") {
                         if (! chosenNew.includes(value)) {
                             chosenNew[this.singleSelectIndex] = value;
                         } else {

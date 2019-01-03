@@ -360,7 +360,7 @@ this["squid_api"]["template"]["squid_api_modal_view"] = Handlebars.template({"1"
     + container.escapeExpression(((helper = (helper = helpers.headerTitle || (depth0 != null ? depth0.headerTitle : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"headerTitle","hash":{},"data":data}) : helper)))
     + "</h4>\n        </div>\n";
 },"5":function(container,depth0,helpers,partials,data) {
-    return "        <div class=\"modal-footer\">\n          	<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n        </div>\n";
+    return "        <div class=\"modal-footer\">\n          	<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\" data-i18n=\"button_close\">Close</button>\n        </div>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
@@ -1706,7 +1706,9 @@ this["squid_api"]["template"]["squid_api_users_admin_widget"] = Handlebars.templ
                 }
                 this.templateWidgets();
             }
-
+            if (typeof $.i18n !== "undefined") {
+            	$(".ob-analysis-select").localize();
+            }
             return this;
         },
         templateWidgets: function(collapseState) {
@@ -4556,7 +4558,7 @@ this["squid_api"]["template"]["squid_api_users_admin_widget"] = Handlebars.templ
 
             if (this.singleSelect) {
                 // add an empty (none selected) option
-                jsonData.options.push({"label" : "None"});
+                jsonData.options.push({"label" : "None", "value":"none"});
             }
             
             // iterate through all filter facets
@@ -4750,7 +4752,7 @@ this["squid_api"]["template"]["squid_api_users_admin_widget"] = Handlebars.templ
                 if (this.singleSelect) {
                     chosenNew = _.clone(chosen);
                     var value = oid.val();
-                    if (value) {
+                    if (value && value !== "none") {
                         if (! chosenNew.includes(value)) {
                             chosenNew[this.singleSelectIndex] = value;
                         } else {
@@ -5363,7 +5365,9 @@ this["squid_api"]["template"]["squid_api_users_admin_widget"] = Handlebars.templ
             this.view.render();
             // display the modal
             this.$el.modal();
-
+            if (typeof $.i18n !== "undefined") {
+            	$(".modal-footer").localize();
+            }
             return this;
         }
     });
