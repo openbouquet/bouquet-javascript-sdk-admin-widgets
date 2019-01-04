@@ -70,7 +70,7 @@
             // display the modal
             this.$el.modal();
             if (typeof $.i18n !== "undefined") {
-            	$(".modal-footer").localize();
+            	this.$el.localize();
             }
             return this;
         }

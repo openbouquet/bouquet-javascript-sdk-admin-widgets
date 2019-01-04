@@ -460,7 +460,7 @@
                 this.templateWidgets();
             }
             if (typeof $.i18n !== "undefined") {
-            	$(".ob-analysis-select").localize();
+            	this.$el.localize();
             }
             return this;
         },

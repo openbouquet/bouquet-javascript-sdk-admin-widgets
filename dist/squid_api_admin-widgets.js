@@ -1707,7 +1707,7 @@ this["squid_api"]["template"]["squid_api_users_admin_widget"] = Handlebars.templ
                 this.templateWidgets();
             }
             if (typeof $.i18n !== "undefined") {
-            	$(".ob-analysis-select").localize();
+            	this.$el.localize();
             }
             return this;
         },
@@ -4768,7 +4768,7 @@ this["squid_api"]["template"]["squid_api_users_admin_widget"] = Handlebars.templ
                         nSelectedText: nSelectedText,
                         allSelectedText: allSelectedText,
                         resetText: resetText});
-                    $("#dimensionSelector").localize();
+                    this.$el.localize();
 	            }
                 this.$el.find("select").multiselect('dataprovider', jsonData.options);
                 this.$el.find("select").multiselect('rebuild');
@@ -5303,7 +5303,7 @@ this["squid_api"]["template"]["squid_api_users_admin_widget"] = Handlebars.templ
                         nSelectedText: nSelectedText,
                         allSelectedText: allSelectedText,
                         resetText: resetText});
-                    $("#metricSelector").localize();
+                    this.$el.localize();
 	            }
                 this.$el.find("select.metric-multiple-selected").multiselect("dataprovider", data);
                 this.$el.find("select.metric-multiple-selected").multiselect("rebuild");
@@ -5427,7 +5427,7 @@ this["squid_api"]["template"]["squid_api_users_admin_widget"] = Handlebars.templ
             // display the modal
             this.$el.modal();
             if (typeof $.i18n !== "undefined") {
-            	$(".modal-footer").localize();
+            	this.$el.localize();
             }
             return this;
         }

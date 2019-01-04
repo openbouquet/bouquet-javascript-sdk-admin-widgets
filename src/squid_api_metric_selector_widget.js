@@ -207,7 +207,7 @@
                         nSelectedText: nSelectedText,
                         allSelectedText: allSelectedText,
                         resetText: resetText});
-                    $("#metricSelector").localize();
+                    this.$el.localize();
 	            }
                 this.$el.find("select.metric-multiple-selected").multiselect("dataprovider", data);
                 this.$el.find("select.metric-multiple-selected").multiselect("rebuild");

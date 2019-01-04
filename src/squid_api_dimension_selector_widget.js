@@ -372,7 +372,7 @@
                         nSelectedText: nSelectedText,
                         allSelectedText: allSelectedText,
                         resetText: resetText});
-                    $("#dimensionSelector").localize();
+                    this.$el.localize();
 	            }
                 this.$el.find("select").multiselect('dataprovider', jsonData.options);
                 this.$el.find("select").multiselect('rebuild');
