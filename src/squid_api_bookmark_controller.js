@@ -396,7 +396,7 @@
 											var facetForItems;
 
 											if (previousBookmark && previousBookmark.id) {
-												me.savedAnalysesConfig.set(copyConfig.get("bookmark"), copyConfig.attributes);
+												me.savedAnalysesConfig.set(copyConfig.get("bookmark"), $.extend(false, {}, copyConfig.attributes));
 											}
 
 											//Get the latest config used on the new bookmark used if any

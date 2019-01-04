@@ -1,0 +1,9 @@
+{
+  "none_label":"None",
+  "selectAllText": "Select all",
+  "filterPlaceholder": "Search",
+  "nonSelectedText": "None selected",
+  "nSelectedText": "selected",
+  "allSelectedText": "All selected",
+  "resetText": "Reset"          
+}

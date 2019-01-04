@@ -160,9 +160,13 @@
 
             var jsonData = {"selAvailable" : true, "options" : [], "multiple" : isMultiple};
 
+            var noneLabel = "None";
+            if (typeof $.i18n !== "undefined") {
+            	noneLabel=$.i18n.t("none_label");
+            }
             if (this.singleSelect) {
                 // add an empty (none selected) option
-                jsonData.options.push({"label" : "None", "value":"none"});
+                jsonData.options.push({"label" : noneLabel, "value":"none"});
             }
             
             // iterate through all filter facets
@@ -314,11 +318,26 @@
         renderView: function(jsonData) {
             var me = this;
 
-            if (this.$el.find("select").length === 0) {
+            var selectAllText= "Select all",
+            filterPlaceholder= "Search",
+            nonSelectedText= "None selected",
+            nSelectedText= "selected",
+            allSelectedText= "All selected",
+            resetText= "Reset";
+            if (typeof $.i18n !== "undefined") {
+            	selectAllText= $.i18n.t("selectAllText");
+                filterPlaceholder= $.i18n.t("filterPlaceholder");
+                nonSelectedText= $.i18n.t("nonSelectedText");
+                nSelectedText= $.i18n.t("nSelectedText");
+                allSelectedText= $.i18n.t("allSelectedText");
+                resetText= $.i18n.t("resetText");
+            }
+           if (this.$el.find("select").length === 0) {
                 var html = this.template(jsonData);
                 this.$el.html(html);
                 // Initialize plugin
                 if (! this.singleSelect) {
+
                     this.$el.find("select").multiselect({
                         buttonContainer: '<div class="squid-api-data-widgets-dimension-selector" />',
                         buttonText: function() {
@@ -333,10 +352,28 @@
                             if (me.configurationEnabled) {
                                 me.showConfiguration();
                             }
-                        }
+                        }      
                     });
+                    this.$el.find("select").multiselect("setOptions",{
+                        selectAllText: selectAllText,
+                        filterPlaceholder: filterPlaceholder,
+                        nonSelectedText: nonSelectedText,
+                        nSelectedText: nSelectedText,
+                        allSelectedText: allSelectedText,
+                        resetText: resetText});
+                    this.$el.find("select").multiselect('rebuild');
                 }
             } else {
+                if (typeof $.i18n !== "undefined") {
+                    this.$el.find("select").multiselect("setOptions",{
+                        selectAllText: selectAllText,
+                        filterPlaceholder: filterPlaceholder,
+                        nonSelectedText: nonSelectedText,
+                        nSelectedText: nSelectedText,
+                        allSelectedText: allSelectedText,
+                        resetText: resetText});
+                    $("#dimensionSelector").localize();
+	            }
                 this.$el.find("select").multiselect('dataprovider', jsonData.options);
                 this.$el.find("select").multiselect('rebuild');
             }
