@@ -12,7 +12,7 @@
   "license": "AGPL-3.0",
   "private": true,
   "dependencies": {
-    "squid_api": "https://github.com/openbouquet/bouquet-javascript-sdk.git#7.0.0",
+    "squid_api": "https://github.com/openbouquet/bouquet-javascript-sdk.git#7.0.2",
     "handlebars": "~4.0.0",
     "font-awesome": "https://github.com/components/font-awesome.git",
     "data_tables": "https://github.com/DataTables/DataTables.git#1.10.8",
