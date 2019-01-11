@@ -58,6 +58,23 @@
 
                 // check for additions
                 chosenNew = _.intersection(_.union(chosen, selected), selected);
+                //Handle order by silently 
+                var oldValues = _.difference(chosen, chosenNew);
+                if (typeof orderByList !== "undefined" && orderByList && oldValues && oldValues.length>0) {
+                	for (var ix=oldValues.length-1; ix>=0; ix--) {
+                		var oldValue = oldValues[ix];
+                    	for (var jx=orderByList.length-1; jx>=0; jx--) {
+                    		if (orderByList[jx].expression !== "undefined" ) {
+                    			if ( typeof orderByList[jx].expression.value !== "undefined") {
+                    				if (orderByList[jx].expression.value === oldValue) {
+                    					orderByList.splice(jx, 1);
+                    				}
+                    			}
+                    		}
+                    	}
+                	}             	
+                	this.config.attributes.orderBy = orderByList;
+                }
 
                 // Update
                 if (this.onChangeHandler) {

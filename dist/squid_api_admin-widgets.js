@@ -2739,6 +2739,23 @@ this["squid_api"]["template"]["squid_api_users_admin_widget"] = Handlebars.templ
 
                 // check for additions
                 chosenNew = _.intersection(_.union(chosen, selected), selected);
+                //Handle order by silently 
+                var oldValues = _.difference(chosen, chosenNew);
+                if (typeof orderByList !== "undefined" && orderByList && oldValues && oldValues.length>0) {
+                	for (var ix=oldValues.length-1; ix>=0; ix--) {
+                		var oldValue = oldValues[ix];
+                    	for (var jx=orderByList.length-1; jx>=0; jx--) {
+                    		if (orderByList[jx].expression !== "undefined" ) {
+                    			if ( typeof orderByList[jx].expression.value !== "undefined") {
+                    				if (orderByList[jx].expression.value === oldValue) {
+                    					orderByList.splice(jx, 1);
+                    				}
+                    			}
+                    		}
+                    	}
+                	}             	
+                	this.config.attributes.orderBy = orderByList;
+                }
 
                 // Update
                 if (this.onChangeHandler) {
@@ -4785,6 +4802,7 @@ this["squid_api"]["template"]["squid_api_users_admin_widget"] = Handlebars.templ
 
                 var chosen = this.config.get(this.chosen);
                 var chosenNew;
+                var orderByList = _.clone(this.config.get("orderBy"));
 
                 if (this.singleSelect) {
                     chosenNew = _.clone(chosen);
@@ -4810,7 +4828,24 @@ this["squid_api"]["template"]["squid_api_users_admin_widget"] = Handlebars.templ
                     // check for additions
                     chosenNew = _.intersection(_.union(chosen, selected), selected);
                 }
-
+                //Handle order by silently 
+                var oldValues = _.difference(chosen, chosenNew);
+                if (typeof orderByList !== "undefined" && orderByList && oldValues && oldValues.length>0) {
+                	for (var ix=oldValues.length-1; ix>=0; ix--) {
+                		var oldValue = oldValues[ix];
+                    	for (var jx=orderByList.length-1; jx>=0; jx--) {
+                    		if (orderByList[jx].expression !== "undefined" ) {
+                    			if ( typeof orderByList[jx].expression.value !== "undefined") {
+                    				if (orderByList[jx].expression.value === oldValue) {
+                    					orderByList.splice(jx, 1);
+                    				}
+                    			}
+                    		}
+                    	}
+                	}             	
+                	this.config.attributes.orderBy = orderByList;
+                }
+                
                 // Update
                 if (this.onChangeHandler) {
                     this.onChangeHandler.call(this);
