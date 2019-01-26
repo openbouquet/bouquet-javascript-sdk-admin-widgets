@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 (function (root, factory) {
 	root.squid_api.view.BookmarkCollectionManagementWidget = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_bookmark_collection_management_widget);
 
@@ -19,8 +20,9 @@
         onChangeHandler : null,
         descriptionHover : null,
         returnPaths: null,
-        hierarchialList: null,
+        hierarchialList: false,
         disableRightClickOnSelect: null,
+        searchText: "",
 
         init : function(options) {
             var me = this;
@@ -90,7 +92,19 @@
             model.set("config",config);
             return model;
         },
-
+        select : function(value) {
+            if (this.onChangeHandler) {
+                if (squid_api.model.config && value != squid_api.model.config.get("bookmark")) {
+                    this.onChangeHandler(value ,this.collection);
+                }
+            }
+            else {
+                squid_api.setBookmarkId(value);
+                if (this.onSelect) {
+                    this.onSelect.call();
+                }
+            }
+        },
         eventSelect : function(event) {
             if (! $(event.target).hasClass("disabled")) {
                 var value = $(event.target).parents("li").attr("data-attr");
@@ -98,24 +112,12 @@
                     value = $(event.target).attr("data-attr");
                 }
                 //Callback to keep filters selection on Counter apps for ex
-            
-                if (this.onChangeHandler) {
-                    if (squid_api.model.config && value != squid_api.model.config.get("bookmark")) {
-                        this.onChangeHandler(value ,this.collection);
-                    }
-                }
-                else {
-                    squid_api.setBookmarkId(value);
-                    if (this.onSelect) {
-                        this.onSelect.call();
-                    }
-                }
+                this.select(value);
             } else {
                 event.preventDefault();
             }
         },
-
-        filterCollection: function(text) {
+         filterCollection: function(text) {
             var collection = this.jsonData.collection;
             for (i=0; i<collection.length; i++) {
                 var item = this.jsonData.collection[i];
@@ -133,21 +135,38 @@
 
         eventSearch: function(event) {
             // obtain search box text
-            var text = $(event.currentTarget).val();
-            // filter collection
-            var filteredCollection = this.filterCollection(text);
-            // update list
-            var listHtml = $(this.template(filteredCollection)).find(".list").last().html();
-            this.$el.find(".list").last().html(listHtml);
+        	var me = this;
+        	//setTimeout(function() {
+                me.searchText = $(event.currentTarget).val();
+                // filter collection
+                var filteredCollection = me.filterCollection(me.searchText);
+            	if (me.hierarchialList) {
+                    // update list
+            		me.render();
+                    if (me.searchText.length > 0) {
+	            		filteredCollection = $("#bookmark-tree").treeview('search', me.searchText, {
+	                    	  ignoreCase: true,     // case insensitive
+	                    	  exactMatch: false,    // like or equals
+	                    	  revealResults: true,  // reveal matching nodes
+	                    	});   
+	            		if (filteredCollection.length === 0) {
+	                    	me.render();
+	            		}
+                   }
+            	} else {
+                    var listHtml = $(me.template(filteredCollection)).find(".list").last().html();
+                    me.$el.find(".list").last().html(listHtml);
 
-            if (text.length > 0) {
-                this.templateWidgets("open");
-            } else {
-                this.templateWidgets();
-            }
-            if (this.afterRender) {
-                this.afterRender.call(this);
-            }
+                    if (me.searchText.length > 0) {
+                    	me.templateWidgets("open");
+                    } else {
+                    	me.templateWidgets();
+                    }
+                    if (me.afterRender) {
+                    	me.afterRender.call(me);
+                    }
+            	}
+        	//}, 500);
         },
 
         eventCreate : function() {
@@ -263,7 +282,28 @@
                 this.$el.find("#bookmark-collapse-" + item).collapse('toggle');
             }
         },
+        selectTree: function(data) {
+        	if (typeof data.parentId !== "undefined") {
+        		this.selectTree($("#bookmark-tree").treeview("getParent", data.nodeId));
+        	}
+        	data.state.selected=false;
+    		$("#bookmark-tree").treeview("expandNode", [ data.nodeId, { silent: true } ]);
+        },
+        onNodeSelected: function(data) {
+        	if (data.id) {
+            	this.select(data.id);
+            	window.location.href=data.href;
+        	} else {
+        		var expanded = data.state.expanded;
+        		$("#bookmark-tree").treeview("collapseAll", { silent: true });
+    			this.selectTree(data);
+    			if (expanded === true) {
+            		$("#bookmark-tree").treeview("collapseNode", [ data.nodeId, { silent: true } ]);
+        		}
+        	}
+        },
         render: function(activePath) {
+        	var me=this;
             console.log("render CollectionManagementWidget "+this.type);
             var project = this.config.get("project");
             var currentBookmark = this.config.get("bookmark");
@@ -271,6 +311,9 @@
             if (this.config.has("bookmark") && this.configSelectedId === "bookmark") {
             	selectedId = currentBookmark;
             }
+        	var hierarchy = [];
+            var indexToOpen = 0;
+
             this.jsonData = {
                 collectionLoaded : !this.collectionLoading,
                 collection : this.collection,
@@ -280,7 +323,8 @@
                 typeLabelPlural : this.typeLabelPlural,
                 hierarchialList : this.hierarchialList,
                 modalHtml : true,
-                type : this.type
+                type : this.type,
+                searchText: this.searchText
             };
             if (this.headerText) {
                 this.jsonData.typeLabelPlural = this.headerText;
@@ -291,9 +335,8 @@
                 var paths = [];
                 this.jsonData.collection = {};
                 this.jsonData.createRole = this.getCreateRole();
+                var types = [];
 
-                
-                
                 // store model data
                 for (i=0; i<this.collection.size(); i++) {
                     var item = this.collection.at(i);
@@ -373,13 +416,22 @@
                             if (! pathExists) {
                                 // store different paths
                                 paths.push(path);
+                                const bbType = path.substr(1).split(" ", 1)[0];
+	                    		var test = types.find(
+	                    				elt => elt === bbType
+	                    		);
+	                    		if (typeof test === "undefined") {
+	                    			types.push(bbType);
+	                    		}
                                 collection.push({
                                     "path" : {
                                         "value" : path,
                                         "userFriendlyName" : friendlyPath,
-                                        "type" : path.substr(1).split(" ", 1)[0]
+                                        "type" : bbType
                                     },
-                                    "bookmarks" : []
+                                    "bookmarks" : [],
+                                    "currentBookmarkInside": false,
+                                    "active": false
                                 });
                             }
 
@@ -399,7 +451,7 @@
                                     // store active folder
                                     if (activePath === collection[x].path.value) {
                                         collection[x].active = true;
-                                    }
+                                     }
                                     if (currentBookmark === bookmark.oid) {
                                         collection[x].currentBookmarkInside = true;
                                     }
@@ -407,6 +459,17 @@
                                 }
                             }
                         }
+                    }
+                }
+                if (collection) {
+                    // if no active collection, open the parent folder of currently selected bookmark
+                    if (typeof activePath === "undefined" || ! activePath) {
+                    	indexToOpen = _.indexOf(_.pluck(collection, 'currentBookmarkInside'), true);
+                        if (indexToOpen === -1) {
+                            indexToOpen = 0;
+                        }
+                        collection[indexToOpen].active=true;
+                        activePath = collection[indexToOpen].path.value;
                     }
                 }
 
@@ -434,6 +497,66 @@
                 if (_.where(collection, {active: true}).length === 0 && collection.length > 0) {
                     collection[0].active = true;
                 }
+                if (this.hierarchialList === true)  {
+                    for (i=0; i<collection.length; i++) {
+                    	var collectionPaths = collection[i].path.value.split("/");
+                    	var current = hierarchy;
+                    	var node;
+                    	var localPath = "";
+                    	var fullPath = "";
+                    	var skip = (types.length <= 1?1:0);
+                    	for (j=0; j<collectionPaths.length; j++) {
+                    		const col = collectionPaths[j];
+                    		if ("" !== col && skip === 0) {
+ 	                    		node = current.find(
+	                    				elt => elt.text === col
+	                    		);
+	                    		var test1 = activePath.indexOf(fullPath + "/" + col);
+	                    		localPath = localPath + "/" + col;
+	                    		if (typeof node === "undefined") {
+	                    			current.push({ 
+	                    				text: col, 
+	                    				value: localPath, 
+	                    				type: collection[i].path.type,
+	                    				nodes:[],
+		                    			path: fullPath,
+                                	    selectable: false,
+		                    			state: {
+		                                	    checked: false,
+		                                	    disabled: false,
+		                                	    expanded: activePath.indexOf(fullPath + "/" + col) === 0,
+		                                	    selected: false
+		                                	}
+	                    				});
+	                    			current = current[current.length-1].nodes;
+	                    		} else {
+	                    			current = node.nodes;
+	                    		}
+                    		}
+                   			if ("" !== col && skip>0) {
+                				skip--;
+                			}
+                   			if ("" !== col) {
+                   				fullPath = fullPath + "/" + col;
+                   			}	
+                    	} 
+                    	for (j=0; j<collection[i].bookmarks.length; j++) {
+                    		current.push({
+                    			text: collection[i].bookmarks[j].name, 
+                    			href: "#analytics/projects/"+collection[i].bookmarks[j].id.projectId+"/bookmarks/"+collection[i].bookmarks[j].id.bookmarkId,
+                    			id: collection[i].bookmarks[j].id.bookmarkId,
+                    			path: fullPath,
+                    			state: {
+                                	    checked: false,
+                                	    disabled: false,
+                                	    expanded: activePath.indexOf(fullPath) === 0 ,
+                                	    selected: collection[i].bookmarks[j].id.bookmarkId === currentBookmark
+                                	}
+                    		});
+                    	}                    	
+                    }
+
+                }
                 this.jsonData.collection = collection;
                 if (this.returnPaths) {
                     this.returnPaths.call(paths);
@@ -443,20 +566,39 @@
             // render template
             var html = this.template(this.jsonData);
             this.$el.html(html);
+            if (this.hierarchialList === true)  {
+            	var tree = this.$("#bookmark-tree");
+            	tree.treeview({
+            		data: hierarchy,
+            		collapseIcon: "glyphicon glyphicon-folder-open",
+            		expandIcon: "glyphicon glyphicon-folder-close",
+            		selectedColor: "#ee7914",
+            		selectedBackColor: "transparent",
+            		searchResultColor: "#800000",
+            		emptyIcon: "glyphicon glyphicon-chevron-right",
+            		backColor: "transparent",
+            		showBorder: false,
+            		onNodeSelected: function(event, data) {
+                        if (me.onNodeSelected) {
+                            me.onNodeSelected(data);
+                        }
+                    },
+            		onNodeUnselected: function(event, data) {
+                        if (me.onNodeSelected) {
+                            me.onNodeSelected(data);
+                        }
+                    }         	
 
-            this.$el.find("input.search").focus();
+            	});
+            }
+ 
+            this.$el.find("input.search").val("").focus();
+            this.$el.find("input.search").val(this.searchText);
 
             this.statusUpdate();
 
             if (this.jsonData.collection) {
-                // if no active collection, open the parent folder of currently selected bookmark
-                if (! activePath) {
-                    var indexToOpen = _.indexOf(_.pluck(this.jsonData.collection, 'currentBookmarkInside'), true);
-                    if (indexToOpen === -1) {
-                        indexToOpen = 0;
-                    }
-                    this.bookmarkFolderState(indexToOpen);
-                }
+                this.bookmarkFolderState(indexToOpen);
                 this.templateWidgets();
             }
             if (typeof $.i18n !== "undefined") {
