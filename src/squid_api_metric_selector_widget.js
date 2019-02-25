@@ -45,7 +45,7 @@
                 if (options.customView) {
                     this.customView = options.customView;
                 }
-                if (options.displayAll !== 'undefined' && options.displayAll !== null) {
+                if (options.displayAll !== "undefined" && options.displayAll !== null) {
                     this.displayAll = options.displayAll;
                 }
                 if (options.buttonText) {
@@ -100,6 +100,32 @@
                 this.$el.find("button").prop("disabled", false);
             }
         },
+        
+        getTranslations: function() {
+            var selectAllText= "Select all",
+            filterPlaceholder= "Search",
+            nonSelectedText= "None selected",
+            nSelectedText= "selected",
+            allSelectedText= "All selected",
+            resetText= "Reset";
+            if (typeof $.i18n !== "undefined") {
+            	selectAllText= $.i18n.t("selectAllText");
+                filterPlaceholder= $.i18n.t("filterPlaceholder");
+                nonSelectedText= $.i18n.t("nonSelectedText");
+                nSelectedText= $.i18n.t("nSelectedText");
+                allSelectedText= $.i18n.t("allSelectedText");
+                resetText= $.i18n.t("resetText");
+            }
+            return {
+	            selectAllText: selectAllText,
+	            filterPlaceholder: filterPlaceholder,
+	            nonSelectedText: nonSelectedText,
+	            nSelectedText: nSelectedText,
+	            allSelectedText: allSelectedText,
+	            resetText: resetText
+            };
+        	
+        },
 
         updateView: function() {
             var me = this, isMultiple = true;
@@ -129,8 +155,8 @@
 	                        // check this metric is available (or chosen)
 	                        var availableArray = this.config.get(this.available);
 	                        var chosenArray = this.config.get(this.chosen);
-	                        if ((availableArray === 'undefined' || $.isArray(availableArray) ===false || availableArray.indexOf(item.get("oid")) < 0) &&
-	                        		(chosenArray === 'undefined' || $.isArray(chosenArray) ===false || chosenArray.indexOf(item.get("oid")) < 0)) {
+	                        if ((availableArray === "undefined" || $.isArray(availableArray) ===false || availableArray.indexOf(item.get("oid")) < 0) &&
+	                        		(chosenArray === "undefined" || $.isArray(chosenArray) ===false || chosenArray.indexOf(item.get("oid")) < 0)) {
 	                            add = false;
 	                        }
 	                    }
@@ -162,6 +188,8 @@
                 if (this.customView) {
                     this.renderBase(jsonData.options);
                 } else {
+                    this.$el.find("select").multiselect("setOptions", me.getTranslations());
+                    this.$el.localize();
                     // update dropdown content
                     this.$el.find("select").multiselect("dataprovider", jsonData.options);
                     this.$el.find("select").multiselect("rebuild");
@@ -175,20 +203,7 @@
         },
 
         renderBase: function(data) {
-            var selectAllText= "Select all",
-            filterPlaceholder= "Search",
-            nonSelectedText= "None selected",
-            nSelectedText= "selected",
-            allSelectedText= "All selected",
-            resetText= "Reset";
-            if (typeof $.i18n !== "undefined") {
-            	selectAllText= $.i18n.t("selectAllText");
-                filterPlaceholder= $.i18n.t("filterPlaceholder");
-                nonSelectedText= $.i18n.t("nonSelectedText");
-                nSelectedText= $.i18n.t("nSelectedText");
-                allSelectedText= $.i18n.t("allSelectedText");
-                resetText= $.i18n.t("resetText");
-            }
+        	var me = this;
             if (this.$el.find("select.metric-multiple-selected").length === 0) {
                 var html = this.template({options : data});
                 this.$el.html(html);
@@ -199,16 +214,8 @@
                     this.delegateEvents();
                 }
             } else {
-                if (typeof $.i18n !== "undefined") {
-                    this.$el.find("select.metric-multiple-selected").multiselect("setOptions",{
-                        selectAllText: selectAllText,
-                        filterPlaceholder: filterPlaceholder,
-                        nonSelectedText: nonSelectedText,
-                        nSelectedText: nSelectedText,
-                        allSelectedText: allSelectedText,
-                        resetText: resetText});
-                    this.$el.localize();
-	            }
+                this.$el.find("select.metric-multiple-selected").multiselect("setOptions", me.getTranslations());
+                this.$el.localize();
                 this.$el.find("select.metric-multiple-selected").multiselect("dataprovider", data);
                 this.$el.find("select.metric-multiple-selected").multiselect("rebuild");
             }
