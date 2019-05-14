@@ -12,8 +12,8 @@
   "license": "AGPL-3.0",
   "private": true,
   "dependencies": {
-    "squid_api": "https://github.com/openbouquet/bouquet-javascript-sdk.git#7.0.2",
-    "handlebars": "~4.0.0",
+    "squid_api": "https://github.com/openbouquet/bouquet-javascript-sdk.git#7.0.6",
+    "handlebars": "~4.0.12",
     "font-awesome": "https://github.com/components/font-awesome.git",
     "data_tables": "https://github.com/DataTables/DataTables.git#1.10.8",
     "data_tables_css": "https://cdn.datatables.net/plug-ins/a5734b29083/integration/bootstrap/3/dataTables.bootstrap.css",
