@@ -1922,7 +1922,7 @@ this["squid_api"]["template"]["squid_api_users_admin_widget"] = Handlebars.templ
 						var sel = filters.get("selection");
 						//JTH 2016-08-24 copy facets
 						/**/
-						var facets;
+						var facets = [];
 						if (sel && sel.facets) {
 							facets=  sel.facets;
 						}

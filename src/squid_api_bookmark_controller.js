@@ -46,7 +46,7 @@
 						var sel = filters.get("selection");
 						//JTH 2016-08-24 copy facets
 						/**/
-						var facets;
+						var facets = [];
 						if (sel && sel.facets) {
 							facets=  sel.facets;
 						}
