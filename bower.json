@@ -1,6 +1,6 @@
     {
   "name": "squid_api_admin_widgets",
-  "version": "7.1.4",
+  "version": "7.1.5",
   "homepage": "https://github.com/openbouquet/bouquet-javascript-sdk-admin-widgets",
   "authors": [
     "obalbous <oba@squid>"
@@ -12,7 +12,7 @@
   "license": "AGPL-3.0",
   "private": true,
   "dependencies": {
-    "squid_api": "https://github.com/openbouquet/bouquet-javascript-sdk.git#7.1.2",
+    "squid_api": "https://github.com/openbouquet/bouquet-javascript-sdk.git#7.1.4",
     "handlebars": "~4.0.12",
     "font-awesome": "https://github.com/components/font-awesome.git",
     "data_tables": "https://github.com/DataTables/DataTables.git#1.10.8",
